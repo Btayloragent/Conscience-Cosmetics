@@ -1,6 +1,6 @@
 import React from 'react';
 
-const BackgroundImageComponent = () => {
+const LandingPage = () => {
   const backgroundImageStyle = {
     backgroundImage: 'url(src/pictures/landingPic.jpg)',
     backgroundSize: 'cover',
@@ -66,6 +66,6 @@ const BackgroundImageComponent = () => {
   );
 };
 
-export default BackgroundImageComponent;
+export default LandingPage;
 
 

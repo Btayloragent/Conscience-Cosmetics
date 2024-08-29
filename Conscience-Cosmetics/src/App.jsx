@@ -1,16 +1,25 @@
-import { useState } from 'react';
-import BackgroundImageComponent from "./landingPage"; 
+import React from "react";
+import LandingPage from "./pages/landingPage.jsx"; 
+
+
 
 
 
 function App() {
-  const [count, setCount] = useState(0);
-
   return (
+    
     <>
-    <BackgroundImageComponent /> 
+    
     </>
+   
   );
 }
 
 export default App;
+
+
+
+
+
+
+<LandingPage /> 
