@@ -1,6 +1,7 @@
 import React from 'react';
 import LoginComponent from '../components/LoginComponent';
 
+
 const MakeUpPage = () => {
     const backgroundImageStyle = {
         backgroundImage: 'url(src/Loginpics/LoginIn11.jpg)',
