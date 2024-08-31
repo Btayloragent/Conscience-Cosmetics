@@ -5,6 +5,7 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import './index.css'
 import LandingPage from './pages/landingPage.jsx'
 import MakeUpPage from './pages/makeUpPage.jsx'
+import VideoPage from './pages/VideoPage.jsx'
 
 
 let router = createBrowserRouter([
@@ -15,6 +16,10 @@ let router = createBrowserRouter([
   {
     path: "/MakeUpPage",
     element: <MakeUpPage />
+  },
+  {
+    path: "/VideoPage",
+    element: <VideoPage/>
   }
 ]);
 
