@@ -1,19 +1,25 @@
 import React from 'react';
+import logo from '../loginpics/LogoPic2.png'; // Adjust the path as needed
 
 const NavBar = () => {
   return (
-    <div className="navbar bg-base-100">
-      <div className="flex-1">
-        <a className="btn btn-ghost text-xl">daisyUI</a>
+    <div className="navbar bg-base-100 justify-between">
+      <div className="flex-none">
+        <a className="btn btn-ghost">
+          <img src={logo} alt="Logo" className="h-10" /> {/* Replace with your logo */}
+        </a>
       </div>
-      <div className="flex-none gap-2">
-        <div className="form-control">
+      <div className="flex-1 flex justify-center items-center">
+        <div className="form-control flex flex-row">
           <input
             type="text"
             placeholder="Search"
-            className="input input-bordered w-24 md:w-auto"
+            className="input input-bordered w-96" // Adjust the width as needed
           />
+          <button className="btn btn-primary ml-2">Search</button> {/* Search Button */}
         </div>
+      </div>
+      <div className="flex-none gap-2">
         <div className="dropdown dropdown-end">
           <div tabIndex={0} role="button" className="btn btn-ghost btn-circle avatar">
             <div className="w-10 rounded-full">
@@ -43,3 +49,4 @@ const NavBar = () => {
 };
 
 export default NavBar;
+
