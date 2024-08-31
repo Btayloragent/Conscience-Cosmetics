@@ -5,7 +5,9 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import './index.css'
 import LandingPage from './pages/landingPage.jsx'
 import MakeUpPage from './pages/makeUpPage.jsx'
-import TestPage from './pages/TestPage.jsx'
+
+=======
+
 
 
 let router = createBrowserRouter([
@@ -17,10 +19,7 @@ let router = createBrowserRouter([
     path: "/MakeUpPage",
     element: <MakeUpPage />
   },
-  {
-    path: "/TestPage",
-    element: <TestPage />
-  }
+
 
 ]);
 
