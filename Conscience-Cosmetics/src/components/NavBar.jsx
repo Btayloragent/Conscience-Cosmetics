@@ -1,61 +1,53 @@
 import React from 'react';
-import logo from '../loginpics/LogoPic2.png'; // Adjust the path as needed
-import searchIcon from '../pictures/LipStickButton.png'; // Path to your PNG image
+import logo from '../loginpics/LogoPic3.png'; // Adjust the path as needed
+import UploadButton from '../components/UploadButton.jsx'; // Import the UploadButton component
 
 const NavBar = () => {
   return (
-    <div className="navbar bg-gray-100 justify-between"> 
+    <div className="navbar bg-white-100 justify-between">
       <div className="flex-none">
         <a className="btn btn-ghost">
-          <img src={logo} alt="Logo" className="h-10" /> 
+          <img src={logo} alt="Logo" className="h-10" />
         </a>
       </div>
-      <div className="flex-1 flex justify-center items-center">
-        <div className="form-control flex flex-row items-center pt-1"> {/* How to change padding between search bar */}
+      <div className="flex-1 flex justify-center items-center relative">
+        <div className="form-control flex flex-row items-center w-3/4 max-w-lg relative">
           <input
             type="text"
             placeholder="Search"
-            className="input input-bordered w-96 bg-transparent border-black text-black" // Adjust the width and style as needed
+            className="input input-bordered w-full bg-white border-black text-black pr-10"
           />
-          <img
-            src={searchIcon}
-            alt="Search"
-            className="w-20 h-20 ml-2 cursor-pointer transition-transform duration-300 ease-in-out transform hover:scale-105 active:scale-95"
-            aria-label="Search"
-            onClick={() => console.log('Search icon clicked')} // Handle click events if needed
-          />
+          <button
+            className="absolute right-0 top-0 bottom-0 mt-auto mb-auto mr-2 bg-transparent border-none flex items-center justify-center"
+            style={{ height: '100%' }} // Adjust the button height to match the input
+            onClick={() => console.log('Search button clicked')}
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-6 w-6 text-black transition-colors duration-300 ease-in-out hover:text-beige"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+              />
+            </svg>
+          </button>
         </div>
       </div>
       <div className="flex-none gap-2">
-        <div className="dropdown dropdown-end">
-          <div tabIndex={0} role="button" className="btn btn-ghost btn-circle avatar">
-            <div className="w-10 rounded-full">
-              <img
-                alt="User Avatar"
-                src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp"
-              />
-            </div>
-          </div>
-          <ul
-            tabIndex={0}
-            className="menu menu-sm dropdown-content bg-base-100 rounded-box z-[1] mt-3 w-52 p-2 shadow"
-          >
-            <li>
-              <a className="justify-between">
-                Profile
-                <span className="badge">New</span>
-              </a>
-            </li>
-            <li><a>Settings</a></li>
-            <li><a>Logout</a></li>
-          </ul>
-        </div>
+        <UploadButton />
       </div>
     </div>
   );
 };
 
 export default NavBar;
+
 
 
 

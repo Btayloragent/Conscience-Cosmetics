@@ -1,3 +1,13 @@
+/* Apply fixed position styling to NavBar */
+.nav-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000; /* Ensures NavBar is above other content */
+}
+
+/* Ensure the body handles scrolling properly */
 body {
     margin: 0;
     padding: 0;
@@ -7,34 +17,32 @@ body {
     background-repeat: no-repeat;
     background-attachment: fixed;
     filter: brightness(90%); /* Darkens the background image */
+    overflow-x: hidden; /* Prevent horizontal scroll */
+    overflow-y: auto; /* Enable vertical scroll */
 }
 
-
+/* Adjust video-page-container to account for the NavBar height */
 .video-page-container {
     padding: 20px;
     max-width: 1200px;
     margin: 0 auto;
-    /* Remove background-color to allow the background image to show through */
+    margin-top: 60px; /* Adjust this value according to your NavBar height */
+    background-color: transparent; /* Ensure background is transparent to show image */
 }
 
+/* Style for video grid */
 .video-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     gap: 20px;
 }
 
-.video-card-container {
-    background-color: rgba(255, 255, 255, 0.9); /* Keep the cards slightly transparent */
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    overflow: hidden;
-    transition: transform 0.3s;
-}
-
+/* Add hover effect for video card container */
 .video-card-container:hover {
     transform: translateY(-5px);
 }
 
+/* Style for rating container */
 .rating-container {
     padding: 10px;
     text-align: center;
