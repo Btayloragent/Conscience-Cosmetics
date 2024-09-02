@@ -37,7 +37,7 @@ function VideoCard() {
             alt="Video Thumbnail"
             className="w-full m-0 p-0 rounded-lg"
           />
-          <div className="absolute inset-0 bg-black bg-opacity-50 text-white flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity rounded-lg">
+          <div className="absolute inset-0 bg-black bg-opacity-40 text-white flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity rounded-lg">
             <p className="p-4">
               This is a sample description for the video. It provides context and details about the content.
             </p>
