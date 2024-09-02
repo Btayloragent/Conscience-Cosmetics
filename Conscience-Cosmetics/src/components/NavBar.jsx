@@ -1,5 +1,5 @@
 import React from 'react';
-import logo from '../loginpics/LogoPic3.png'; // Adjust the path as needed
+import logo from '../loginpics/LogoPic4.png'; // Adjust the path as needed
 import UploadButton from '../components/UploadButton.jsx'; // Import the UploadButton component
 
 const NavBar = () => {
