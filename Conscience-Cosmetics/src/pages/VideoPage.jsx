@@ -2,6 +2,7 @@ import React from 'react';
 import VideoCard from '../components/VideoCard';
 import './VideoPage.css'; // Assuming you'll add some CSS for styling
 import NavBar from '../components/NavBar';
+import Rating from '../components/rating';
 
 const VideoPage = () => {
     return (
@@ -9,15 +10,34 @@ const VideoPage = () => {
             <NavBar />
             <div className="video-page-container">
                 <div className="video-grid">
-                    <VideoCard />
-                    <VideoCard />
-                    <VideoCard />
-                    <VideoCard />
-                    <VideoCard />
-                    <VideoCard />
-                    <VideoCard />
-                    <VideoCard />
-                    {/* Add as many VideoCard components as needed */}
+                    <div className="video-card-container">
+                        <VideoCard />
+                    </div>
+                    <div className="video-card-container">
+                        <VideoCard />
+                    </div>
+                    <div className="video-card-container">
+                        <VideoCard />
+                    </div>
+                    <div className="video-card-container">
+                        <VideoCard />
+                    </div>
+                    <div className="video-card-container">
+                        <VideoCard />
+                    </div>
+                    <div className="video-card-container">
+                        <VideoCard />
+                    </div>
+                    <div className="video-card-container">
+                        <VideoCard />
+                    </div>
+                    <div className="video-card-container">
+                        <VideoCard />
+                    </div>
+                    <div className="video-card-container">
+                        <VideoCard />
+                    </div>
+                    {/* Add more video-card-container blocks if needed */}
                 </div>
             </div>
         </>
@@ -25,6 +45,7 @@ const VideoPage = () => {
 }
 
 export default VideoPage;
+
 
 
 

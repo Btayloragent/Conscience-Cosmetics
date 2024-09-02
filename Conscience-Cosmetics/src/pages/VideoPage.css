@@ -1,14 +1,41 @@
+body {
+    margin: 0;
+    padding: 0;
+    background-image: url('../pictures/videoBack2.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    filter: brightness(90%); /* Darkens the background image */
+}
+
+
 .video-page-container {
-    display: flex;
-    justify-content: center;
     padding: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+    /* Remove background-color to allow the background image to show through */
 }
 
 .video-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-    gap: 60px;
-    width: 100%;
-    max-width: 1200px;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
 }
 
+.video-card-container {
+    background-color: rgba(255, 255, 255, 0.9); /* Keep the cards slightly transparent */
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    transition: transform 0.3s;
+}
+
+.video-card-container:hover {
+    transform: translateY(-5px);
+}
+
+.rating-container {
+    padding: 10px;
+    text-align: center;
+}
