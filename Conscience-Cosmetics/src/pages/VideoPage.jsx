@@ -4,6 +4,7 @@ import './VideoPage.css';
 import NavBar from '../components/NavBar';
 import SideBar from '../components/SideBar';
 
+
 const VideoPage = () => {
     const containerStyle = {
         marginTop: '40px', // Adjust this value to set the desired space
