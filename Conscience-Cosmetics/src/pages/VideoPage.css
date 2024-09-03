@@ -11,7 +11,7 @@
 body {
     margin: 0;
     padding: 0;
-    background-image: url('../pictures/videoBack2.jpg');
+    background-image: url('../pictures/videoBack3.jpg');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
@@ -23,21 +23,34 @@ body {
 
 /* Adjust video-page-container to account for the NavBar height */
 .video-page-container {
+    display: flex; /* Ensure SideBar and video-grid are side by side */
     padding: 20px;
-    max-width: 1200px;
+    max-width: 1120px;
     margin: 0 auto;
     margin-top: 60px; /* Adjust this value according to your NavBar height */
     background-color: transparent; /* Ensure background is transparent to show image */
 }
 
+/* Style for the sidebar */
+.side-bar {
+    width: 240px; /* Set fixed width for the sidebar */
+    margin-top: 0; /* Ensure sidebar starts right below the NavBar */
+}
+
 /* Style for video grid */
 .video-grid {
+    flex: 1; /* Take up the remaining space */
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 20px;
+    grid-template-columns: repeat(auto-fit, minmax(265px, 1fr));
+    gap: 50px;
+    padding-left: 40px; /* Space between sidebar and grid */
 }
 
 /* Add hover effect for video card container */
+.video-card-container {
+    transition: transform 0.3s;
+}
+
 .video-card-container:hover {
     transform: translateY(-5px);
 }

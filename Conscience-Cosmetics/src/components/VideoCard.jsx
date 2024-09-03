@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import Rating from './Rating'; 
+import Rating from './Rating'; // Import your Rating component
 
 function VideoCard() {
   const [isTextareaVisible, setTextareaVisible] = useState(false);
