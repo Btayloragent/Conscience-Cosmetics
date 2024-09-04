@@ -1,13 +1,15 @@
-const express = require('express');
-const axios = require('axios');
+import express from 'express';
+import axios from 'axios';
 const app = express();
 const port = 5000;
+import 'dotenv/config'
+
 
 app.get('/api/videos', async (req, res) => {
     try {
-        const response = await axios.get('https://api.pexels.com/videos/popular', {
+        const response = await get('https://api.pexels.com/videos/popular', {
             headers: {
-                Authorization: 'SbGJLX1nqVtNrfE2G0Vrp7amvZVVCWLUlxfKRPmkp9mB9Q0hG5ECJSkq', // Replace with your API key
+                Authorization: process.env.VID_KEY, 
             },
         });
         res.json(response.data);
@@ -19,3 +21,4 @@ app.get('/api/videos', async (req, res) => {
 app.listen(port, () => {
     console.log(`Server is running on http://localhost:${port}`);
 });
+
