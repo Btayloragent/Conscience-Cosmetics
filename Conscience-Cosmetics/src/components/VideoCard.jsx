@@ -1,6 +1,7 @@
 import React, { useState, useRef } from 'react';
+import Rating from './Rating'; // Import your Rating component
 
-function CardComponent() {
+function VideoCard() {
   const [isTextareaVisible, setTextareaVisible] = useState(false);
   const [textareaValue, setTextareaValue] = useState("");
   const textareaRef = useRef(null);
@@ -14,34 +15,30 @@ function CardComponent() {
 
   const handleTextareaChange = (event) => {
     setTextareaValue(event.target.value);
-    event.target.style.height = "auto";
-    event.target.style.height = `${event.target.scrollHeight}px`;
   };
 
   const handleSubmit = () => {
-    // Handle the submit action here
     console.log("Textarea submitted:", textareaValue);
-    setTextareaVisible(false); // Hide textarea after submission
-    setTextareaValue(""); // Clear textarea value
+    setTextareaVisible(false);
+    setTextareaValue("");
   };
 
   const handleCancel = () => {
-    setTextareaVisible(false); // Hide textarea
-    setTextareaValue(""); // Clear textarea value
+    setTextareaVisible(false);
+    setTextareaValue("");
   };
 
   return (
-    <div className="card bg-base-100 shadow-xl inline-block p-0 m-0">
-      <div className="relative">
-        <figure className="m-0 p-0">
+    <div className="card bg-base-100 shadow-xl inline-block p-0 m-0 rounded-lg">
+      <div className="relative rounded-lg overflow-hidden">
+        <figure className="m-0 p-0 rounded-lg overflow-hidden">
           <img
             src="https://img.daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.webp"
-            alt="Shoes"
-            className="w-full m-0 p-0"
+            alt="Video Thumbnail"
+            className="w-full m-0 p-0 rounded-lg"
           />
-          <div className="absolute inset-0 bg-black bg-opacity-50 text-white flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity">
+          <div className="absolute inset-0 bg-black bg-opacity-50 text-white flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity rounded-lg">
             <p className="p-4">
-              {/* Add your video description here */}
               This is a sample description for the video. It provides context and details about the content.
             </p>
           </div>
@@ -56,19 +53,22 @@ function CardComponent() {
         )}
       </div>
       {isTextareaVisible && (
-        <div className="relative p-4">
+        <div className="relative p-4 rounded-lg bg-white">
+          {/* Rating Component */}
+          <div className="flex justify-center mb-4">
+            <Rating />
+          </div>
           <textarea
             ref={textareaRef}
-            className="textarea textarea-bordered w-full"
-            placeholder="Comment"
+            className="textarea textarea-bordered w-full rounded-lg"
+            placeholder="Write your comment..."
             value={textareaValue}
             onChange={handleTextareaChange}
             style={{ 
               resize: 'none', 
               overflow: 'hidden', 
               margin: 0, 
-              padding: '0.5rem', 
-              paddingBottom: '2.5rem' // Adding padding to the bottom to make room for the buttons
+              padding: '0.5rem 0.5rem 2.5rem 0.5rem' // Adjusted padding for the buttons
             }}
           ></textarea>
           <div className="flex justify-end mt-2">
@@ -94,10 +94,4 @@ function CardComponent() {
   );
 }
 
-export default CardComponent;
-
-
-
-
-
-
+export default VideoCard;

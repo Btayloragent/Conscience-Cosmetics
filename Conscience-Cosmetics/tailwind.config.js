@@ -5,7 +5,11 @@ export default {
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+        beige: '#ff7600', // Define your beige color here
+      },
+    },
   },
-  plugins: [require('daisyui'),],
+  plugins: [require('daisyui')],
 }
