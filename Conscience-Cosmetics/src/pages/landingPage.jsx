@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from "react-router-dom";
 
 const LandingPage = () => {
   const backgroundImageStyle = {
@@ -41,25 +42,25 @@ const LandingPage = () => {
   const heroContentStyle = {
     position: 'absolute',
     top: '50%',
-    left: '48%', // Shift slightly to the left by decreasing the left value
+    left: '48%',
     transform: 'translate(-50%, -50%)',
     color: 'white',
     textAlign: 'center',
     maxWidth: '600px',
-    paddingLeft: '10px', // Optional: Adds extra padding to fine-tune the shift
+    paddingLeft: '10px',
   };
+
   return (
     <div style={backgroundImageStyle}>
       <div style={heroOverlayStyle}></div>
       
       {/* Login Button positioned at the top right */}
       <div style={{ position: 'absolute', top: '20px', right: '20px' }}>
-        <button 
-          className="btn btn-outline btn-primary"
-          onClick={() => window.location.href = '/login'}
-        >
-          Login
-        </button>
+        <Link to="/makeUpPage">
+          <button className="btn btn-outline btn-primary">
+            Login
+          </button>
+        </Link>
       </div>
   
       <div style={heroContentStyle}>
@@ -67,16 +68,18 @@ const LandingPage = () => {
         <p className="mb-5">
           Explore ethical beauty and a community that reflects your values!
         </p>
-        <button className="btn btn-outline btn-error">Get Started</button>
+        <Link to="/VideoPage">
+          <button className="btn btn-outline btn-error">Get Started</button>
+        </Link>
       </div>
       
       <h1 style={conscienceStyle}>Conscience</h1>
       <h1 style={cosmeticsStyle}>Cosmetics</h1>
     </div>
   );
-  
 };
 
 export default LandingPage;
+
 
 

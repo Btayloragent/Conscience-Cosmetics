@@ -1,20 +1,13 @@
 import React, { useState } from 'react';
 
-const CardWithDropdown = () => {
+const CardWithDropdown = ({ tagsData, cosmeticsData }) => {
     const [isOpen, setIsOpen] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
 
-    const tags = [
-        { label: 'Important' },
-        { label: 'Announcement' },
-        { label: 'Cannot Fix' },
-        { label: 'News' },
-        { label: 'Enhancement' },
-        { label: 'Change Declined' },
-        { label: 'Off Topic' },
-        { label: 'Interesting' },
-        { label: 'Discussion' },
-    ];
+    const categories = [...new Set(cosmeticsData.map(product => product.category).filter(category => category))];
+    const tags = tagsData.map(tag => (
+        { label: tag }
+    ));
 
     const filteredTags = tags.filter(tag =>
         tag.label.toLowerCase().includes(searchTerm.toLowerCase())
@@ -25,18 +18,17 @@ const CardWithDropdown = () => {
             <div className="card-body">
                 <h2 className="card-title">By Category</h2>
                 <p>Product filtered by type.</p>
-
                 {/* Tag Labels on the Card */}
                 <div className="py-2">
                     <div className="border-t border-gray-200">
                         <div className="py-1 flex flex-wrap">
-                            {tags.map((tag, index) => (
+                            {categories.map((category, index) => (
                                 <div
                                     key={index}
                                     className="tag-label badge badge-outline mx-1 my-1"
                                     style={{ fontFamily: "'Roboto', sans-serif" }}
                                 >
-                                    {tag.label}
+                                    {category}
                                 </div>
                             ))}
                         </div>

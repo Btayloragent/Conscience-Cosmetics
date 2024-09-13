@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import Dropdown from "../components/DropDownMenu"; // Ensure the path is correct
 import SidePic from '../pictures/SidePics/Side3.png'; // Ensure the path is correct and pointing to the image
 
-const MakeUpSearch = () => {
+const MakeUpSearch = ({tagsData, cosmeticsData}) => {
     const [currentSlide, setCurrentSlide] = useState(0);
 
     // Updated slides array with all provided slides
@@ -63,17 +63,17 @@ const MakeUpSearch = () => {
         alert(`Image ${currentSlide + 1} clicked!`); // Replace this with your desired action
     };
 
-    const nextSlide = () => {
-        setCurrentSlide((prevSlide) =>
-            prevSlide === slides.length - 1 ? 0 : prevSlide + 1
-        );
-    };
+   const nextSlide = () => {
+    setCurrentSlide((prevSlide) =>
+        prevSlide === slides.length - 1 ? 0 : prevSlide + 1
+    );
+};
 
-    const prevSlide = () => {
-        setCurrentSlide((prevSlide) =>
-            prevSlide === 0 ? slides.length - 1 : prevSlide - 1
-        );
-    };
+const prevSlide = () => {
+    setCurrentSlide((prevSlide) =>
+        prevSlide === 0 ? slides.length - 1 : prevSlide - 1
+    );
+};
 
     return (
         <div className="card bg-base-100 w-full max-w-4xl shadow-xl relative">
@@ -119,7 +119,7 @@ const MakeUpSearch = () => {
                 {/* Flex container for dropdown and image */}
                 <div className="flex items-start justify-between mt-4"> {/* Adjust alignment to items-start */}
                     {/* Dropdown */}
-                    <Dropdown />
+                    <Dropdown tagsData={tagsData} cosmeticsData={cosmeticsData} />
 
                     {/* PNG image */}
                     <img

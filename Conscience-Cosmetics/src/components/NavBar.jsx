@@ -1,8 +1,20 @@
-import React from 'react';
+import React, { useState } from 'react';
 import logo from '../loginpics/LogoPic4.png'; // Adjust the path as needed
 import UploadButton from '../components/UploadButton.jsx'; // Import the UploadButton component
 
-const NavBar = () => {
+const NavBar = ({ onSearch }) => { // Accept onSearch as a prop
+  const [searchTerm, setSearchTerm] = useState('');
+
+  const handleInputChange = (e) => {
+    setSearchTerm(e.target.value);
+  };
+
+  const handleSearchClick = () => {
+    if (searchTerm) {
+      onSearch(searchTerm); // Call the search handler passed from App.js
+    }
+  };
+
   return (
     <div className="navbar bg-white-100 justify-between">
       <div className="flex-none">
@@ -15,12 +27,15 @@ const NavBar = () => {
           <input
             type="text"
             placeholder="Search"
+            value={searchTerm}
+            onChange={handleInputChange} // Update state with input value
             className="input input-bordered w-full bg-white border-black text-black pr-10"
           />
           <button
             className="absolute right-0 top-0 bottom-0 mt-auto mb-auto mr-2 bg-transparent border-none flex items-center justify-center"
             style={{ height: '100%' }} // Adjust the button height to match the input
-            onClick={() => console.log('Search button clicked')}
+            onClick={handleSearchClick} // Trigger search on button click
+            aria-label="Search"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -47,6 +62,8 @@ const NavBar = () => {
 };
 
 export default NavBar;
+
+
 
 
 

@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import HomeIcon from '../pictures/SideBarIcons/Home.png'; 
 import UploadIcon from '../pictures/SideBarIcons/UpLoad.png'; 
 import FavoritesIcon from '../pictures/SideBarIcons/Favorites.png'; 
@@ -6,7 +7,7 @@ import MakeUpIcon from '../pictures/SideBarIcons/MakeUp.png';
 
 const SideBar = () => {
     const sidebarStyle = {
-        width: '250px',
+        width: '150px',
         backgroundColor: 'transparent',
         padding: '20px',
         position: 'fixed',
@@ -35,33 +36,28 @@ const SideBar = () => {
     };
 
     const iconStyle = {
-        width: '30px', // Increased size for the icon
+        width: '30px',
         height: '30px',
-        marginRight: '10px', // Space between the icon and text
+        marginRight: '10px',
     };
 
     return (
         <div style={sidebarStyle}>
             <ul style={ulStyle}>
                 <li style={liStyle}>
-                    <a href="#" style={aStyle}>
+                    <Link to="/" style={aStyle}>
                         <img src={HomeIcon} alt="Home" style={iconStyle} />
-                    </a>
+                    </Link>
                 </li>
                 <li style={liStyle}>
-                    <a href="#" style={aStyle}>
-                        <img src={UploadIcon} alt="Upload" style={iconStyle} />
-                    </a>
-                </li>
-                <li style={liStyle}>
-                    <a href="#" style={aStyle}>
+                    <Link to="/favorites" style={aStyle}>
                         <img src={FavoritesIcon} alt="Favorites" style={iconStyle} />
-                    </a>
+                    </Link>
                 </li>
                 <li style={liStyle}>
-                    <a href="#" style={aStyle}>
-                        <img src={MakeUpIcon} alt="MakeUp" style={iconStyle} />
-                    </a>
+                    <Link to="/CosmeticPage" style={aStyle}>
+                        <img src={MakeUpIcon} alt="Cosmetics" style={iconStyle} />
+                    </Link>
                 </li>
             </ul>
         </div>
