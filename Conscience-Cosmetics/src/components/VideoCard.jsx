@@ -1,7 +1,7 @@
 import React, { useState, useRef } from 'react';
 import Rating from './Rating'; // Import your Rating component
 
-function VideoCard() {
+function VideoCard({videoThumbnail}) {
   const [isTextareaVisible, setTextareaVisible] = useState(false);
   const [textareaValue, setTextareaValue] = useState("");
   const textareaRef = useRef(null);
@@ -33,7 +33,7 @@ function VideoCard() {
       <div className="relative rounded-lg overflow-hidden">
         <figure className="m-0 p-0 rounded-lg overflow-hidden">
           <img
-            src="https://img.daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.webp"
+            src={videoThumbnail}
             alt="Video Thumbnail"
             className="w-full m-0 p-0 rounded-lg"
           />
