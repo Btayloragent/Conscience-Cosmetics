@@ -13,6 +13,10 @@ const CardWithDropdown = ({ tagsData, cosmeticsData }) => {
         tag.label.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
+    const handleCategoryClick = (category) => {
+        window.location.href = `https://makeup-api.herokuapp.com/api/v1/products?product_category=${category.toLowerCase()}`;
+    };
+
     return (
         <div className="card w-96 bg-base-100 shadow-xl" style={{ fontFamily: "'Roboto', Merriweather" }}>
             <div className="card-body">
@@ -25,7 +29,8 @@ const CardWithDropdown = ({ tagsData, cosmeticsData }) => {
                             {categories.map((category, index) => (
                                 <div
                                     key={index}
-                                    className="tag-label badge badge-outline mx-1 my-1"
+                                    onClick={() => handleCategoryClick(category)}
+                                    className="tag-label badge badge-outline mx-1 my-1 cursor-pointer"
                                     style={{ fontFamily: "'Roboto', sans-serif" }}
                                 >
                                     {category}
@@ -92,4 +97,3 @@ const CardWithDropdown = ({ tagsData, cosmeticsData }) => {
 };
 
 export default CardWithDropdown;
-

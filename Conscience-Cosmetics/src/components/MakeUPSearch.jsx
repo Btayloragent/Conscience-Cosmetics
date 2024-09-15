@@ -10,70 +10,82 @@ const MakeUpSearch = ({tagsData, cosmeticsData}) => {
         {
             image: "https://images.pexels.com/photos/5403542/pexels-photo-5403542.jpeg?auto=compress&cs=tinysrgb&w=600",
             title: "Blush",
-            description: "Explore the elegance with this glamorous makeup look."
+            description: "Explore the elegance with this glamorous makeup look.",
+            productType: "blush" // Added product type
         },
         {
             image: "https://images.pexels.com/photos/5141085/pexels-photo-5141085.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
             title: "Bronzer",
-            description: "A perfect blend of elegance and sophistication."
+            description: "A perfect blend of elegance and sophistication.",
+            productType: "bronzer" // Added product type
         },
         {
             image: "https://images.pexels.com/photos/5128084/pexels-photo-5128084.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
             title: "EyeBrow",
-            description: "Make a bold statement with this vibrant makeup style."
+            description: "Make a bold statement with this vibrant makeup style.",
+            productType: "eyebrow" // Added product type
         },
         {
             image: "https://images.pexels.com/photos/2517447/pexels-photo-2517447.jpeg",
             title: "EyeLiner",
-            description: "Achieve a natural and fresh look with this makeup."
+            description: "Achieve a natural and fresh look with this makeup.",
+            productType: "eyeliner" // Added product type
         },
         {
             image: "https://images.pexels.com/photos/13019072/pexels-photo-13019072.jpeg",
             title: "EyeShadow",
-            description: "A timeless classic makeup that suits every occasion."
+            description: "A timeless classic makeup that suits every occasion.",
+            productType: "eyeshadow" // Added product type
         },
         {
             image: "https://images.pexels.com/photos/5403543/pexels-photo-5403543.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
             title: "Foundation",
-            description: "Stay on trend with this stylish makeup look."
+            description: "Stay on trend with this stylish makeup look.",
+            productType: "foundation" // Added product type
         },
         {
             image: "https://images.pexels.com/photos/2535928/pexels-photo-2535928.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
             title: "LipLiner",
-            description: "Express your creativity with this unique makeup design."
+            description: "Express your creativity with this unique makeup design.",
+            productType: "lipliner" // Added product type
         },
         {
             image: "https://images.pexels.com/photos/1377034/pexels-photo-1377034.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
             title: "LipStick",
-            description: "Combine art and beauty with this artistic makeup look."
+            description: "Combine art and beauty with this artistic makeup look.",
+            productType: "lipstick" // Added product type
         },
         {
             image: "https://images.pexels.com/photos/27462673/pexels-photo-27462673/free-photo-of-a-mascara-tube-with-a-black-lid-and-a-pink-brush.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
             title: "Mascara",
-            description: "Highlight your eyes with this mascara-focused look."
+            description: "Highlight your eyes with this mascara-focused look.",
+            productType: "mascara" // Added product type
         },
         {
             image: "https://images.pexels.com/photos/19321230/pexels-photo-19321230/free-photo-of-close-up-of-pink-nail-polishes.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
             title: "NailPolish",
-            description: "Add a pop of color with these trendy nail polishes."
+            description: "Add a pop of color with these trendy nail polishes.",
+            productType: "nailpolish" // Added product type
         }
     ];
 
     const handleImageClick = () => {
-        alert(`Image ${currentSlide + 1} clicked!`); // Replace this with your desired action
+        // Use the productType to construct the URL
+        const productType = slides[currentSlide].productType; // Get the product type from the current slide
+        window.location.href = `https://makeup-api.herokuapp.com/api/v1/products?product_type=${productType}`; // Redirect to the corresponding page
     };
 
-   const nextSlide = () => {
-    setCurrentSlide((prevSlide) =>
-        prevSlide === slides.length - 1 ? 0 : prevSlide + 1
-    );
-};
+    const nextSlide = () => {
+        setCurrentSlide((prevSlide) =>
+            prevSlide === slides.length - 1 ? 0 : prevSlide + 1
+        );
+    };
 
-const prevSlide = () => {
-    setCurrentSlide((prevSlide) =>
-        prevSlide === 0 ? slides.length - 1 : prevSlide - 1
-    );
-};
+    const prevSlide = () => {
+        setCurrentSlide((prevSlide) =>
+            prevSlide === 0 ? slides.length - 1 : prevSlide - 1
+        );
+    };
 
     return (
         <div className="card bg-base-100 w-full max-w-4xl shadow-xl relative">
