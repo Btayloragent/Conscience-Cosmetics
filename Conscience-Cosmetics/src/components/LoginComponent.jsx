@@ -1,6 +1,12 @@
-import React from 'react';
+import React, { useState } from 'react';
+import axios from 'axios'; // To make API requests
 
 const LoginComponent = () => {
+    const [username, setUsername] = useState('');
+    const [password, setPassword] = useState('');
+    const [errorMessage, setErrorMessage] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
+
     const loginContainerStyle = {
         position: 'absolute',
         top: '50%',
@@ -87,34 +93,66 @@ const LoginComponent = () => {
         e.target.style.borderColor = 'rgba(255, 255, 255, 0.5)';
     };
 
+    // Handle Login Submission
+    const handleSubmit = async () => {
+        setIsLoading(true);
+        setErrorMessage('');
+
+        try {
+            const response = await axios.post('http://localhost:5001/login', { username, password });
+
+            // If login is successful, store the token in localStorage
+            if (response.status === 200) {
+                const { token } = response.data;
+                localStorage.setItem('token', token); // Store JWT in localStorage
+                alert('Login successful!');
+                // You can also redirect to another page here, like the homepage
+            }
+        } catch (error) {
+            setErrorMessage('Invalid username or password.');
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
     return (
         <div style={loginContainerStyle}>
             <div style={titleStyle}>Login</div>
+
+            {errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>}
+
             <input
                 type="text"
                 placeholder="Username"
                 style={inputStyle}
                 onFocus={handleInputFocus}
                 onBlur={handleInputBlur}
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
             />
+
             <input
                 type="password"
                 placeholder="Password"
                 style={inputStyle}
                 onFocus={handleInputFocus}
                 onBlur={handleInputBlur}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
             />
+
             <button
                 style={buttonBaseStyle}
                 onMouseEnter={handleMouseEnter}
                 onMouseLeave={handleMouseLeave}
                 onMouseDown={handleMouseDown}
                 onMouseUp={handleMouseUp}
+                onClick={handleSubmit}
+                disabled={isLoading} // Disable button when loading
             >
-                Login
+                {isLoading ? 'Logging in...' : 'Login'}
             </button>
         </div>
-
     );
 };
 
