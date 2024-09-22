@@ -1,14 +1,12 @@
 import React from "react";
-
+import { Link } from "react-router-dom";
 
 const UploadButton = () => {
-    return(
-<button className="btn btn-warning">Upload</button>
+  return (
+    <Link to="/UploadPage">
+      <button className="btn btn-warning">Upload</button>
+    </Link>
+  );
+};
 
-
-
-    )
-
-}
-
-export default UploadButton
+export default UploadButton;

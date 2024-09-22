@@ -7,6 +7,7 @@ import LandingPage from './pages/landingPage.jsx'
 import MakeUpPage from './pages/makeUpPage.jsx'
 import VideoPage from './pages/VideoPage.jsx'
 import CosmeticPage from './pages/CosmeticPage.jsx'
+import UploadPage from './pages/UploadPage.jsx'
 
 
 
@@ -27,6 +28,10 @@ let router = createBrowserRouter([
   {
     path: "/CosmeticPage",
     element: <CosmeticPage />
+  },
+  {
+    path: "/UploadPage",
+    element: <UploadPage />
   }
  
 
