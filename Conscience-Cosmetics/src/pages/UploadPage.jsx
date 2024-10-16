@@ -17,7 +17,7 @@ const UploadPage = () => {
     const fileInputContainerStyle = {
         display: 'flex',
         justifyContent: 'center',
-        paddingTop: '90px', // Padding from the top
+        paddingTop: '90px',
         flexDirection: 'column',
         alignItems: 'center',
     };
@@ -25,14 +25,25 @@ const UploadPage = () => {
     const buttonContainerStyle = {
         display: 'flex',
         justifyContent: 'center',
-        paddingTop: '20px', // Space between the file input and button
+        paddingTop: '20px',
+        gap: '10px', // Space between buttons
     };
 
-    const videoButtonStyle = {
+    const cancelButtonStyle = {
         backgroundColor: '#FF69B4',
         color: 'white',
         border: 'none',
-        padding: '4px 4px',
+        padding: '4px 8px',
+        cursor: 'pointer',
+        fontSize: '10px',
+        borderRadius: '5px',
+    };
+
+    const loadButtonStyle = {
+        backgroundColor: '#FFA500', // Orange-yellow color
+        color: 'white',
+        border: 'none',
+        padding: '4px 8px',
         cursor: 'pointer',
         fontSize: '10px',
         borderRadius: '5px',
@@ -40,6 +51,11 @@ const UploadPage = () => {
 
     const handleGoToVideos = () => {
         navigate('/VideoPage');
+    };
+
+    const handleLoad = () => {
+        // Logic for loading can be added here
+        console.log("Load button clicked");
     };
 
     return (
@@ -50,7 +66,10 @@ const UploadPage = () => {
                     className="file-input file-input-bordered w-full max-w-xs" 
                 />
                 <div style={buttonContainerStyle}>
-                    <button style={videoButtonStyle} onClick={handleGoToVideos}>
+                    <button style={loadButtonStyle} onClick={handleLoad}>
+                        Load
+                    </button>
+                    <button style={cancelButtonStyle} onClick={handleGoToVideos}>
                         Cancel Upload
                     </button>
                 </div>
@@ -60,3 +79,5 @@ const UploadPage = () => {
 };
 
 export default UploadPage;
+
+

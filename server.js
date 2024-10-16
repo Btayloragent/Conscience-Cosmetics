@@ -32,13 +32,14 @@ const User = mongoose.model("User", userSchema);
 // Connect to MongoDB
 async function connectDb() {
     try {
-        await mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true });
+        await mongoose.connect(uri);
         console.log("Successfully connected to MongoDB!");
     } catch (error) {
         console.log("Error connecting to MongoDB: " + error.message);
         process.exit(1); // Exit the app if DB connection fails
     }
 }
+
 
 // Get user by ID with ObjectId validation
 app.get("/users/:id", async (req, res) => {
