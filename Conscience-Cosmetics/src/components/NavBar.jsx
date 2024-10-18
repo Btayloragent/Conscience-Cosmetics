@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import logo from '../loginpics/LogoPic4.png'; // Adjust the path as needed
 import UploadButton from '../components/UploadButton.jsx'; // Import the UploadButton component
+import { Link } from 'react-router-dom';
+
 
 const NavBar = ({ onSearch }) => { // Accept onSearch as a prop
   const [searchTerm, setSearchTerm] = useState('');
@@ -18,10 +20,11 @@ const NavBar = ({ onSearch }) => { // Accept onSearch as a prop
   return (
     <div className="navbar bg-white-100 justify-between">
       <div className="flex-none">
-        <a className="btn btn-ghost">
-          <img src={logo} alt="Logo" className="h-10" />
-        </a>
-      </div>
+  <Link to="/" className="btn btn-ghost">
+    <img src={logo} alt="Logo" className="h-10" />
+  </Link>
+</div>
+
       <div className="flex-1 flex justify-center items-center relative">
         <div className="form-control flex flex-row items-center w-3/4 max-w-lg relative">
           <input
