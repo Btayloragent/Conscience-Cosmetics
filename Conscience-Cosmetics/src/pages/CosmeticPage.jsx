@@ -3,6 +3,7 @@ import MakeUpSearch from "../components/MakeUPSearch"; // Make sure the path is 
 import SideBar from "../components/SideBar";
 import NavBar from "../components/NavBar";
 import axios from 'axios';
+import Footer from '../components/Footer'; // Import the Footer component
 
 const CosmeticPage = () => {
     const [cosmeticsData, setCosmeticsData] = useState();
@@ -75,6 +76,7 @@ const CosmeticPage = () => {
             </div>
            { tagsData && <MakeUpSearch tagsData={tagsData} cosmeticsData={cosmeticsData} />}
             <SideBar />
+            <Footer /> {/* Add the Footer component here */} 
         </div>
     );
 };

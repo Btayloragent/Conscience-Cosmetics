@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from "react-router-dom";
+import Footer from '../components/Footer'; // Import the Footer component
 
 const LandingPage = () => {
   const backgroundImageStyle = {
@@ -53,7 +54,6 @@ const LandingPage = () => {
   return (
     <div style={backgroundImageStyle}>
       <div style={heroOverlayStyle}></div>
-      
       {/* Login Button positioned at the top right */}
       <div style={{ position: 'absolute', top: '20px', right: '20px' }}>
         <Link to="/makeUpPage">
@@ -71,8 +71,8 @@ const LandingPage = () => {
         <Link to="/VideoPage">
           <button className="btn btn-outline btn-error">Get Started</button>
         </Link>
+        <Footer /> {/* Add the Footer component here */}
       </div>
-      
       <h1 style={conscienceStyle}>Conscience</h1>
       <h1 style={cosmeticsStyle}>Cosmetics</h1>
     </div>
