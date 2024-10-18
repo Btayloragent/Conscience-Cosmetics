@@ -4,6 +4,7 @@ import './VideoPage.css';
 import NavBar from '../components/NavBar';
 import SideBar from '../components/SideBar';
 import axios from 'axios';
+import Footer from '../components/Footer'; // Import the Footer component
 
 const VideoPage = () => {
   const [videos, setVideos] = useState([]);
@@ -34,22 +35,23 @@ const VideoPage = () => {
         <SideBar style={{ width: '80px' }} /> {/* Set a fixed width for the sidebar */}
         <div className="video-grid" style={{ flex: 1, paddingLeft: '20px' }}>
           {videos && videos.map((video) => {
-            // Extract the video file URL (you may need to check the array)
             const videoFile = video.video_files.length > 0 ? video.video_files[0].link : '';
             return (
               <div key={video.id} className="video-card-container">
                 <VideoCard 
                   videoThumbnail={video.image} 
-                  videoFile={videoFile}  // Pass the video file URL as a prop
+                  videoFile={videoFile} 
                 />
               </div>
             );
           })}
         </div>
       </div>
+      <Footer /> {/* Add the Footer component here */}
     </>
   );
 }
 
 export default VideoPage;
+
 

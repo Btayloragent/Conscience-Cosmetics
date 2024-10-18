@@ -1,15 +1,21 @@
 import React from 'react';
 import { useNavigate } from "react-router-dom";
+import Footer from '../components/Footer'; // Import the Footer component
 
 const UploadPage = () => {
     const navigate = useNavigate();
 
+    const pageStyle = {
+        display: 'flex',
+        flexDirection: 'column',
+        minHeight: '100vh', // Ensure the full height of the viewport
+    };
+
     const backgroundImageStyle = {
+        flex: 1, // Allow this div to grow and take available space
         backgroundImage: 'url(src/pictures/UploadPic.jpg)',
         backgroundSize: 'cover',
         backgroundPosition: 'center',
-        height: '100vh',
-        width: '100%',
         position: 'relative',
         color: '#D2B48C',
     };
@@ -59,21 +65,24 @@ const UploadPage = () => {
     };
 
     return (
-        <div style={backgroundImageStyle}>
-            <div style={fileInputContainerStyle}>
-                <input 
-                    type="file" 
-                    className="file-input file-input-bordered w-full max-w-xs" 
-                />
-                <div style={buttonContainerStyle}>
-                    <button style={loadButtonStyle} onClick={handleLoad}>
-                        Load
-                    </button>
-                    <button style={cancelButtonStyle} onClick={handleGoToVideos}>
-                        Cancel Upload
-                    </button>
+        <div style={pageStyle}>
+            <div style={backgroundImageStyle}>
+                <div style={fileInputContainerStyle}>
+                    <input 
+                        type="file" 
+                        className="file-input file-input-bordered w-full max-w-xs" 
+                    />
+                    <div style={buttonContainerStyle}>
+                        <button style={loadButtonStyle} onClick={handleLoad}>
+                            Load
+                        </button>
+                        <button style={cancelButtonStyle} onClick={handleGoToVideos}>
+                            Cancel Upload
+                        </button>
+                    </div>
                 </div>
             </div>
+            <Footer /> {/* Footer will now be positioned at the bottom */}
         </div>
     );
 };
