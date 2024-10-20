@@ -8,6 +8,7 @@ import MakeUpPage from './pages/makeUpPage.jsx'
 import VideoPage from './pages/VideoPage.jsx'
 import CosmeticPage from './pages/CosmeticPage.jsx'
 import UploadPage from './pages/UploadPage.jsx'
+import FavsPage from './pages/FavsPage.jsx'
 
 
 
@@ -32,6 +33,10 @@ let router = createBrowserRouter([
   {
     path: "/UploadPage",
     element: <UploadPage />
+  },
+  {
+    path: "/FavsPage",
+    element: <FavsPage />
   }
  
 

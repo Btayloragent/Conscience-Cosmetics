@@ -50,7 +50,7 @@ const SideBar = () => {
                     </Link>
                 </li>
                 <li style={liStyle}>
-                    <Link to="/favorites" style={aStyle}>
+                    <Link to="/FavsPage" style={aStyle}>
                         <img src={FavoritesIcon} alt="Favorites" style={iconStyle} />
                     </Link>
                 </li>
