@@ -4,6 +4,7 @@ import HomeIcon from '../pictures/SideBarIcons/Home.png';
 import UploadIcon from '../pictures/SideBarIcons/UpLoad.png'; 
 import FavoritesIcon from '../pictures/SideBarIcons/Favorites.png'; 
 import MakeUpIcon from '../pictures/SideBarIcons/MakeUp.png'; 
+import VideosIcon from '../pictures/SideBarIcons/Videos.png'; 
 
 const SideBar = () => {
     const sidebarStyle = {
@@ -57,6 +58,11 @@ const SideBar = () => {
                 <li style={liStyle}>
                     <Link to="/CosmeticPage" style={aStyle}>
                         <img src={MakeUpIcon} alt="Cosmetics" style={iconStyle} />
+                    </Link>
+                </li>
+                <li style={liStyle}>
+                    <Link to="/VideoPage" style={aStyle}>
+                        <img src={VideosIcon} alt="Videos" style={iconStyle} />
                     </Link>
                 </li>
             </ul>

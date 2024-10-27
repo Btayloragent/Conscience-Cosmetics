@@ -2,6 +2,7 @@ import React from 'react';
 import Footer from '../components/Footer'; // Import the Footer component
 import NavBar from '../components/NavBar';
 import SideBar from '../components/SideBar';
+import LoadMoreButton from '../components/LoadMoreButton'; // Import the Load More Button
 
 const FavsPage = () => {
   const backgroundImageStyle = {
@@ -14,12 +15,26 @@ const FavsPage = () => {
     color: '#D2B48C',
   };
 
+  const handleLoadMore = () => {
+    // Add your load more logic here
+    console.log("Load more items...");
+  };
+
   return (
     <div style={backgroundImageStyle}>
-      {/* You can add other content here if needed */}
-      <NavBar/>
-      <SideBar/>
-      <Footer /> {/* Add the Footer component here */}
+      <NavBar />
+      <SideBar />
+      <h1 style={{ 
+        textAlign: 'center', 
+        marginTop: '20px', 
+        fontSize: '3rem', 
+        fontWeight: 'bold', 
+        fontFamily: 'Serif' // Add the serif font here
+      }}>
+        Favorites
+      </h1>
+      <LoadMoreButton onClick={handleLoadMore} /> {/* Added Load More Button */}
+      <Footer />
     </div>
   );
 };
@@ -27,7 +42,6 @@ const FavsPage = () => {
 export default FavsPage;
 
 
- 
 
 
 
