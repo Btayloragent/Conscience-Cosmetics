@@ -37,6 +37,10 @@ let router = createBrowserRouter([
   {
     path: "/FavsPage",
     element: <FavsPage />
+  },
+  {
+    path: "/VideoPage",
+    element: <VideoPage />
   }
  
 

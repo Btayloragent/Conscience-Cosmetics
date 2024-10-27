@@ -1,5 +1,6 @@
 import React from 'react';
 import { useNavigate } from "react-router-dom";
+import SideBar from '../components/SideBar';
 import Footer from '../components/Footer'; // Import the Footer component
 
 const UploadPage = () => {
@@ -82,6 +83,7 @@ const UploadPage = () => {
                     </div>
                 </div>
             </div>
+            <SideBar />
             <Footer /> {/* Footer will now be positioned at the bottom */}
         </div>
     );
