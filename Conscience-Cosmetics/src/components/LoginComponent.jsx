@@ -1,23 +1,25 @@
 import React, { useState } from 'react';
-import axios from 'axios'; // To make API requests
+import axios from 'axios';
 
 const LoginComponent = () => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
+    const [email, setEmail] = useState(''); // New state for email
     const [errorMessage, setErrorMessage] = useState('');
     const [isLoading, setIsLoading] = useState(false);
+    const [isLoginMode, setIsLoginMode] = useState(true);
 
-    const loginContainerStyle = {
+    const containerStyle = {
         position: 'absolute',
         top: '50%',
         left: '50%',
         transform: 'translate(-50%, -50%)',
-        background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.2), rgba(0, 0, 0, 0.2))',
         padding: '20px',
         borderRadius: '18px',
         boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)',
         width: '400px',
         textAlign: 'center',
+        backgroundColor: 'rgba(255, 255, 255, 0.2)',
     };
 
     const inputStyle = {
@@ -27,130 +29,134 @@ const LoginComponent = () => {
         borderRadius: '4px',
         border: '1px solid rgba(255, 255, 255, 0.5)',
         backgroundColor: 'rgba(255, 255, 255, 0.1)',
-        color: '#D2B48C',
+        color: 'white',
         transition: 'border-color 0.3s',
     };
 
-    const inputFocusStyle = {
-        borderColor: '#D2B48C',
-    };
-
-    const buttonBaseStyle = {
-        width: '100%',
-        padding: '10px',
-        borderRadius: '4px',
-        backgroundColor: 'rgba(210, 180, 140, 0.5)',
-        border: 'none',
-        color: 'white',
-        fontSize: '16px',
-        cursor: 'pointer',
-        transition: 'background-color 0.3s, transform 0.1s, box-shadow 0.3s',
-        boxShadow: '0 4px 6px rgba(0, 0, 0, 0.2)',
-    };
-
-    const buttonHoverStyle = {
-        backgroundColor: 'rgba(210, 180, 140, 0.7)',
-        boxShadow: '0 6px 8px rgba(0, 0, 0, 0.3)',
-    };
-
-    const buttonActiveStyle = {
-        backgroundColor: 'rgba(210, 180, 140, 0.9)',
-        transform: 'scale(0.95)',
-        boxShadow: '0 4px 6px rgba(0, 0, 0, 0.2)',
-    };
-
     const titleStyle = {
-        marginBottom: '20px',
+        marginBottom: '10px',
         fontSize: '24px',
         color: '#D2B48C',
     };
 
-    const handleMouseEnter = (e) => {
-        e.target.style.backgroundColor = buttonHoverStyle.backgroundColor;
-        e.target.style.boxShadow = buttonHoverStyle.boxShadow;
+    const tabStyle = {
+        display: 'flex',
+        justifyContent: 'space-around',
+        cursor: 'pointer',
+        marginBottom: '10px',
+        color: '#D2B48C',
+        position: 'relative',
     };
 
-    const handleMouseLeave = (e) => {
-        e.target.style.backgroundColor = buttonBaseStyle.backgroundColor;
-        e.target.style.boxShadow = buttonBaseStyle.boxShadow;
+    const activeTabStyle = {
+        fontWeight: 'bold',
     };
 
-    const handleMouseDown = (e) => {
-        e.target.style.backgroundColor = buttonActiveStyle.backgroundColor;
-        e.target.style.transform = 'scale(0.95)';
+    const indicatorStyle = {
+        height: '4px',
+        backgroundColor: '#D2B48C',
+        width: '50%', // Adjust width to half for two tabs
+        position: 'absolute',
+        bottom: '0',
+        left: isLoginMode ? '0%' : '50%', // Move indicator based on active tab
+        transition: 'left 0.6s',
     };
 
-    const handleMouseUp = (e) => {
-        e.target.style.backgroundColor = buttonHoverStyle.backgroundColor;
-        e.target.style.transform = 'scale(1)';
-    };
-
-    const handleInputFocus = (e) => {
-        e.target.style.borderColor = inputFocusStyle.borderColor;
-    };
-
-    const handleInputBlur = (e) => {
-        e.target.style.borderColor = 'rgba(255, 255, 255, 0.5)';
-    };
-
-    // Handle Login Submission
     const handleSubmit = async () => {
         setIsLoading(true);
         setErrorMessage('');
 
         try {
-            const response = await axios.post('http://localhost:5001/login', { username, password });
+            const url = isLoginMode ? 'http://localhost:5001/login' : 'http://localhost:5001/signup';
+            const payload = isLoginMode ? { username, password } : { username, password, email };
+            const response = await axios.post(url, payload);
 
-            // If login is successful, store the token in localStorage
             if (response.status === 200) {
                 const { token } = response.data;
-                localStorage.setItem('token', token); // Store JWT in localStorage
-                alert('Login successful!');
-                // You can also redirect to another page here, like the homepage
+                localStorage.setItem('token', token);
+                alert(`${isLoginMode ? 'Login' : 'Sign up'} successful!`);
             }
         } catch (error) {
-            setErrorMessage('Invalid username or password.');
+            setErrorMessage(isLoginMode ? 'Invalid username or password.' : 'Sign up failed. Please try again.');
         } finally {
             setIsLoading(false);
         }
     };
 
     return (
-        <div style={loginContainerStyle}>
-            <div style={titleStyle}>Login</div>
-
+        <div style={containerStyle}>
+            <div style={tabStyle}>
+                <div 
+                    style={{ ...activeTabStyle }} 
+                    onClick={() => setIsLoginMode(true)}
+                >
+                    Login
+                </div>
+                <div 
+                    style={{ ...activeTabStyle }} 
+                    onClick={() => setIsLoginMode(false)}
+                >
+                    Sign Up
+                </div>
+                <div style={indicatorStyle} />
+            </div>
+            <div style={titleStyle}>{isLoginMode ? 'Login To Conscience Cosmetics' : 'Create a Account '}</div>
             {errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>}
 
-            <input
-                type="text"
-                placeholder="Username"
-                style={inputStyle}
-                onFocus={handleInputFocus}
-                onBlur={handleInputBlur}
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-            />
-
-            <input
-                type="password"
-                placeholder="Password"
-                style={inputStyle}
-                onFocus={handleInputFocus}
-                onBlur={handleInputBlur}
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-            />
+            {isLoginMode ? (
+                <>
+                    <input
+                        type="text"
+                        placeholder="Username"
+                        style={inputStyle}
+                        value={username}
+                        onChange={(e) => setUsername(e.target.value)}
+                    />
+                    <input
+                        type="password"
+                        placeholder="Password"
+                        style={inputStyle}
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                    />
+                </>
+            ) : (
+                <>
+                    <input
+                        type="text"
+                        placeholder="Username"
+                        style={inputStyle}
+                        value={username}
+                        onChange={(e) => setUsername(e.target.value)}
+                    />
+                    <input
+                        type="email"
+                        placeholder="Email"
+                        style={inputStyle}
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                    />
+                    <input
+                        type="password"
+                        placeholder="Password"
+                        style={inputStyle}
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                    />
+                    <input
+                        type="password"
+                        placeholder="Confirm Password"
+                        style={inputStyle}
+                    />
+                </>
+            )}
 
             <button
-                style={buttonBaseStyle}
-                onMouseEnter={handleMouseEnter}
-                onMouseLeave={handleMouseLeave}
-                onMouseDown={handleMouseDown}
-                onMouseUp={handleMouseUp}
+                style={{ width: '100%', padding: '10px', borderRadius: '4px', backgroundColor: 'rgba(210, 180, 140, 0.5)', color: 'white', cursor: 'pointer' }}
                 onClick={handleSubmit}
-                disabled={isLoading} // Disable button when loading
+                disabled={isLoading}
             >
-                {isLoading ? 'Logging in...' : 'Login'}
+                {isLoading ? (isLoginMode ? 'Logging in...' : 'Signing up...') : (isLoginMode ? 'Login' : 'Sign Up')}
             </button>
         </div>
     );

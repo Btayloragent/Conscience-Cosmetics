@@ -3,7 +3,6 @@ import logo from '../loginpics/LogoPic4.png'; // Adjust the path as needed
 import UploadButton from '../components/UploadButton.jsx'; // Import the UploadButton component
 import { Link } from 'react-router-dom';
 
-
 const NavBar = ({ onSearch }) => { // Accept onSearch as a prop
   const [searchTerm, setSearchTerm] = useState('');
 
@@ -20,10 +19,10 @@ const NavBar = ({ onSearch }) => { // Accept onSearch as a prop
   return (
     <div className="navbar bg-white-100 justify-between">
       <div className="flex-none">
-  <Link to="/" className="btn btn-ghost">
-    <img src={logo} alt="Logo" className="h-10" />
-  </Link>
-</div>
+        <Link to="/" className="btn btn-ghost">
+          <img src={logo} alt="Logo" className="h-10" />
+        </Link>
+      </div>
 
       <div className="flex-1 flex justify-center items-center relative">
         <div className="form-control flex flex-row items-center w-3/4 max-w-lg relative">
@@ -56,8 +55,12 @@ const NavBar = ({ onSearch }) => { // Accept onSearch as a prop
             </svg>
           </button>
         </div>
+        <div className="flex items-center gap-4 ml-14"> {/* Added a flex container for the links */}
+          <Link to="/login" className="text-white hover:text-beige">Log In</Link>
+          <Link to="/signup" className="text-white hover:text-beige">Sign Up</Link>
+        </div>
       </div>
-      <div className="flex-none gap-2">
+      <div className="flex-none gap-1">
         <UploadButton />
       </div>
     </div>
@@ -65,6 +68,7 @@ const NavBar = ({ onSearch }) => { // Accept onSearch as a prop
 };
 
 export default NavBar;
+
 
 
 
