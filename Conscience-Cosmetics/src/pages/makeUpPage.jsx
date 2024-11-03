@@ -1,6 +1,5 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import LoginComponent from '../components/LoginComponent';
 import Footer from '../components/Footer'; // Import the Footer component
 
 const MakeUpPage = () => {
@@ -60,7 +59,6 @@ const MakeUpPage = () => {
                 <button style={goBackButtonStyle} onClick={handleGoBack}>
                     <span style={arrowStyle}>&larr;</span> Go Back to Home
                 </button>
-                <LoginComponent />
             </div>
             <Footer /> {/* Footer will now be positioned at the bottom */}
         </div>

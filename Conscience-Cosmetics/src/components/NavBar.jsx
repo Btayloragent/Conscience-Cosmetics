@@ -6,7 +6,8 @@ import LoginComponent from '../components/LoginComponent'; // Import the LoginCo
 
 const NavBar = ({ onSearch }) => {
   const [searchTerm, setSearchTerm] = useState('');
-  const [isModalOpen, setIsModalOpen] = useState(false); // State to manage modal visibility
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isLoginMode, setIsLoginMode] = useState(true); // State to manage login/signup mode
 
   const handleInputChange = (e) => {
     setSearchTerm(e.target.value);
@@ -14,16 +15,17 @@ const NavBar = ({ onSearch }) => {
 
   const handleSearchClick = () => {
     if (searchTerm) {
-      onSearch(searchTerm); // Call the search handler passed from App.js
+      onSearch(searchTerm);
     }
   };
 
-  const openModal = () => {
-    setIsModalOpen(true); // Open the modal
+  const openModal = (mode) => {
+    setIsLoginMode(mode); // Set login or signup mode
+    setIsModalOpen(true);
   };
 
   const closeModal = () => {
-    setIsModalOpen(false); // Close the modal
+    setIsModalOpen(false);
   };
 
   return (
@@ -41,13 +43,13 @@ const NavBar = ({ onSearch }) => {
               type="text"
               placeholder="Search"
               value={searchTerm}
-              onChange={handleInputChange} // Update state with input value
+              onChange={handleInputChange}
               className="input input-bordered w-full bg-white border-black text-black pr-10"
             />
             <button
               className="absolute right-0 top-0 bottom-0 mt-auto mb-auto mr-2 bg-transparent border-none flex items-center justify-center"
-              style={{ height: '100%' }} // Adjust the button height to match the input
-              onClick={handleSearchClick} // Trigger search on button click
+              style={{ height: '100%' }}
+              onClick={handleSearchClick}
               aria-label="Search"
             >
               <svg
@@ -67,8 +69,8 @@ const NavBar = ({ onSearch }) => {
             </button>
           </div>
           <div className="flex items-center gap-4 ml-14">
-            <button onClick={openModal} className="text-black hover:text-beige">Log In</button>
-            <button onClick={openModal} className="text-black hover:text-beige">Sign Up</button>
+            <button onClick={() => openModal(true)} className="text-black hover:text-beige">Log In</button>
+            <button onClick={() => openModal(false)} className="text-black hover:text-beige">Sign Up</button>
           </div>
         </div>
         <div className="flex-none gap-1">
@@ -87,20 +89,20 @@ const NavBar = ({ onSearch }) => {
             justifyContent: 'center',
             border: 'none',
             margin: '0',
-            backgroundColor: 'rgba(0, 0, 0, 0.5)', // Semi-transparent background
-            zIndex: 1000, // Ensure it's above other elements
-            position: 'fixed', // Make it fixed to the viewport
-            top: '30%', // Move it up to 30% from the top
-            left: '50%', // Center horizontally
-            transform: 'translate(-50%, -50%)', // Center vertically
+            backgroundColor: 'rgba(0, 0, 0, 0.5)',
+            zIndex: 1000,
+            position: 'fixed',
+            top: '30%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
           }}
         >
           <div
             style={{
-              width: '400px', // Set width to match LoginComponent
-              borderRadius: '8px', // Rounded corners
-              padding: '20px', // Padding for inner content
-              boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)', // Shadow for depth
+              width: '400px',
+              borderRadius: '8px',
+              padding: '20px',
+              boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)',
             }}
           >
             <button
@@ -110,7 +112,7 @@ const NavBar = ({ onSearch }) => {
             >
               ✕
             </button>
-            <LoginComponent onClose={closeModal} /> {/* Render the LoginComponent inside the modal */}
+            <LoginComponent isLoginMode={isLoginMode} onClose={closeModal} /> {/* Pass isLoginMode as prop */}
           </div>
         </dialog>
       )}
@@ -119,7 +121,6 @@ const NavBar = ({ onSearch }) => {
 };
 
 export default NavBar;
-
 
 
 

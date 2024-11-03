@@ -53,16 +53,6 @@ const LandingPage = () => {
 
   return (
     <div style={backgroundImageStyle}>
-      <div style={heroOverlayStyle}></div>
-      {/* Login Button positioned at the top right */}
-      <div style={{ position: 'absolute', top: '20px', right: '20px' }}>
-        <Link to="/makeUpPage">
-          <button className="btn btn-outline btn-primary">
-            Login
-          </button>
-        </Link>
-      </div>
-  
       <div style={heroContentStyle}>
         <h1 className="mb-5 text-5xl font-bold">Welcome to Conscience Cosmetics!</h1>
         <p className="mb-5">
