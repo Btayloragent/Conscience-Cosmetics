@@ -7,6 +7,7 @@ import LoginComponent from '../components/LoginComponent'; // Import the LoginCo
 const NavBar = ({ onSearch }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false); // State to manage modal visibility
+  const [authMode, setAuthMode] = useState('login'); // Default to 'login'
 
   const handleInputChange = (e) => {
     setSearchTerm(e.target.value);
@@ -18,7 +19,8 @@ const NavBar = ({ onSearch }) => {
     }
   };
 
-  const openModal = () => {
+  const openModal = (mode) => {
+    setAuthMode(mode); // Set the auth mode ('login' or 'signup')
     setIsModalOpen(true); // Open the modal
   };
 
@@ -67,8 +69,18 @@ const NavBar = ({ onSearch }) => {
             </button>
           </div>
           <div className="flex items-center gap-4 ml-14">
-            <button onClick={openModal} className="text-black hover:text-beige">Log In</button>
-            <button onClick={openModal} className="text-black hover:text-beige">Sign Up</button>
+            <button
+              onClick={() => openModal('login')} // Pass 'login' as the mode
+              className="text-black hover:text-beige"
+            >
+              Log In
+            </button>
+            <button
+              onClick={() => openModal('signup')} // Pass 'signup' as the mode
+              className="text-black hover:text-beige"
+            >
+              Sign Up
+            </button>
           </div>
         </div>
         <div className="flex-none gap-1">
@@ -100,17 +112,29 @@ const NavBar = ({ onSearch }) => {
               width: '400px', // Set width to match LoginComponent
               borderRadius: '8px', // Rounded corners
               padding: '20px', // Padding for inner content
-              boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)', // Shadow for depth
+              position: 'relative', // Allow absolute positioning of the close button
             }}
           >
+            {/* Close Button */}
             <button
-              type="button"
-              className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
-              onClick={closeModal}
-            >
-              ✕
-            </button>
-            <LoginComponent onClose={closeModal} /> {/* Render the LoginComponent inside the modal */}
+  type="button"
+  className="btn btn-sm btn-circle btn-ghost absolute right-6 top-8"
+  onClick={closeModal}
+  style={{
+    border: 'none',
+    color: '#D2B48C',
+    fontSize: '20px',
+    cursor: 'pointer',
+    zIndex: 1050, // Make sure this is higher than the modal content's zIndex
+  }}
+>
+  ✕
+</button>
+
+            <LoginComponent
+              mode={authMode} // Pass the auth mode ('login' or 'signup') to the LoginComponent
+              onClose={closeModal} // Pass the close modal function
+            />
           </div>
         </dialog>
       )}
@@ -119,7 +143,6 @@ const NavBar = ({ onSearch }) => {
 };
 
 export default NavBar;
-
 
 
 
