@@ -3,18 +3,24 @@ import React, { useState } from 'react';
 const CardWithDropdown = ({ tagsData, cosmeticsData }) => {
     const [isOpen, setIsOpen] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
+    const [selectedTags, setSelectedTags] = useState([]); // State to keep track of selected tags
 
     const categories = [...new Set(cosmeticsData.map(product => product.category).filter(category => category))];
-    const tags = tagsData.map(tag => (
-        { label: tag }
-    ));
+    const tags = tagsData.map(tag => ({ label: tag }));
 
     const filteredTags = tags.filter(tag =>
         tag.label.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
+    // Handle category click
     const handleCategoryClick = (category) => {
         window.location.href = `https://makeup-api.herokuapp.com/api/v1/products?product_category=${category.toLowerCase()}`;
+    };
+
+    // Handle tag click (add product tag filter functionality)
+    const handleTagClick = (tag) => {
+        // When a tag is clicked, redirect to the filtered URL with the selected tag
+        window.location.href = `https://makeup-api.herokuapp.com/api/v1/products?product_tags=${tag.toLowerCase()}`;
     };
 
     return (
@@ -22,6 +28,7 @@ const CardWithDropdown = ({ tagsData, cosmeticsData }) => {
             <div className="card-body">
                 <h2 className="card-title">By Category</h2>
                 <p>Product filtered by type.</p>
+
                 {/* Tag Labels on the Card */}
                 <div className="py-2">
                     <div className="border-t border-gray-200">
@@ -80,7 +87,8 @@ const CardWithDropdown = ({ tagsData, cosmeticsData }) => {
                                     {filteredTags.map((tag, index) => (
                                         <div
                                             key={index}
-                                            className="tag-label badge badge-outline mx-1 my-1"
+                                            onClick={() => handleTagClick(tag.label)}
+                                            className={`tag-label badge badge-outline mx-1 my-1 cursor-pointer ${selectedTags.includes(tag.label) ? 'badge-primary' : ''}`}
                                             style={{ fontFamily: "'Roboto', sans-serif" }}
                                         >
                                             {tag.label}
