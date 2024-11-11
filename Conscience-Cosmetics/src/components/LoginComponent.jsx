@@ -7,6 +7,7 @@ const LoginComponent = ({ mode, onClose }) => {
   const [email, setEmail] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [currentMode, setCurrentMode] = useState(mode); // Track the current mode locally
 
   // Handle form submission (Login or Signup)
   const handleSubmit = async () => {
@@ -14,18 +15,18 @@ const LoginComponent = ({ mode, onClose }) => {
     setErrorMessage('');
 
     try {
-      const url = mode === 'login' ? 'http://localhost:5001/login' : 'http://localhost:5001/signup';
-      const payload = mode === 'login' ? { username, password } : { username, password, email };
+      const url = currentMode === 'login' ? 'http://localhost:5001/login' : 'http://localhost:5001/signup';
+      const payload = currentMode === 'login' ? { username, password } : { username, password, email };
       const response = await axios.post(url, payload);
 
       if (response.status === 200) {
         const { token } = response.data;
         localStorage.setItem('token', token);
-        alert(`${mode === 'login' ? 'Login' : 'Sign Up'} successful!`);
+        alert(`${currentMode === 'login' ? 'Login' : 'Sign Up'} successful!`);
         onClose(); // Close modal on success
       }
     } catch (error) {
-      setErrorMessage(mode === 'login' ? 'Invalid username or password.' : 'Sign up failed. Please try again.');
+      setErrorMessage(currentMode === 'login' ? 'Invalid username or password.' : 'Sign up failed. Please try again.');
     } finally {
       setIsLoading(false);
     }
@@ -34,9 +35,15 @@ const LoginComponent = ({ mode, onClose }) => {
   // Logic for switching between Login/Signup modes
   const [indicatorPosition, setIndicatorPosition] = useState(0);
 
+  const switchMode = (newMode) => {
+    setCurrentMode(newMode); // Update the local mode state
+    setIndicatorPosition(newMode === 'login' ? 0 : 50); // Set the indicator position
+  };
+
+  // Use Effect to sync the initial mode and indicator position when the component loads
   useEffect(() => {
-    setIndicatorPosition(mode === 'login' ? 0 : 50); // Position indicator based on mode
-  }, [mode]);
+    setIndicatorPosition(currentMode === 'login' ? 0 : 50);
+  }, [currentMode]);
 
   return (
     <div
@@ -55,10 +62,10 @@ const LoginComponent = ({ mode, onClose }) => {
       <div style={{ position: 'relative' }}>
         <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '20px' }}>
           <div
-            onClick={() => {} /* Logic for switching tabs */}
+            onClick={() => switchMode('login')}
             style={{
               marginRight: '20px',
-              fontWeight: mode === 'login' ? 'bold' : 'normal',
+              fontWeight: currentMode === 'login' ? 'bold' : 'normal',
               color: '#D2B48C',
               cursor: 'pointer',
             }}
@@ -67,9 +74,9 @@ const LoginComponent = ({ mode, onClose }) => {
             Login
           </div>
           <div
-            onClick={() => {} /* Logic for switching tabs */}
+            onClick={() => switchMode('signup')}
             style={{
-              fontWeight: mode === 'signup' ? 'bold' : 'normal',
+              fontWeight: currentMode === 'signup' ? 'bold' : 'normal',
               color: '#D2B48C',
               cursor: 'pointer',
             }}
@@ -95,7 +102,7 @@ const LoginComponent = ({ mode, onClose }) => {
 
       {/* Title */}
       <div style={{ marginBottom: '10px', fontSize: '24px', color: '#D2B48C' }}>
-        {mode === 'login' ? 'Login To Conscience Cosmetics' : 'Create an Account'}
+        {currentMode === 'login' ? 'Login To Conscience Cosmetics' : 'Create an Account'}
       </div>
       
       {/* Error Message */}
@@ -134,7 +141,7 @@ const LoginComponent = ({ mode, onClose }) => {
       />
 
       {/* Additional Inputs for Sign Up */}
-      {mode === 'signup' && (
+      {currentMode === 'signup' && (
         <input
           type="email"
           placeholder="Email"
@@ -152,7 +159,7 @@ const LoginComponent = ({ mode, onClose }) => {
         />
       )}
 
-      {mode === 'signup' && (
+      {currentMode === 'signup' && (
         <input
           type="password"
           placeholder="Confirm Password"
@@ -180,7 +187,7 @@ const LoginComponent = ({ mode, onClose }) => {
           cursor: 'pointer',
         }}
       >
-        {mode === 'login' ? 'Login' : 'Sign Up'}
+        {currentMode === 'login' ? 'Login' : 'Sign Up'}
       </button>
     </div>
   );
