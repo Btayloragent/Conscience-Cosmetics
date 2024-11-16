@@ -1,5 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import NavBar from '../components/NavBar';
+import SideBar from '../components/SideBar';
 import Footer from '../components/Footer'; // Import the Footer component
 
 const MakeUpPage = () => {
@@ -8,15 +10,10 @@ const MakeUpPage = () => {
     const pageStyle = {
         display: 'flex',
         flexDirection: 'column',
-        minHeight: '100vh', // Ensure the full height of the viewport
-    };
-
-    const backgroundImageStyle = {
-        flex: 1, // Allow this div to grow and take available space
-        backgroundImage: 'url(src/Loginpics/LoginIn11.jpg)',
+        minHeight: '115vh', // Ensure the full height of the viewport
+        backgroundImage: 'url(src/Loginpics/LoginIn11.jpg)', // Move background to the parent div
         backgroundSize: 'cover',
         backgroundPosition: 'center',
-        position: 'relative',
         color: '#D2B48C',
     };
 
@@ -48,19 +45,15 @@ const MakeUpPage = () => {
         fontSize: '20px',
     };
 
-    const handleGoBack = () => {
-        navigate('/');
-    };
-
     return (
         <div style={pageStyle}>
-            <div style={backgroundImageStyle}>
-                <div style={heroOverlayStyle}></div>
-                <button style={goBackButtonStyle} onClick={handleGoBack}>
-                    <span style={arrowStyle}>&larr;</span> Go Back to Home
-                </button>
+            {/* NavBar, SideBar, and Footer will now share the background */}
+            <NavBar />
+            <div style={{ flex: 1, display: 'flex' }}>
+                {/* Main content area can go here, side by side with the sidebar */}
+                <SideBar />
             </div>
-            <Footer /> {/* Footer will now be positioned at the bottom */}
+            <Footer /> {/* Footer will now share the same background as NavBar */}
         </div>
     );
 };
