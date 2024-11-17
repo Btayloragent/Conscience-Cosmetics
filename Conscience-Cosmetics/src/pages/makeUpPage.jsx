@@ -47,18 +47,32 @@ const MakeUpPage = () => {
 
     // Style for the "About Us" text
     const aboutUsTextStyle = {
-        fontSize: '50px', // Large text
+        fontSize: '90px', // Large text
         fontWeight: 'bold', // Bold text
         color: '#fff', // White color for contrast
         padding: '20px', // Padding for spacing
     };
 
+    // Sample text to add under "About Us"
+    const sampleTextStyle = {
+        fontSize: '18px', // Smaller text size for the paragraph
+        color: '#B8860B', // White color for contrast
+        lineHeight: '1.6', // Add line height for better readability
+        padding: '10px 0', // Padding for spacing
+    };
+
     // Container for the About Us text and layout
     const contentStyle = {
         display: 'flex',
-        justifyContent: 'space-between', // Push content to left and right
+        justifyContent: 'flex-start', // Align content to the left
         padding: '90px',
         flex: 1,
+        alignItems: 'center', // Vertically center content
+    };
+
+    const textContainerStyle = {
+        textAlign: 'left', // Align the text to the left
+        maxWidth: '50%', // Limit the width to avoid too long lines
     };
 
     return (
@@ -68,9 +82,14 @@ const MakeUpPage = () => {
 
             {/* Main content area */}
             <div style={contentStyle}>
-                {/* "About Us" text on the left under NavBar */}
-                <div style={{ flex: 1, textAlign: 'left' }}>
+                {/* "About Us" text on the left */}
+                <div style={textContainerStyle}>
                     <p style={aboutUsTextStyle}>About Us</p>
+                    
+                    {/* Sample text below the About Us heading */}
+                    <p style={sampleTextStyle}>
+                        Welcome to our makeup page! We are passionate about providing the latest trends in beauty products and makeup tips. Our team is dedicated to helping you feel confident and beautiful in your own skin. Whether you're looking for a bold new look or simple everyday makeup, we've got you covered. Stay tuned for expert advice, product reviews, and much more!
+                    </p>
                 </div>
 
                 {/* SideBar on the right */}
@@ -84,7 +103,4 @@ const MakeUpPage = () => {
 };
 
 export default MakeUpPage;
-
-
-
 
