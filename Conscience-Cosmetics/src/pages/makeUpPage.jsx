@@ -11,7 +11,7 @@ const MakeUpPage = () => {
         display: 'flex',
         flexDirection: 'column',
         minHeight: '115vh', // Ensure the full height of the viewport
-        backgroundImage: 'url(src/Loginpics/LoginIn11.jpg)', // Move background to the parent div
+        backgroundImage: 'url(src/Loginpics/back2.jpg)', // Move background to the parent 
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         color: '#D2B48C',
