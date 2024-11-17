@@ -8,6 +8,8 @@ const NavBar = ({ onSearch }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false); // State to manage modal visibility
   const [authMode, setAuthMode] = useState('login'); // Default to 'login'
+  const [isLoggedIn, setIsLoggedIn] = useState(false); // Track if user is logged in
+  const [username, setUsername] = useState(''); // Store the user's name after login
 
   const handleInputChange = (e) => {
     setSearchTerm(e.target.value);
@@ -26,6 +28,19 @@ const NavBar = ({ onSearch }) => {
 
   const closeModal = () => {
     setIsModalOpen(false); // Close the modal
+  };
+
+  // Handle the successful login and store the username
+  const handleLoginSuccess = (userName) => {
+    setIsLoggedIn(true);
+    setUsername(userName);
+    closeModal(); // Close the login modal after successful login
+  };
+
+  // Handle logout action
+  const handleLogout = () => {
+    setIsLoggedIn(false);
+    setUsername('');
   };
 
   return (
@@ -69,18 +84,32 @@ const NavBar = ({ onSearch }) => {
             </button>
           </div>
           <div className="flex items-center gap-4 ml-14">
-            <button
-              onClick={() => openModal('login')} // Pass 'login' as the mode
-              className="text-black hover:text-beige"
-            >
-              Log In
-            </button>
-            <button
-              onClick={() => openModal('signup')} // Pass 'signup' as the mode
-              className="text-black hover:text-beige"
-            >
-              Sign Up
-            </button>
+            {isLoggedIn ? (
+              <div className="text-black hover:text-beige">
+                <span>Welcome, {username}!</span>
+                <button
+                  onClick={handleLogout}
+                  className="ml-4 text-black hover:text-beige"
+                >
+                  Log Out
+                </button>
+              </div>
+            ) : (
+              <>
+                <button
+                  onClick={() => openModal('login')} // Pass 'login' as the mode
+                  className="text-black hover:text-beige"
+                >
+                  Log In
+                </button>
+                <button
+                  onClick={() => openModal('signup')} // Pass 'signup' as the mode
+                  className="text-black hover:text-beige"
+                >
+                  Sign Up
+                </button>
+              </>
+            )}
           </div>
         </div>
         <div className="flex-none gap-1">
@@ -117,23 +146,24 @@ const NavBar = ({ onSearch }) => {
           >
             {/* Close Button */}
             <button
-  type="button"
-  className="btn btn-sm btn-circle btn-ghost absolute right-6 top-8"
-  onClick={closeModal}
-  style={{
-    border: 'none',
-    color: '#D2B48C',
-    fontSize: '20px',
-    cursor: 'pointer',
-    zIndex: 1050, // Make sure this is higher than the modal content's zIndex
-  }}
->
-  ✕
-</button>
+              type="button"
+              className="btn btn-sm btn-circle btn-ghost absolute right-6 top-8"
+              onClick={closeModal}
+              style={{
+                border: 'none',
+                color: '#D2B48C',
+                fontSize: '20px',
+                cursor: 'pointer',
+                zIndex: 1050, // Make sure this is higher than the modal content's zIndex
+              }}
+            >
+              ✕
+            </button>
 
             <LoginComponent
               mode={authMode} // Pass the auth mode ('login' or 'signup') to the LoginComponent
               onClose={closeModal} // Pass the close modal function
+              onLoginSuccess={handleLoginSuccess} // Pass the handler for login success
             />
           </div>
         </dialog>
@@ -143,6 +173,5 @@ const NavBar = ({ onSearch }) => {
 };
 
 export default NavBar;
-
 
 
