@@ -11,7 +11,7 @@ const MakeUpPage = () => {
         display: 'flex',
         flexDirection: 'column',
         minHeight: '115vh', // Ensure the full height of the viewport
-        backgroundImage: 'url(src/Loginpics/back2.jpg)', // Move background to the parent 
+        backgroundImage: 'url(src/Loginpics/back2.jpg)', // Background image
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         color: '#D2B48C',
@@ -45,26 +45,45 @@ const MakeUpPage = () => {
         fontSize: '20px',
     };
 
+    // Style for the "About Us" text
+    const aboutUsTextStyle = {
+        fontSize: '50px', // Large text
+        fontWeight: 'bold', // Bold text
+        color: '#fff', // White color for contrast
+        padding: '20px', // Padding for spacing
+    };
+
+    // Container for the About Us text and layout
+    const contentStyle = {
+        display: 'flex',
+        justifyContent: 'space-between', // Push content to left and right
+        padding: '90px',
+        flex: 1,
+    };
+
     return (
         <div style={pageStyle}>
-            {/* NavBar, SideBar, and Footer will now share the background */}
+            {/* NavBar */}
             <NavBar />
-            <div style={{ flex: 1, display: 'flex' }}>
-                {/* Main content area can go here, side by side with the sidebar */}
+
+            {/* Main content area */}
+            <div style={contentStyle}>
+                {/* "About Us" text on the left under NavBar */}
+                <div style={{ flex: 1, textAlign: 'left' }}>
+                    <p style={aboutUsTextStyle}>About Us</p>
+                </div>
+
+                {/* SideBar on the right */}
                 <SideBar />
             </div>
-            <Footer /> {/* Footer will now share the same background as NavBar */}
+
+            {/* Footer */}
+            <Footer />
         </div>
     );
 };
 
 export default MakeUpPage;
-
- 
-
-
-
-
 
 
 
