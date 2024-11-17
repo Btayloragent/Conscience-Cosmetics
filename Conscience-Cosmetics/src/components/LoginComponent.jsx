@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
-const LoginComponent = ({ mode, onClose }) => {
+const LoginComponent = ({ mode, onClose, onLoginSuccess }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [email, setEmail] = useState('');
@@ -20,9 +20,10 @@ const LoginComponent = ({ mode, onClose }) => {
       const response = await axios.post(url, payload);
 
       if (response.status === 200) {
-        const { token } = response.data;
+        const { token, user } = response.data; // Assuming the response contains user details
         localStorage.setItem('token', token);
         alert(`${currentMode === 'login' ? 'Login' : 'Sign Up'} successful!`);
+        onLoginSuccess(user.username); // Pass the username to the parent component
         onClose(); // Close modal on success
       }
     } catch (error) {
