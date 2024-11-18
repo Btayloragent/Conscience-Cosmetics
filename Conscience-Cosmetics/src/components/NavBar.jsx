@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import logo from '../loginpics/LogoPic4.png'; // Adjust the path as needed
 import UploadButton from '../components/UploadButton.jsx'; // Import the UploadButton component
 import { Link } from 'react-router-dom';
@@ -10,6 +10,28 @@ const NavBar = ({ onSearch }) => {
   const [authMode, setAuthMode] = useState('login'); // Default to 'login'
   const [isLoggedIn, setIsLoggedIn] = useState(false); // Track if user is logged in
   const [username, setUsername] = useState(''); // Store the user's name after login
+
+  // Use useEffect to check the localStorage for login state on page load
+  useEffect(() => {
+    const savedUsername = localStorage.getItem('username');
+    const savedLoginState = localStorage.getItem('isLoggedIn');
+
+    if (savedLoginState === 'true' && savedUsername) {
+      setIsLoggedIn(true);
+      setUsername(savedUsername);
+    }
+  }, []);
+
+  // Store login state and username to localStorage when the state changes
+  useEffect(() => {
+    if (isLoggedIn && username) {
+      localStorage.setItem('isLoggedIn', 'true');
+      localStorage.setItem('username', username);
+    } else {
+      localStorage.removeItem('isLoggedIn');
+      localStorage.removeItem('username');
+    }
+  }, [isLoggedIn, username]);
 
   const handleInputChange = (e) => {
     setSearchTerm(e.target.value);
@@ -41,6 +63,8 @@ const NavBar = ({ onSearch }) => {
   const handleLogout = () => {
     setIsLoggedIn(false);
     setUsername('');
+    localStorage.removeItem('isLoggedIn');
+    localStorage.removeItem('username');
   };
 
   return (
