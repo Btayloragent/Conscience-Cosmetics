@@ -11,7 +11,7 @@ const MakeUpPage = () => {
         display: 'flex',
         flexDirection: 'column',
         minHeight: '115vh', // Ensure the full height of the viewport
-        backgroundImage: 'url(src/Loginpics/back2.jpg)', // Background image
+        backgroundImage: 'url(src/Loginpics/back4.jpg)', // Background image
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         color: '#D2B48C',
@@ -72,7 +72,7 @@ const MakeUpPage = () => {
 
     const textContainerStyle = {
         textAlign: 'left', // Align the text to the left
-        maxWidth: '50%', // Limit the width to avoid too long lines
+        maxWidth: '40%', // Limit the width to avoid too long lines
     };
 
     return (
@@ -88,7 +88,11 @@ const MakeUpPage = () => {
                     
                     {/* Sample text below the About Us heading */}
                     <p style={sampleTextStyle}>
-                        Welcome to our makeup page! We are passionate about providing the latest trends in beauty products and makeup tips. Our team is dedicated to helping you feel confident and beautiful in your own skin. Whether you're looking for a bold new look or simple everyday makeup, we've got you covered. Stay tuned for expert advice, product reviews, and much more!
+                    Welcome to Conscience Cosmetics! We're here to help you discover the best in clean, high-quality beauty products, with a focus on ethical and eco-friendly practices. Our mission is to make beauty simple and accessible for women who are passionate about looking and feeling their best, while staying true to their values.
+
+At Conscience Cosmetics, we provide a curated selection of top-rated makeup and skincare products, expert beauty tips, and community-driven content for shared recommendations and experiences. Whether you're after bold beauty trends or everyday essentials, our platform makes it easy to find what works for you—without the confusion of endless choices.
+
+Join our community today to explore, learn, and grow with Conscience Cosmetics. Together, we’ll simplify your beauty journey! Get started today by logging in above.
                     </p>
                 </div>
 

@@ -109,11 +109,11 @@ const NavBar = ({ onSearch }) => {
           </div>
           <div className="flex items-center gap-4 ml-14">
             {isLoggedIn ? (
-              <div className="text-black hover:text-beige">
+              <div className="text-beige hover:text-[#007BFF]">
                 <span>Welcome, {username}!</span>
                 <button
                   onClick={handleLogout}
-                  className="ml-4 text-black hover:text-beige"
+                  className="ml-4 text-beige hover:text-[#007BFF]"
                 >
                   Log Out
                 </button>
@@ -122,13 +122,13 @@ const NavBar = ({ onSearch }) => {
               <>
                 <button
                   onClick={() => openModal('login')} // Pass 'login' as the mode
-                  className="text-black hover:text-beige"
+                  className="text-beige hover:text-[#007BFF]"
                 >
                   Log In
                 </button>
                 <button
                   onClick={() => openModal('signup')} // Pass 'signup' as the mode
-                  className="text-black hover:text-beige"
+                  className="text-beige hover:text-[#007BFF]"
                 >
                   Sign Up
                 </button>

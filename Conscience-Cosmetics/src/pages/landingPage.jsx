@@ -58,7 +58,7 @@ const LandingPage = () => {
         <p className="mb-5">
           Explore ethical beauty and a community that reflects your values!
         </p>
-        <Link to="/VideoPage">
+        <Link to="/MakeUpPage">
           <button className="btn btn-outline btn-error">Get Started</button>
         </Link>
         <Footer /> {/* Add the Footer component here */}
