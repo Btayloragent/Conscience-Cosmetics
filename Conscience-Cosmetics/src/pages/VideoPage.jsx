@@ -39,6 +39,8 @@ const VideoPage = () => {
             return (
               <div key={video.id} className="video-card-container">
                 <VideoCard 
+                  key={video.id}
+                  videoId={video.id}
                   videoThumbnail={video.image} 
                   videoFile={videoFile} 
                 />
