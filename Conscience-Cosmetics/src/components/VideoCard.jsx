@@ -1,10 +1,12 @@
 import React, { useState, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Rating from './Rating'; // Import your Rating component
 
-function VideoCard({ videoThumbnail, videoFile }) {
+function VideoCard({ videoThumbnail, videoFile, videoId }) {
   const [isTextareaVisible, setTextareaVisible] = useState(false);
   const [textareaValue, setTextareaValue] = useState("");
   const textareaRef = useRef(null);
+  const navigate = useNavigate();
 
   const toggleTextarea = () => {
     setTextareaVisible(true);
@@ -28,13 +30,19 @@ function VideoCard({ videoThumbnail, videoFile }) {
     setTextareaValue("");
   };
 
+  const handleVideoClick = () => {
+    navigate(`/VideoPage/${videoId}`, {
+      state: { videoFile, videoThumbnail },
+    });
+  };
+
   return (
     <div 
       className="card bg-base-100 shadow-xl inline-block p-0 m-0 rounded-lg"
       style={{
-        width: '100%', // Ensure the card takes full width
-        maxWidth: '400px', // Optional: Set a max width for your card
-        margin: '0 auto' // Center the card if needed
+        width: '100%',
+        maxWidth: '400px',
+        margin: '0 auto'
       }}
     >
       <div 
@@ -45,14 +53,15 @@ function VideoCard({ videoThumbnail, videoFile }) {
           src={videoFile}
           controls
           poster={videoThumbnail}
-          className="rounded-lg"
+          className="rounded-lg cursor-pointer"
+          onClick={handleVideoClick}
           style={{
-            width: '100%', // Ensure the video takes full width
-            height: '300px', // Fixed height for consistent size
-            objectFit: 'cover', // Keep the aspect ratio and avoid distortion
+            width: '100%',
+            height: '300px',
+            objectFit: 'cover',
             margin: 0,
             padding: 0,
-            borderRadius: '0.5rem' // Make sure video has rounded corners
+            borderRadius: '0.5rem'
           }}
         >
           Your browser does not support the video tag.
@@ -87,7 +96,6 @@ function VideoCard({ videoThumbnail, videoFile }) {
             backgroundColor: 'white'
           }}
         >
-          {/* Rating Component */}
           <div className="flex justify-center mb-4">
             <Rating />
           </div>
@@ -147,3 +155,4 @@ function VideoCard({ videoThumbnail, videoFile }) {
 }
 
 export default VideoCard;
+
