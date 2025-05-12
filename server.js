@@ -30,6 +30,28 @@ const userSchema = new mongoose.Schema({
 
 const User = mongoose.model("User", userSchema);
 
+// ✅ Define comment schema
+const commentSchema = new mongoose.Schema({
+    videoId: {
+        type: String,
+        required: true,
+    },
+    username: {
+        type: String,
+        required: true,
+    },
+    text: {
+        type: String,
+        required: true,
+    },
+    createdAt: {
+        type: Date,
+        default: Date.now,
+    },
+});
+
+const Comment = mongoose.model("Comment", commentSchema);
+
 // Connect to MongoDB
 async function connectDb() {
     try {
@@ -50,10 +72,7 @@ app.post("/signup", async (req, res) => {
             return res.status(400).send("Username and password are required");
         }
 
-        // Hash the password
         const hashedPassword = await bcrypt.hash(password, 10);
-
-        // Create a new user and save to the database
         const newUser = new User({ username, hashedPassword });
         await newUser.save();
 
@@ -64,7 +83,7 @@ app.post("/signup", async (req, res) => {
     }
 });
 
-// Add login route for user authentication
+// Login route
 app.post("/login", async (req, res) => {
     try {
         const { username, password } = req.body;
@@ -83,11 +102,39 @@ app.post("/login", async (req, res) => {
             return res.status(400).send("Invalid password");
         }
 
-        // Successful login - you can generate a JWT here if needed
         res.status(200).send({ message: "Login successful", user: { username: user.username } });
     } catch (error) {
         console.error("Error logging in: ", error.message);
         res.status(500).send("Error logging in");
+    }
+});
+
+// ✅ Comment POST route
+app.post("/api/comments", async (req, res) => {
+    try {
+        const { videoId, username, text } = req.body;
+        if (!videoId || !username || !text) {
+            return res.status(400).send("Missing fields");
+        }
+
+        const newComment = new Comment({ videoId, username, text });
+        await newComment.save();
+        res.status(201).json(newComment);
+    } catch (error) {
+        console.error("Error posting comment:", error.message);
+        res.status(500).send("Failed to post comment");
+    }
+});
+
+// ✅ Comment GET route for a specific video
+app.get("/api/comments/:videoId", async (req, res) => {
+    try {
+        const { videoId } = req.params;
+        const comments = await Comment.find({ videoId }).sort({ createdAt: -1 });
+        res.status(200).json(comments);
+    } catch (error) {
+        console.error("Error fetching comments:", error.message);
+        res.status(500).send("Failed to fetch comments");
     }
 });
 
