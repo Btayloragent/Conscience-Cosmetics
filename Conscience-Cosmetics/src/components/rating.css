@@ -1,29 +1,29 @@
 .rating {
-    display: flex;
-    direction: row-reverse;
-    justify-content: center;
-    align-items: center;
-  }
-  
-  .rating input {
-    display: none;
-  }
-  
-  .rating .icon {
-    width: 40px; /* Adjust size as needed */
-    height: 40px; /* Adjust size as needed */
-    background-image: url('../loginpics/Lips.png'); /* Path to your lip icon */
-    background-size: contain;
-    background-repeat: no-repeat;
-    cursor: pointer;
-    opacity: 0.3; /* Start as transparent */
-    transition: opacity 0.3s, filter 0.3s; /* Smooth transition */
-  }
-  
-  .rating input:checked + .icon {
-    opacity: 1; /* Fully opaque when selected */
-    filter: brightness(1) sepia(1) hue-rotate(-50deg) saturate(5); /* Adjust to get a red effect */
-  }
-  
+  display: flex;
+  direction: row-reverse;
+  justify-content: center;
+  align-items: center;
+  gap: 8px; /* Optional: adds spacing between icons */
+}
+
+.rating input {
+  display: none;
+}
+
+.rating .icon {
+  width: 35px;  /* Increased from 40px */
+  height: 35px; /* Increased from 40px */
+  background-image: url('../loginpics/Lips.png'); /* Path to your lip icon */
+  background-size: contain;
+  background-repeat: no-repeat;
+  cursor: pointer;
+  opacity: 0.3;
+  transition: opacity 0.3s, filter 0.3s;
+}
+
+.rating input:checked + .icon {
+  opacity: 1;
+  filter: brightness(1) sepia(1) hue-rotate(-50deg) saturate(5);
+}
 
   
