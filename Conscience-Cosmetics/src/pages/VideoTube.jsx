@@ -33,6 +33,7 @@ function VideoTube() {
 
   const handleThumbnailClick = (video) => {
     setCurrentVideo(video);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   if (!currentVideo.videoFile) {
@@ -41,11 +42,11 @@ function VideoTube() {
 
   return (
     <div className="min-h-screen bg-black p-4 flex justify-center">
-      <div className="flex w-full max-w-7xl gap-6">
-        
+      <div className="flex flex-col lg:flex-row w-full max-w-7xl gap-6">
+
         {/* Main Video Area */}
         <div className="flex flex-col flex-1">
-          {/* Back Button */}
+          {/* Back Button - UNCHANGED */}
           <button
             onClick={() => navigate('/VideoPage')}
             className="text-white flex items-center mb-4 hover:underline"
@@ -53,18 +54,17 @@ function VideoTube() {
             <span className="text-xl mr-2">←</span> Back to Video Page
           </button>
 
-          {/* Video */}
+          {/* Video Player */}
           <div className="flex justify-center">
             <video
               src={currentVideo.videoFile}
               poster={currentVideo.videoThumbnail}
               controls
-              autoPlay
               className="w-full max-w-[640px] h-[360px] object-cover rounded-lg"
             />
           </div>
 
-          {/* Rating aligned to right under video */}
+          {/* Rating */}
           <div className="flex justify-end max-w-[640px] w-full mx-auto mt-2">
             <Rating />
           </div>
@@ -78,17 +78,28 @@ function VideoTube() {
         </div>
 
         {/* Related Videos */}
-        <div className="w-[180px] overflow-y-auto max-h-[calc(100vh-100px)]">
+        <div className="w-full lg:w-[180px] overflow-y-auto max-h-[calc(100vh-100px)]">
           <h2 className="text-white font-semibold mb-3">More Videos</h2>
-          {videos.map((video, index) => (
-            <img
-              key={index}
-              src={video.videoThumbnail}
-              alt={`Thumbnail ${index}`}
-              onClick={() => handleThumbnailClick(video)}
-              className="w-full h-28 object-cover rounded-lg mb-3 cursor-pointer hover:scale-105 transition-transform"
-            />
-          ))}
+          {videos.length === 0 ? (
+            <p className="text-white text-sm">Loading videos...</p>
+          ) : (
+            videos.map((video, index) => (
+              <div
+                key={index}
+                className={`relative mb-3 cursor-pointer group border-2 rounded-lg ${
+                  video.videoFile === currentVideo.videoFile ? 'border-white' : 'border-transparent'
+                }`}
+                onClick={() => handleThumbnailClick(video)}
+              >
+                <img
+                  src={video.videoThumbnail}
+                  alt={`Thumbnail ${index}`}
+                  className="w-full h-28 object-cover rounded-lg transition-transform duration-200 group-hover:scale-105"
+                />
+                <div className="absolute inset-0 bg-black bg-opacity-30 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
+              </div>
+            ))
+          )}
         </div>
       </div>
     </div>
