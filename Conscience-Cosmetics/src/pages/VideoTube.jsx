@@ -13,6 +13,7 @@ function VideoTube() {
 
   const [videos, setVideos] = useState([]);
   const [currentVideo, setCurrentVideo] = useState({ videoFile, videoThumbnail });
+  const [showToast, setShowToast] = useState(false);
 
   useEffect(() => {
     const fetchVideos = async () => {
@@ -36,6 +37,16 @@ function VideoTube() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
+  const copyLink = () => {
+    const shareUrl = `${window.location.origin}/video/${videoId}`;
+    navigator.clipboard.writeText(shareUrl)
+      .then(() => {
+        setShowToast(true);
+        setTimeout(() => setShowToast(false), 2000);
+      })
+      .catch(err => console.error('Failed to copy:', err));
+  };
+
   if (!currentVideo.videoFile) {
     return <div className="text-white text-center mt-10">Video not found</div>;
   }
@@ -46,7 +57,8 @@ function VideoTube() {
 
         {/* Main Video Area */}
         <div className="flex flex-col flex-1">
-          {/* Back Button - UNCHANGED */}
+
+          {/* Back Button */}
           <button
             onClick={() => navigate('/VideoPage')}
             className="text-white flex items-center mb-4 hover:underline"
@@ -55,19 +67,53 @@ function VideoTube() {
           </button>
 
           {/* Video Player */}
-          <div className="flex justify-center">
+          <div className="flex flex-col max-w-[640px] w-full mx-auto">
             <video
               src={currentVideo.videoFile}
               poster={currentVideo.videoThumbnail}
               controls
-              className="w-full max-w-[640px] h-[360px] object-cover rounded-lg"
+              className="w-full h-[360px] object-cover rounded-lg"
             />
+
+            {/* Share icon left, Rating right, both aligned vertically and spaced apart */}
+            <div className="flex justify-between items-center mt-3">
+              {/* Share Button Left */}
+              <button
+                onClick={copyLink}
+                aria-label="Share Video Link"
+                title="Share"
+                className="flex items-center justify-center text-white hover:text-gray-300 transition"
+                style={{ padding: 0, width: '24px', height: '24px' }}
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  fill="white"
+                  stroke="white"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="w-6 h-6"
+                >
+                  <circle cx="18" cy="5" r="3" />
+                  <circle cx="6" cy="12" r="3" />
+                  <circle cx="18" cy="19" r="3" />
+                  <line x1="8.59" y1="13.51" x2="15.42" y2="17.49" />
+                  <line x1="8.59" y1="10.49" x2="15.42" y2="6.51" />
+                </svg>
+              </button>
+
+              {/* Rating Right */}
+              <Rating />
+            </div>
           </div>
 
-          {/* Rating */}
-          <div className="flex justify-end max-w-[640px] w-full mx-auto mt-2">
-            <Rating />
-          </div>
+          {/* Toast notification */}
+          {showToast && (
+            <div className="fixed bottom-10 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white px-5 py-2 rounded shadow-lg">
+              Link copied to clipboard!
+            </div>
+          )}
 
           {/* Comment Section */}
           <div className="mt-6 text-white flex justify-center">
