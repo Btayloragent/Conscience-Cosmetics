@@ -10,28 +10,37 @@ const NavBar = ({ onSearch }) => {
   const [authMode, setAuthMode] = useState('login'); // Default to 'login'
   const [isLoggedIn, setIsLoggedIn] = useState(false); // Track if user is logged in
   const [username, setUsername] = useState(''); // Store the user's name after login
+  const [avatarUrl, setAvatarUrl] = useState(''); // Store user's avatar URL
 
-  // Use useEffect to check the localStorage for login state on page load
+  // Load login state, username, and avatarUrl from localStorage on mount
   useEffect(() => {
     const savedUsername = localStorage.getItem('username');
     const savedLoginState = localStorage.getItem('isLoggedIn');
+    const savedAvatarUrl = localStorage.getItem('avatarUrl');
 
     if (savedLoginState === 'true' && savedUsername) {
       setIsLoggedIn(true);
       setUsername(savedUsername);
+      if (savedAvatarUrl) setAvatarUrl(savedAvatarUrl);
     }
   }, []);
 
-  // Store login state and username to localStorage when the state changes
+  // Save login state, username, and avatarUrl to localStorage when updated
   useEffect(() => {
     if (isLoggedIn && username) {
       localStorage.setItem('isLoggedIn', 'true');
       localStorage.setItem('username', username);
+      if (avatarUrl) {
+        localStorage.setItem('avatarUrl', avatarUrl);
+      } else {
+        localStorage.removeItem('avatarUrl');
+      }
     } else {
       localStorage.removeItem('isLoggedIn');
       localStorage.removeItem('username');
+      localStorage.removeItem('avatarUrl');
     }
-  }, [isLoggedIn, username]);
+  }, [isLoggedIn, username, avatarUrl]);
 
   const handleInputChange = (e) => {
     setSearchTerm(e.target.value);
@@ -52,10 +61,12 @@ const NavBar = ({ onSearch }) => {
     setIsModalOpen(false); // Close the modal
   };
 
-  // Handle the successful login and store the username
-  const handleLoginSuccess = (userName) => {
+  // Handle the successful login and store the username and avatarUrl
+  // NOTE: LoginComponent must call this with (username, avatarUrl)
+  const handleLoginSuccess = (userName, userAvatarUrl) => {
     setIsLoggedIn(true);
     setUsername(userName);
+    setAvatarUrl(userAvatarUrl || '');
     closeModal(); // Close the login modal after successful login
   };
 
@@ -63,8 +74,10 @@ const NavBar = ({ onSearch }) => {
   const handleLogout = () => {
     setIsLoggedIn(false);
     setUsername('');
+    setAvatarUrl('');
     localStorage.removeItem('isLoggedIn');
     localStorage.removeItem('username');
+    localStorage.removeItem('avatarUrl');
   };
 
   return (
@@ -109,7 +122,14 @@ const NavBar = ({ onSearch }) => {
           </div>
           <div className="flex items-center gap-4 ml-14">
             {isLoggedIn ? (
-              <div className="text-beige hover:text-[#007BFF]">
+              <div className="flex items-center text-beige hover:text-[#007BFF] space-x-3">
+                {avatarUrl && (
+                  <img
+                    src={avatarUrl}
+                    alt="User Avatar"
+                    className="w-8 h-8 rounded-full object-cover"
+                  />
+                )}
                 <span>Welcome, {username}!</span>
                 <button
                   onClick={handleLogout}
