@@ -7,41 +7,59 @@ const LoginComponent = ({ mode, onClose, onLoginSuccess }) => {
   const [email, setEmail] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [currentMode, setCurrentMode] = useState(mode); // Track the current mode locally
+  const [currentMode, setCurrentMode] = useState(mode);
 
-  // Handle form submission (Login or Signup)
+  // Avatar selection
+  const [avatarIndex, setAvatarIndex] = useState(0);
+  const getAvatarUrl = (index) => `https://avatar.iran.liara.run/public/girl?index=${index}&gender=female`;
+  const [selectedAvatar, setSelectedAvatar] = useState(getAvatarUrl(avatarIndex));
+
+  useEffect(() => {
+    setSelectedAvatar(getAvatarUrl(avatarIndex));
+  }, [avatarIndex]);
+
   const handleSubmit = async () => {
     setIsLoading(true);
     setErrorMessage('');
 
     try {
-      const url = currentMode === 'login' ? 'http://localhost:5001/login' : 'http://localhost:5001/signup';
-      const payload = currentMode === 'login' ? { username, password } : { username, password, email };
+      const url =
+        currentMode === 'login'
+          ? 'http://localhost:5001/login'
+          : 'http://localhost:5001/signup';
+
+      const payload =
+        currentMode === 'login'
+          ? { username, password }
+          : { username, password, email, avatar: selectedAvatar };
+
       const response = await axios.post(url, payload);
 
       if (response.status === 200) {
-        const { token, user } = response.data; // Assuming the response contains user details
+        const { token, user } = response.data;
         localStorage.setItem('token', token);
         alert(`${currentMode === 'login' ? 'Login' : 'Sign Up'} successful!`);
-        onLoginSuccess(user.username); // Pass the username to the parent component
-        onClose(); // Close modal on success
+        onLoginSuccess(user.username);
+        onClose();
       }
     } catch (error) {
-      setErrorMessage(currentMode === 'login' ? 'Invalid username or password.' : 'Sign up failed. Please try again.');
+      setErrorMessage(
+        currentMode === 'login'
+          ? 'Invalid username or password.'
+          : 'Sign up failed. Please try again.'
+      );
     } finally {
       setIsLoading(false);
     }
   };
 
-  // Logic for switching between Login/Signup modes
   const [indicatorPosition, setIndicatorPosition] = useState(0);
 
   const switchMode = (newMode) => {
-    setCurrentMode(newMode); // Update the local mode state
-    setIndicatorPosition(newMode === 'login' ? 0 : 50); // Set the indicator position
+    setCurrentMode(newMode);
+    setIndicatorPosition(newMode === 'login' ? 0 : 50);
   };
 
-  // Use Effect to sync the initial mode and indicator position when the component loads
   useEffect(() => {
     setIndicatorPosition(currentMode === 'login' ? 0 : 50);
   }, [currentMode]);
@@ -49,17 +67,17 @@ const LoginComponent = ({ mode, onClose, onLoginSuccess }) => {
   return (
     <div
       style={{
-        backgroundColor: '#f9f6f0', // Soft Beige (background color restored)
-        borderRadius: '18px', // Rounded corners
+        backgroundColor: '#f9f6f0',
+        borderRadius: '18px',
         padding: '20px',
         boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)',
-        width: '100%', // Full width of container
-        maxWidth: '400px', // Max width to keep it consistent
+        width: '100%',
+        maxWidth: '400px',
         textAlign: 'center',
-        position: 'relative', // For the positioning of the close button
+        position: 'relative',
       }}
     >
-      {/* Tab Section (Login/Signup tabs) */}
+      {/* Tabs */}
       <div style={{ position: 'relative' }}>
         <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '20px' }}>
           <div
@@ -70,7 +88,6 @@ const LoginComponent = ({ mode, onClose, onLoginSuccess }) => {
               color: '#D2B48C',
               cursor: 'pointer',
             }}
-            className="tab"
           >
             Login
           </div>
@@ -78,10 +95,9 @@ const LoginComponent = ({ mode, onClose, onLoginSuccess }) => {
             onClick={() => switchMode('signup')}
             style={{
               fontWeight: currentMode === 'signup' ? 'bold' : 'normal',
-              color: '#D2B48C',
+              color: '#4DA6FF',
               cursor: 'pointer',
             }}
-            className="tab"
           >
             Sign Up
           </div>
@@ -95,8 +111,8 @@ const LoginComponent = ({ mode, onClose, onLoginSuccess }) => {
             width: '50%',
             position: 'absolute',
             bottom: '0',
-            left: `${indicatorPosition}%`, // Set position based on the mode
-            transition: 'left 0.3s ease', // Smooth transition
+            left: `${indicatorPosition}%`,
+            transition: 'left 0.3s ease',
           }}
         />
       </div>
@@ -105,75 +121,68 @@ const LoginComponent = ({ mode, onClose, onLoginSuccess }) => {
       <div style={{ marginBottom: '10px', fontSize: '24px', color: '#D2B48C' }}>
         {currentMode === 'login' ? 'Login To Conscience Cosmetics' : 'Create an Account'}
       </div>
-      
+
       {/* Error Message */}
       {errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>}
 
-      {/* Username and Password Inputs */}
+      {/* Inputs */}
       <input
         type="text"
         placeholder="Username"
-        style={{
-          width: '100%',
-          padding: '10px',
-          margin: '10px 0',
-          borderRadius: '4px',
-          border: '1px solid black',
-          backgroundColor: 'rgba(255, 255, 255, 0.9)', // White background for inputs
-          color: 'black',
-        }}
+        style={inputStyle}
         value={username}
         onChange={(e) => setUsername(e.target.value)}
       />
       <input
         type="password"
         placeholder="Password"
-        style={{
-          width: '100%',
-          padding: '10px',
-          margin: '10px 0',
-          borderRadius: '4px',
-          border: '1px solid black',
-          backgroundColor: 'rgba(255, 255, 255, 0.9)', // White background for inputs
-          color: 'black',
-        }}
+        style={inputStyle}
         value={password}
         onChange={(e) => setPassword(e.target.value)}
       />
-
-      {/* Additional Inputs for Sign Up */}
       {currentMode === 'signup' && (
-        <input
-          type="email"
-          placeholder="Email"
-          style={{
-            width: '100%',
-            padding: '10px',
-            margin: '10px 0',
-            borderRadius: '4px',
-            border: '1px solid black',
-            backgroundColor: 'rgba(255, 255, 255, 0.9)', // White background for inputs
-            color: 'black',
-          }}
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
+        <>
+          <input
+            type="email"
+            placeholder="Email"
+            style={inputStyle}
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+          <input
+            type="password"
+            placeholder="Confirm Password"
+            style={inputStyle}
+          />
+        </>
       )}
 
+      {/* Avatar Selection */}
       {currentMode === 'signup' && (
-        <input
-          type="password"
-          placeholder="Confirm Password"
-          style={{
-            width: '100%',
-            padding: '10px',
-            margin: '10px 0',
-            borderRadius: '4px',
-            border: '1px solid black',
-            backgroundColor: 'rgba(255, 255, 255, 0.9)', // White background for inputs
-            color: 'black',
-          }}
-        />
+        <div style={{ margin: '20px 0', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px' }}>
+          <button
+            onClick={() => setAvatarIndex((prev) => (prev - 1 + 10) % 10)}
+            style={arrowButtonStyle}
+          >
+            ◀
+          </button>
+          <img
+            src={selectedAvatar}
+            alt="Selected Avatar"
+            style={{
+              width: '80px',
+              height: '80px',
+              borderRadius: '50%',
+              border: '2px solid #D2B48C',
+            }}
+          />
+          <button
+            onClick={() => setAvatarIndex((prev) => (prev + 1) % 10)}
+            style={arrowButtonStyle}
+          >
+            ▶
+          </button>
+        </div>
       )}
 
       {/* Submit Button */}
@@ -183,7 +192,7 @@ const LoginComponent = ({ mode, onClose, onLoginSuccess }) => {
           width: '100%',
           padding: '10px',
           borderRadius: '4px',
-          backgroundColor: 'rgba(210, 180, 140, 0.5)',
+          backgroundColor: 'rgba(8, 94, 192, 0.5)',
           color: 'white',
           cursor: 'pointer',
         }}
@@ -192,6 +201,25 @@ const LoginComponent = ({ mode, onClose, onLoginSuccess }) => {
       </button>
     </div>
   );
+};
+
+// Styles
+const inputStyle = {
+  width: '100%',
+  padding: '10px',
+  margin: '10px 0',
+  borderRadius: '4px',
+  border: '1px solid black',
+  backgroundColor: 'rgba(255, 255, 255, 0.9)',
+  color: 'black',
+};
+
+const arrowButtonStyle = {
+  backgroundColor: 'transparent',
+  border: 'none',
+  fontSize: '24px',
+  cursor: 'pointer',
+  color: '#D2B48C',
 };
 
 export default LoginComponent;

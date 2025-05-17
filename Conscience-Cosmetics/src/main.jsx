@@ -10,7 +10,7 @@ import CosmeticPage from './pages/CosmeticPage.jsx'
 import UploadPage from './pages/UploadPage.jsx'
 import FavsPage from './pages/FavsPage.jsx'
 import VideoTube from './pages/VideoTube.jsx'; // you'll create this
-
+import ProfilePage from './pages/ProfilePage.jsx';
 
 
 let router = createBrowserRouter([
@@ -45,8 +45,12 @@ let router = createBrowserRouter([
   {
     path: "/VideoPage/:videoId", // 👈 Add this route
     element: <VideoTube />
+  },
+   {
+    path: "/ProfilePage", 
+    element: <ProfilePage />
   }
- 
+
 
 ]);
 

@@ -1,6 +1,6 @@
 import express from 'express';
 import axios from 'axios';
-import cors from 'cors'; 
+import cors from 'cors';
 import 'dotenv/config';
 import { createClient } from 'pexels';
 import mongoose from 'mongoose';
@@ -10,7 +10,7 @@ const app = express();
 const port = 5001;
 
 app.use(express.json());
-app.use(cors()); 
+app.use(cors());
 
 // MongoDB connection URI
 const uri = `mongodb+srv://btayloragent:${process.env.PASS_KEY}@cluster0.zollofg.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
@@ -26,11 +26,23 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
+    email: {
+        type: String,
+        default: '',
+    },
+    bio: {
+        type: String,
+        default: '',
+    },
+    avatarUrl: {
+        type: String,
+        default: '',
+    },
 });
 
 const User = mongoose.model("User", userSchema);
 
-// ✅ Define comment schema
+// ✅ Comment schema
 const commentSchema = new mongoose.Schema({
     videoId: {
         type: String,
@@ -56,34 +68,54 @@ const Comment = mongoose.model("Comment", commentSchema);
 async function connectDb() {
     try {
         await mongoose.connect(uri);
-        console.log("Successfully connected to MongoDB!");
+        console.log("✅ Successfully connected to MongoDB!");
     } catch (error) {
-        console.log("Error connecting to MongoDB: " + error.message);
+        console.log("❌ Error connecting to MongoDB: " + error.message);
         process.exit(1);
     }
 }
 
-// Create a new user with password hashing
+// ✅ SIGN UP: Create new user and save avatarUrl, email, bio
 app.post("/signup", async (req, res) => {
     try {
-        const { username, password } = req.body;
+        const { username, password, email, avatarUrl, bio } = req.body;
 
-        if (!username || !password) {
-            return res.status(400).send("Username and password are required");
+        if (!username || !password || !email || !avatarUrl) {
+            return res.status(400).send("Username, password, email, and avatarUrl are required");
+        }
+
+        const existingUser = await User.findOne({ username });
+        if (existingUser) {
+            return res.status(400).send("Username already taken");
         }
 
         const hashedPassword = await bcrypt.hash(password, 10);
-        const newUser = new User({ username, hashedPassword });
+        const newUser = new User({
+            username,
+            hashedPassword,
+            email,
+            avatarUrl,
+            bio: bio || "",
+        });
+
         await newUser.save();
 
-        res.status(201).send({ message: "User created successfully", user: { username: newUser.username } });
+        res.status(201).send({
+            message: "User created successfully",
+            user: {
+                username: newUser.username,
+                email: newUser.email,
+                avatarUrl: newUser.avatarUrl,
+                bio: newUser.bio,
+            },
+        });
     } catch (error) {
         console.error("Error signing up: ", error.message);
-        res.status(500).send("Error signing up, username may already be taken");
+        res.status(500).send("Error signing up");
     }
 });
 
-// Login route
+// ✅ LOGIN
 app.post("/login", async (req, res) => {
     try {
         const { username, password } = req.body;
@@ -102,14 +134,42 @@ app.post("/login", async (req, res) => {
             return res.status(400).send("Invalid password");
         }
 
-        res.status(200).send({ message: "Login successful", user: { username: user.username } });
+        res.status(200).send({
+            message: "Login successful",
+            user: {
+                username: user.username,
+                email: user.email,
+                avatarUrl: user.avatarUrl,
+                bio: user.bio,
+            },
+        });
     } catch (error) {
         console.error("Error logging in: ", error.message);
         res.status(500).send("Error logging in");
     }
 });
 
-// ✅ Comment POST route
+// ✅ GET PROFILE
+app.get("/api/profile", async (req, res) => {
+    try {
+        const { username } = req.query;
+        if (!username) {
+            return res.status(400).send("Username is required");
+        }
+
+        const user = await User.findOne({ username }).select("-hashedPassword");
+        if (!user) {
+            return res.status(404).send("User not found");
+        }
+
+        res.status(200).json(user);
+    } catch (error) {
+        console.error("Error fetching profile:", error.message);
+        res.status(500).send("Error fetching profile");
+    }
+});
+
+// ✅ POST COMMENT
 app.post("/api/comments", async (req, res) => {
     try {
         const { videoId, username, text } = req.body;
@@ -126,7 +186,7 @@ app.post("/api/comments", async (req, res) => {
     }
 });
 
-// ✅ Comment GET route for a specific video
+// ✅ GET COMMENTS
 app.get("/api/comments/:videoId", async (req, res) => {
     try {
         const { videoId } = req.params;
@@ -138,7 +198,7 @@ app.get("/api/comments/:videoId", async (req, res) => {
     }
 });
 
-// Endpoint for fetching cosmetic products
+// ✅ COSMETIC PRODUCTS
 let cosmeticsData;
 axios.get('https://makeup-api.herokuapp.com/api/v1/products.json')
     .then(response => {
@@ -160,7 +220,7 @@ app.get('/api/Products', async (req, res) => {
     }
 });
 
-// Endpoint for fetching makeup videos from Pexels
+// ✅ MAKEUP VIDEOS FROM PEXELS
 app.get('/api/MakeUpVids', async (req, res) => {
     const client = createClient(process.env.VID_KEY);
     const query = 'african american women applying makeup';
@@ -174,8 +234,8 @@ app.get('/api/MakeUpVids', async (req, res) => {
     }
 });
 
-// Start the server and connect to MongoDB
+// ✅ START SERVER
 app.listen(port, async () => {
     await connectDb();
-    console.log(`Server is running on http://localhost:${port}`);
+    console.log(`🚀 Server is running on http://localhost:${port}`);
 });
