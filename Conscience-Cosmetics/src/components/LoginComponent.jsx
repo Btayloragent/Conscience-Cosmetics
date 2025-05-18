@@ -27,7 +27,7 @@ const LoginComponent = ({ mode, onClose, onLoginSuccess }) => {
       const payload =
         currentMode === 'login'
           ? { username, password }
-          : { username, password, email, avatar: selectedAvatar };
+          : { username, password, email, avatarUrl: selectedAvatar };
 
       const response = await axios.post(url, payload);
 
