@@ -9,14 +9,10 @@ const LoginComponent = ({ mode, onClose, onLoginSuccess }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [currentMode, setCurrentMode] = useState(mode);
 
-  // Avatar selection
-  const [avatarIndex, setAvatarIndex] = useState(0);
-  const getAvatarUrl = (index) => `https://avatar.iran.liara.run/public/girl?index=${index}&gender=female`;
-  const [selectedAvatar, setSelectedAvatar] = useState(getAvatarUrl(avatarIndex));
-
-  useEffect(() => {
-    setSelectedAvatar(getAvatarUrl(avatarIndex));
-  }, [avatarIndex]);
+  // Avatar selection (1–99)
+  const [avatarId, setAvatarId] = useState(1);
+  const getAvatarUrl = (id) => `https://avatar.iran.liara.run/public/${id}.png`;
+  const selectedAvatar = getAvatarUrl(avatarId);
 
   const handleSubmit = async () => {
     setIsLoading(true);
@@ -28,11 +24,10 @@ const LoginComponent = ({ mode, onClose, onLoginSuccess }) => {
           ? 'http://localhost:5001/login'
           : 'http://localhost:5001/signup';
 
-     const payload =
-    currentMode === 'login'
-    ? { username, password }
-    : { username, password, email, avatarUrl: selectedAvatar };  // Use avatarUrl here
-
+      const payload =
+        currentMode === 'login'
+          ? { username, password }
+          : { username, password, email, avatar: selectedAvatar };
 
       const response = await axios.post(url, payload);
 
@@ -160,9 +155,17 @@ const LoginComponent = ({ mode, onClose, onLoginSuccess }) => {
 
       {/* Avatar Selection */}
       {currentMode === 'signup' && (
-        <div style={{ margin: '20px 0', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px' }}>
+        <div
+          style={{
+            margin: '20px 0',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '10px',
+          }}
+        >
           <button
-            onClick={() => setAvatarIndex((prev) => (prev - 1 + 10) % 10)}
+            onClick={() => setAvatarId((prev) => (prev <= 1 ? 99 : prev - 1))}
             style={arrowButtonStyle}
           >
             ◀
@@ -178,7 +181,7 @@ const LoginComponent = ({ mode, onClose, onLoginSuccess }) => {
             }}
           />
           <button
-            onClick={() => setAvatarIndex((prev) => (prev + 1) % 10)}
+            onClick={() => setAvatarId((prev) => (prev >= 99 ? 1 : prev + 1))}
             style={arrowButtonStyle}
           >
             ▶
@@ -224,3 +227,4 @@ const arrowButtonStyle = {
 };
 
 export default LoginComponent;
+
