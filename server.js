@@ -28,21 +28,24 @@ const userSchema = new mongoose.Schema({
     },
     email: {
         type: String,
-        default: '',
-    },
-    bio: {
-        type: String,
-        default: '',
+        required: true,
+        unique: true,
     },
     avatarUrl: {
         type: String,
-        default: '',
+        required: true,
+    },
+    bio: {
+        type: String,
+        default: "",
     },
 });
 
+userSchema.index({ username: 1 });
+
 const User = mongoose.model("User", userSchema);
 
-// ✅ Comment schema
+// Comment schema
 const commentSchema = new mongoose.Schema({
     videoId: {
         type: String,
@@ -62,6 +65,8 @@ const commentSchema = new mongoose.Schema({
     },
 });
 
+commentSchema.index({ videoId: 1 });
+
 const Comment = mongoose.model("Comment", commentSchema);
 
 // Connect to MongoDB
@@ -75,13 +80,18 @@ async function connectDb() {
     }
 }
 
-// ✅ SIGN UP: Create new user and save avatarUrl, email, bio
+// ✅ SIGN UP
 app.post("/signup", async (req, res) => {
     try {
         const { username, password, email, avatarUrl, bio } = req.body;
 
         if (!username || !password || !email || !avatarUrl) {
-            return res.status(400).send("Username, password, email, and avatarUrl are required");
+            return res.status(400).send("Username, password, email, and avatar are required");
+        }
+
+        if (mongoose.connection.readyState !== 1) {
+            console.error("MongoDB connection not ready");
+            return res.status(500).send("Database connection error");
         }
 
         const existingUser = await User.findOne({ username });
@@ -90,6 +100,7 @@ app.post("/signup", async (req, res) => {
         }
 
         const hashedPassword = await bcrypt.hash(password, 10);
+
         const newUser = new User({
             username,
             hashedPassword,
@@ -109,8 +120,18 @@ app.post("/signup", async (req, res) => {
                 bio: newUser.bio,
             },
         });
+
     } catch (error) {
-        console.error("Error signing up: ", error.message);
+        console.error("Signup error:", error);
+
+        if (error.code === 11000) {
+            return res.status(400).send("Username or email already exists");
+        }
+
+        if (error.name === "ValidationError") {
+            return res.status(400).send(error.message);
+        }
+
         res.status(500).send("Error signing up");
     }
 });
@@ -140,7 +161,6 @@ app.post("/login", async (req, res) => {
                 username: user.username,
                 email: user.email,
                 avatarUrl: user.avatarUrl,
-                bio: user.bio,
             },
         });
     } catch (error) {
@@ -221,12 +241,13 @@ app.get('/api/Products', async (req, res) => {
 });
 
 // ✅ MAKEUP VIDEOS FROM PEXELS
+const pexelsClient = createClient(process.env.VID_KEY);
+
 app.get('/api/MakeUpVids', async (req, res) => {
-    const client = createClient(process.env.VID_KEY);
     const query = 'african american women applying makeup';
 
     try {
-        let videos = await client.videos.search({ query, per_page: 9 });
+        const videos = await pexelsClient.videos.search({ query, per_page: 9 });
         res.status(200).send({ videos });
     } catch (error) {
         console.error('Error fetching videos:', error.message);
