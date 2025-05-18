@@ -28,10 +28,11 @@ const LoginComponent = ({ mode, onClose, onLoginSuccess }) => {
           ? 'http://localhost:5001/login'
           : 'http://localhost:5001/signup';
 
-      const payload =
-        currentMode === 'login'
-          ? { username, password }
-          : { username, password, email, avatar: selectedAvatar };
+     const payload =
+    currentMode === 'login'
+    ? { username, password }
+    : { username, password, email, avatarUrl: selectedAvatar };  // Use avatarUrl here
+
 
       const response = await axios.post(url, payload);
 
