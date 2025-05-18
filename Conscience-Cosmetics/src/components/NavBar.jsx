@@ -117,17 +117,23 @@ const NavBar = ({ onSearch }) => {
               </svg>
             </button>
           </div>
+
           <div className="flex items-center gap-4 ml-14">
             {isLoggedIn ? (
               <div className="flex items-center text-beige hover:text-[#007BFF] space-x-3">
-                {avatarUrl && (
-                  <img
-                    src={avatarUrl}
-                    alt="User Avatar"
-                    className="w-8 h-8 rounded-full object-cover"
-                  />
-                )}
-                <span>Welcome, {username}!</span>
+                <Link
+                  to={`/profile/${username}`}
+                  className="flex items-center space-x-3 hover:underline"
+                >
+                  {avatarUrl && (
+                    <img
+                      src={avatarUrl}
+                      alt="User Avatar"
+                      className="w-8 h-8 rounded-full object-cover cursor-pointer"
+                    />
+                  )}
+                  <span>Welcome, {username}!</span>
+                </Link>
                 <button
                   onClick={handleLogout}
                   className="ml-4 text-beige hover:text-[#007BFF]"
@@ -153,6 +159,7 @@ const NavBar = ({ onSearch }) => {
             )}
           </div>
         </div>
+
         <div className="flex-none gap-1">
           <UploadButton />
         </div>
@@ -213,6 +220,7 @@ const NavBar = ({ onSearch }) => {
 };
 
 export default NavBar;
+
 
 
 

@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';  // import useParams
 import axios from 'axios';
 
 const ProfilePage = () => {
+  const { userId } = useParams();  // get userId from the URL
   const [profile, setProfile] = useState(null);
 
   useEffect(() => {
     const fetchProfile = async () => {
-      const userId = localStorage.getItem('userId');
       try {
         const res = await axios.get(`/api/profile?userId=${userId}`);
         setProfile(res.data);
@@ -16,7 +17,7 @@ const ProfilePage = () => {
     };
 
     fetchProfile();
-  }, []);
+  }, [userId]);
 
   if (!profile) return <p>Loading profile...</p>;
 
