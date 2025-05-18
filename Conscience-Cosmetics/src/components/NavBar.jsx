@@ -6,13 +6,12 @@ import LoginComponent from '../components/LoginComponent'; // Import the LoginCo
 
 const NavBar = ({ onSearch }) => {
   const [searchTerm, setSearchTerm] = useState('');
-  const [isModalOpen, setIsModalOpen] = useState(false); // State to manage modal visibility
-  const [authMode, setAuthMode] = useState('login'); // Default to 'login'
-  const [isLoggedIn, setIsLoggedIn] = useState(false); // Track if user is logged in
-  const [username, setUsername] = useState(''); // Store the user's name after login
-  const [avatarUrl, setAvatarUrl] = useState(''); // Store user's avatar URL
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [authMode, setAuthMode] = useState('login');
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [username, setUsername] = useState('');
+  const [avatarUrl, setAvatarUrl] = useState('');
 
-  // Load login state, username, and avatarUrl from localStorage on mount
   useEffect(() => {
     const savedUsername = localStorage.getItem('username');
     const savedLoginState = localStorage.getItem('isLoggedIn');
@@ -25,7 +24,6 @@ const NavBar = ({ onSearch }) => {
     }
   }, []);
 
-  // Save login state, username, and avatarUrl to localStorage when updated
   useEffect(() => {
     if (isLoggedIn && username) {
       localStorage.setItem('isLoggedIn', 'true');
@@ -48,29 +46,28 @@ const NavBar = ({ onSearch }) => {
 
   const handleSearchClick = () => {
     if (searchTerm) {
-      onSearch(searchTerm); // Call the search handler passed from App.js
+      onSearch(searchTerm);
     }
   };
 
   const openModal = (mode) => {
-    setAuthMode(mode); // Set the auth mode ('login' or 'signup')
-    setIsModalOpen(true); // Open the modal
+    setAuthMode(mode);
+    setIsModalOpen(true);
   };
 
   const closeModal = () => {
-    setIsModalOpen(false); // Close the modal
+    setIsModalOpen(false);
   };
 
-  // Handle the successful login and store the username and avatarUrl
-  // NOTE: LoginComponent must call this with (username, avatarUrl)
+  // This function must be called by LoginComponent when login/signup succeeds:
+  // It updates username and avatarUrl, then closes modal.
   const handleLoginSuccess = (userName, userAvatarUrl) => {
     setIsLoggedIn(true);
     setUsername(userName);
     setAvatarUrl(userAvatarUrl || '');
-    closeModal(); // Close the login modal after successful login
+    closeModal();
   };
 
-  // Handle logout action
   const handleLogout = () => {
     setIsLoggedIn(false);
     setUsername('');
@@ -95,13 +92,13 @@ const NavBar = ({ onSearch }) => {
               type="text"
               placeholder="Search"
               value={searchTerm}
-              onChange={handleInputChange} // Update state with input value
+              onChange={handleInputChange}
               className="input input-bordered w-full bg-white border-black text-black pr-10"
             />
             <button
               className="absolute right-0 top-0 bottom-0 mt-auto mb-auto mr-2 bg-transparent border-none flex items-center justify-center"
-              style={{ height: '100%' }} // Adjust the button height to match the input
-              onClick={handleSearchClick} // Trigger search on button click
+              style={{ height: '100%' }}
+              onClick={handleSearchClick}
               aria-label="Search"
             >
               <svg
@@ -120,17 +117,23 @@ const NavBar = ({ onSearch }) => {
               </svg>
             </button>
           </div>
+
           <div className="flex items-center gap-4 ml-14">
             {isLoggedIn ? (
               <div className="flex items-center text-beige hover:text-[#007BFF] space-x-3">
-                {avatarUrl && (
-                  <img
-                    src={avatarUrl}
-                    alt="User Avatar"
-                    className="w-8 h-8 rounded-full object-cover"
-                  />
-                )}
-                <span>Welcome, {username}!</span>
+                <Link
+                  to={`/profile/${username}`}
+                  className="flex items-center space-x-3 hover:underline"
+                >
+                  {avatarUrl && (
+                    <img
+                      src={avatarUrl}
+                      alt="User Avatar"
+                      className="w-8 h-8 rounded-full object-cover cursor-pointer"
+                    />
+                  )}
+                  <span>Welcome, {username}!</span>
+                </Link>
                 <button
                   onClick={handleLogout}
                   className="ml-4 text-beige hover:text-[#007BFF]"
@@ -141,13 +144,13 @@ const NavBar = ({ onSearch }) => {
             ) : (
               <>
                 <button
-                  onClick={() => openModal('login')} // Pass 'login' as the mode
+                  onClick={() => openModal('login')}
                   className="text-beige hover:text-[#007BFF]"
                 >
                   Log In
                 </button>
                 <button
-                  onClick={() => openModal('signup')} // Pass 'signup' as the mode
+                  onClick={() => openModal('signup')}
                   className="text-beige hover:text-[#007BFF]"
                 >
                   Sign Up
@@ -156,6 +159,7 @@ const NavBar = ({ onSearch }) => {
             )}
           </div>
         </div>
+
         <div className="flex-none gap-1">
           <UploadButton />
         </div>
@@ -172,23 +176,22 @@ const NavBar = ({ onSearch }) => {
             justifyContent: 'center',
             border: 'none',
             margin: '0',
-            backgroundColor: 'rgba(0, 0, 0, 0.5)', // Semi-transparent background
-            zIndex: 1000, // Ensure it's above other elements
-            position: 'fixed', // Make it fixed to the viewport
-            top: '30%', // Move it up to 30% from the top
-            left: '50%', // Center horizontally
-            transform: 'translate(-50%, -50%)', // Center vertically
+            backgroundColor: 'rgba(0, 0, 0, 0.5)',
+            zIndex: 1000,
+            position: 'fixed',
+            top: '30%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
           }}
         >
           <div
             style={{
-              width: '400px', // Set width to match LoginComponent
-              borderRadius: '8px', // Rounded corners
-              padding: '20px', // Padding for inner content
-              position: 'relative', // Allow absolute positioning of the close button
+              width: '400px',
+              borderRadius: '8px',
+              padding: '20px',
+              position: 'relative',
             }}
           >
-            {/* Close Button */}
             <button
               type="button"
               className="btn btn-sm btn-circle btn-ghost absolute right-6 top-8"
@@ -198,16 +201,16 @@ const NavBar = ({ onSearch }) => {
                 color: '#D2B48C',
                 fontSize: '20px',
                 cursor: 'pointer',
-                zIndex: 1050, // Make sure this is higher than the modal content's zIndex
+                zIndex: 1050,
               }}
             >
               ✕
             </button>
 
             <LoginComponent
-              mode={authMode} // Pass the auth mode ('login' or 'signup') to the LoginComponent
-              onClose={closeModal} // Pass the close modal function
-              onLoginSuccess={handleLoginSuccess} // Pass the handler for login success
+              mode={authMode}
+              onClose={closeModal}
+              onLoginSuccess={handleLoginSuccess} // <- Make sure this is called properly inside LoginComponent!
             />
           </div>
         </dialog>
@@ -217,5 +220,7 @@ const NavBar = ({ onSearch }) => {
 };
 
 export default NavBar;
+
+
 
 

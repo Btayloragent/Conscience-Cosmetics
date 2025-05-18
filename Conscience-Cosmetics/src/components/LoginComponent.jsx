@@ -35,7 +35,11 @@ const LoginComponent = ({ mode, onClose, onLoginSuccess }) => {
         const { token, user } = response.data;
         localStorage.setItem('token', token);
         alert(`${currentMode === 'login' ? 'Login' : 'Sign Up'} successful!`);
-        onLoginSuccess(user.username);
+
+        // Use avatarUrl from server if available (login), else fallback to selectedAvatar (signup)
+        const avatarUrl = user.avatarUrl || selectedAvatar;
+
+        onLoginSuccess(user.username, avatarUrl);
         onClose();
       }
     } catch (error) {
@@ -200,6 +204,7 @@ const LoginComponent = ({ mode, onClose, onLoginSuccess }) => {
           color: 'white',
           cursor: 'pointer',
         }}
+        disabled={isLoading}
       >
         {currentMode === 'login' ? 'Login' : 'Sign Up'}
       </button>
