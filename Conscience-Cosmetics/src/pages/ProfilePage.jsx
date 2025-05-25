@@ -36,7 +36,6 @@ const ProfilePage = () => {
     setBannerPreview(null);
   };
 
-  // Handle file selection
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -45,20 +44,11 @@ const ProfilePage = () => {
     }
   };
 
-  // Simulate saving the banner
   const handleSaveBanner = async () => {
     if (!newBannerFile) return;
 
     try {
       setIsSaving(true);
-
-      // For real app: send formData with the file to backend
-      // Example:
-      // const formData = new FormData();
-      // formData.append("banner", newBannerFile);
-      // await axios.post(`/api/profile/${userId}/banner`, formData);
-
-      // Simulate saving and update local profile banner URL with preview
       setTimeout(() => {
         setProfile((prev) => ({
           ...prev,
@@ -83,10 +73,8 @@ const ProfilePage = () => {
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-200">
-      {/* NavBar at top */}
       <NavBar />
 
-      {/* Main Page Content (flex-grow makes this take up all space between NavBar and Footer) */}
       <div className="flex-grow">
         {/* Profile Banner */}
         <div
@@ -94,16 +82,14 @@ const ProfilePage = () => {
           style={{
             backgroundImage: profile.bannerUrl
               ? `url(${profile.bannerUrl})`
-              : "linear-gradient(to right, #6366f1, #8b5cf6)", // fallback gradient
+              : "linear-gradient(to right, #6366f1, #8b5cf6)",
           }}
         >
-          {/* Edit Icon top-right */}
           <button
             onClick={handleEditBanner}
             className="absolute top-4 right-4 p-2 bg-white bg-opacity-80 rounded-full hover:bg-opacity-100 shadow-md focus:outline-none"
             title="Edit Banner"
           >
-            {/* Pencil icon SVG */}
             <svg
               xmlns="http://www.w3.org/2000/svg"
               className="h-6 w-6 text-indigo-700"
@@ -121,33 +107,65 @@ const ProfilePage = () => {
           </button>
 
           <div className="h-full flex flex-col justify-center items-center text-center">
-            {/* Avatar overlapping bottom of banner */}
-            <img
-              src={profile.avatarUrl || "/default-avatar.png"}
-              alt="Avatar"
-              className="w-80 h-80 rounded-full border-4 border-white shadow-lg absolute left-1/2 transform -translate-x-1/2 bg-white"
+            {/* Avatar */}
+            <div
+              className="absolute left-1/2 transform -translate-x-1/2 rounded-full p-2 bg-gray-200 shadow-lg z-20"
               style={{ bottom: "-10rem" }}
-            />
-            <div className="invisible">{/* Keeps height in layout */}</div>
+            >
+              <img
+                src={profile.avatarUrl || "/default-avatar.png"}
+                alt="Avatar"
+                className="w-80 h-80 rounded-full border-4 border-white"
+              />
+            </div>
+            <div className="invisible">{/* Placeholder */}</div>
           </div>
         </div>
 
-        {/* Main Content */}
-        <div className="flex pt-96">
-          <SideBar />
-          <div className="flex-1 p-6">
-            <h2 className="text-xl font-semibold text-gray-800">About</h2>
-            <p className="text-gray-700 mt-2">{profile.bio || "No bio provided."}</p>
-            <h1 className="text-3xl font-bold mt-8">{profile.username}</h1>
-            <p className="text-gray-600">{profile.email}</p>
+        {/* Content Area with Sidebar, About (Left) and Links (Right) */}
+        <div className="flex pt-24 px-4 gap-10 justify-start relative z-10">
+          {/* Sidebar */}
+          <div style={{ width: "250px" }}>
+            <SideBar />
+          </div>
+
+          {/* About Section (Left) */}
+          <div
+            className="p-8 bg-gray-500 bg-opacity-30 rounded-lg"
+            style={{
+              maxWidth: "30vw",
+              width: "100%",
+              height: "500px",
+              overflowY: "auto",
+            }}
+          >
+            <h2 className="text-xl font-semibold text-white">About</h2>
+            <p className="text-gray-200 mt-2">{profile.bio || "No bio provided."}</p>
+            <h1 className="text-3xl font-bold mt-8 text-white">{profile.username}</h1>
+            <p className="text-gray-300">{profile.email}</p>
+          </div>
+
+          {/* Links Section (Right) */}
+          <div
+            className="p-8 bg-gray-500 bg-opacity-30 rounded-lg"
+            style={{
+              maxWidth: "30vw",
+              width: "100%",
+              height: "500px",
+              overflowY: "auto",
+            }}
+          >
+            <h2 className="text-xl font-semibold text-white">Links</h2>
+            <p className="text-gray-200 mt-2">Website: example.com</p>
+            <p className="text-gray-200">Twitter: @example</p>
+            <p className="text-gray-200">GitHub: github.com/example</p>
           </div>
         </div>
       </div>
 
-      {/* Footer pinned to the bottom always */}
       <Footer />
 
-      {/* Modal for editing banner */}
+      {/* Modal */}
       {isModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
           <div className="bg-white rounded-lg shadow-lg p-6 w-96 max-w-full relative">
@@ -191,4 +209,5 @@ const ProfilePage = () => {
 };
 
 export default ProfilePage;
+
 
