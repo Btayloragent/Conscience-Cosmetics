@@ -71,6 +71,15 @@ const ProfilePage = () => {
     );
   }
 
+  // Here is the placeholder avatar URL you can replace if you want:
+  const placeholderAvatar = "https://i.pravatar.cc/300";
+
+  // Use profile.avatarUrl only if it's valid and not the string "avatarUrl"
+  const avatarSrc =
+    profile.avatarUrl && profile.avatarUrl !== "avatarUrl"
+      ? profile.avatarUrl
+      : placeholderAvatar;
+
   return (
     <div className="flex flex-col min-h-screen bg-gray-200">
       <NavBar />
@@ -113,7 +122,7 @@ const ProfilePage = () => {
               style={{ bottom: "-10rem" }}
             >
               <img
-                src={profile.avatarUrl || "/default-avatar.png"}
+                src={avatarSrc}
                 alt="Avatar"
                 className="w-96 h-96 rounded-full border-4 border-white"
               />
