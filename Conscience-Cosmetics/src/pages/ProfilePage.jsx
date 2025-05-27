@@ -8,10 +8,18 @@ import Footer from "../components/Footer";
 const ProfilePage = () => {
   const { userId } = useParams();
   const [profile, setProfile] = useState(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  // Banner state
+  const [isBannerModalOpen, setIsBannerModalOpen] = useState(false);
   const [newBannerFile, setNewBannerFile] = useState(null);
   const [bannerPreview, setBannerPreview] = useState(null);
-  const [isSaving, setIsSaving] = useState(false);
+  const [isSavingBanner, setIsSavingBanner] = useState(false);
+
+  // Avatar state
+  const [isAvatarModalOpen, setIsAvatarModalOpen] = useState(false);
+  const [newAvatarFile, setNewAvatarFile] = useState(null);
+  const [avatarPreview, setAvatarPreview] = useState(null);
+  const [isSavingAvatar, setIsSavingAvatar] = useState(false);
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -26,40 +34,69 @@ const ProfilePage = () => {
     fetchProfile();
   }, [userId]);
 
-  const handleEditBanner = () => {
-    setIsModalOpen(true);
-  };
-
-  const handleCloseModal = () => {
-    setIsModalOpen(false);
+  // Banner handlers
+  const handleEditBanner = () => setIsBannerModalOpen(true);
+  const handleCloseBannerModal = () => {
+    setIsBannerModalOpen(false);
     setNewBannerFile(null);
     setBannerPreview(null);
   };
-
-  const handleFileChange = (e) => {
+  const handleBannerFileChange = (e) => {
     const file = e.target.files[0];
     if (file) {
       setNewBannerFile(file);
       setBannerPreview(URL.createObjectURL(file));
     }
   };
-
   const handleSaveBanner = async () => {
     if (!newBannerFile) return;
-
     try {
-      setIsSaving(true);
+      setIsSavingBanner(true);
+      // Simulate save/upload delay
       setTimeout(() => {
         setProfile((prev) => ({
           ...prev,
           bannerUrl: bannerPreview,
         }));
-        setIsSaving(false);
-        handleCloseModal();
+        setIsSavingBanner(false);
+        handleCloseBannerModal();
       }, 1500);
     } catch (err) {
       console.error("Failed to save banner:", err);
-      setIsSaving(false);
+      setIsSavingBanner(false);
+    }
+  };
+
+  // Avatar handlers
+  const handleEditAvatar = () => setIsAvatarModalOpen(true);
+  const handleCloseAvatarModal = () => {
+    setIsAvatarModalOpen(false);
+    setNewAvatarFile(null);
+    setAvatarPreview(null);
+  };
+  const handleAvatarFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setNewAvatarFile(file);
+      setAvatarPreview(URL.createObjectURL(file));
+    }
+  };
+  const handleSaveAvatar = async () => {
+    if (!newAvatarFile) return;
+    try {
+      setIsSavingAvatar(true);
+      // Simulate save/upload delay
+      setTimeout(() => {
+        setProfile((prev) => ({
+          ...prev,
+          avatarUrl: avatarPreview,
+        }));
+        setIsSavingAvatar(false);
+        handleCloseAvatarModal();
+      }, 1500);
+    } catch (err) {
+      console.error("Failed to save avatar:", err);
+      setIsSavingAvatar(false);
     }
   };
 
@@ -71,10 +108,7 @@ const ProfilePage = () => {
     );
   }
 
-  // Here is the placeholder avatar URL you can replace if you want:
   const placeholderAvatar = "https://i.pravatar.cc/300";
-
-  // Use profile.avatarUrl only if it's valid and not the string "avatarUrl"
   const avatarSrc =
     profile.avatarUrl && profile.avatarUrl !== "avatarUrl"
       ? profile.avatarUrl
@@ -116,29 +150,60 @@ const ProfilePage = () => {
           </button>
 
           <div className="h-full flex flex-col justify-center items-center text-center">
-            {/* Avatar */}
+            {/* Avatar container with relative position */}
             <div
-              className="absolute left-1/2 transform -translate-x-1/2 rounded-full p-2 bg-gray-200 shadow-lg z-20"
+              className="relative inline-block rounded-full p-2 bg-gray-200 shadow-lg z-20"
               style={{ bottom: "-10rem" }}
             >
+              {/* Avatar image */}
               <img
                 src={avatarSrc}
                 alt="Avatar"
                 className="w-96 h-96 rounded-full border-4 border-white"
               />
+
+              {/* Pencil edit icon on top right of avatar */}
+              <button
+                onClick={handleEditAvatar}
+                title="Edit Avatar"
+                style={{
+                  position: "absolute",
+                  top: 50,
+                  right: 80,
+                  backgroundColor: "white",
+                  borderRadius: "50%",
+                  padding: 6,
+                  border: "none",
+                  cursor: "pointer",
+                  boxShadow: "0 0 4px rgba(0,0,0,0.2)",
+                  zIndex: 10,
+                }}
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  height="15"
+                  width="15"
+                  fill="none"
+                  stroke="indigo"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  viewBox="0 0 24 24"
+                >
+                  <path d="M15.232 5.232l3.536 3.536M16.5 3.75a2.121 2.121 0 013 3L7.5 18.75H4.5v-3l12-12z" />
+                </svg>
+              </button>
             </div>
             <div className="invisible">{/* Placeholder */}</div>
           </div>
         </div>
 
-        {/* Content Area with Sidebar, About (Left) and Links (Right) */}
+        {/* Content Area */}
         <div className="flex pt-24 px-4 gap-10 justify-start relative z-10">
-          {/* Sidebar */}
           <div style={{ width: "250px" }}>
             <SideBar />
           </div>
 
-          {/* About Section (Left) */}
           <div
             className="p-8 bg-gray-500 bg-opacity-30 rounded-lg"
             style={{
@@ -154,7 +219,6 @@ const ProfilePage = () => {
             <p className="text-gray-300">{profile.email}</p>
           </div>
 
-          {/* Links Section (Right) - Split Vertically */}
           <div
             className="flex flex-col gap-4"
             style={{
@@ -163,14 +227,12 @@ const ProfilePage = () => {
               height: "500px",
             }}
           >
-            {/* Top Links Block */}
             <div className="p-6 bg-gray-500 bg-opacity-30 rounded-lg flex-1 overflow-auto">
               <h2 className="text-xl font-semibold text-white">Links - Personal</h2>
               <p className="text-gray-200 mt-2">Website: example.com</p>
               <p className="text-gray-200">Twitter: @example</p>
             </div>
 
-            {/* Bottom Links Block */}
             <div className="p-6 bg-gray-500 bg-opacity-30 rounded-lg flex-1 overflow-auto">
               <h2 className="text-xl font-semibold text-white">Links - Projects</h2>
               <p className="text-gray-200">GitHub: github.com/example</p>
@@ -181,13 +243,13 @@ const ProfilePage = () => {
 
       <Footer />
 
-      {/* Modal */}
-      {isModalOpen && (
+      {/* Banner Modal */}
+      {isBannerModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
           <div className="bg-white rounded-lg shadow-lg p-6 w-96 max-w-full relative">
             <h3 className="text-xl font-semibold mb-4">Edit Banner</h3>
 
-            <input type="file" accept="image/*" onChange={handleFileChange} />
+            <input type="file" accept="image/*" onChange={handleBannerFileChange} />
 
             {bannerPreview && (
               <img
@@ -199,22 +261,62 @@ const ProfilePage = () => {
 
             <div className="mt-6 flex justify-end space-x-4">
               <button
-                onClick={handleCloseModal}
+                onClick={handleCloseBannerModal}
                 className="px-4 py-2 rounded bg-gray-300 hover:bg-gray-400"
-                disabled={isSaving}
+                disabled={isSavingBanner}
               >
                 Cancel
               </button>
               <button
                 onClick={handleSaveBanner}
-                disabled={!newBannerFile || isSaving}
+                disabled={!newBannerFile || isSavingBanner}
                 className={`px-4 py-2 rounded text-white ${
-                  newBannerFile && !isSaving
+                  newBannerFile && !isSavingBanner
                     ? "bg-indigo-600 hover:bg-indigo-700"
                     : "bg-indigo-300 cursor-not-allowed"
                 }`}
               >
-                {isSaving ? "Saving..." : "Save"}
+                {isSavingBanner ? "Saving..." : "Save"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Avatar Modal */}
+      {isAvatarModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-white rounded-lg shadow-lg p-6 w-96 max-w-full relative">
+            <h3 className="text-xl font-semibold mb-4">Edit Avatar</h3>
+
+            <input type="file" accept="image/*" onChange={handleAvatarFileChange} />
+
+            {avatarPreview && (
+              <img
+                src={avatarPreview}
+                alt="Avatar Preview"
+                className="mt-4 w-40 h-40 object-cover rounded-full border"
+              />
+            )}
+
+            <div className="mt-6 flex justify-end space-x-4">
+              <button
+                onClick={handleCloseAvatarModal}
+                className="px-4 py-2 rounded bg-gray-300 hover:bg-gray-400"
+                disabled={isSavingAvatar}
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleSaveAvatar}
+                disabled={!newAvatarFile || isSavingAvatar}
+                className={`px-4 py-2 rounded text-white ${
+                  newAvatarFile && !isSavingAvatar
+                    ? "bg-indigo-600 hover:bg-indigo-700"
+                    : "bg-indigo-300 cursor-not-allowed"
+                }`}
+              >
+                {isSavingAvatar ? "Saving..." : "Save"}
               </button>
             </div>
           </div>
@@ -225,6 +327,4 @@ const ProfilePage = () => {
 };
 
 export default ProfilePage;
-
-
 
