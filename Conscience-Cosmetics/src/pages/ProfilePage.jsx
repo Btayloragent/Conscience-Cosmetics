@@ -115,7 +115,7 @@ const ProfilePage = () => {
               <img
                 src={profile.avatarUrl || "/default-avatar.png"}
                 alt="Avatar"
-                className="w-80 h-80 rounded-full border-4 border-white"
+                className="w-96 h-96 rounded-full border-4 border-white"
               />
             </div>
             <div className="invisible">{/* Placeholder */}</div>
@@ -145,20 +145,27 @@ const ProfilePage = () => {
             <p className="text-gray-300">{profile.email}</p>
           </div>
 
-          {/* Links Section (Right) */}
+          {/* Links Section (Right) - Split Vertically */}
           <div
-            className="p-8 bg-gray-500 bg-opacity-30 rounded-lg"
+            className="flex flex-col gap-4"
             style={{
               maxWidth: "30vw",
               width: "100%",
               height: "500px",
-              overflowY: "auto",
             }}
           >
-            <h2 className="text-xl font-semibold text-white">Links</h2>
-            <p className="text-gray-200 mt-2">Website: example.com</p>
-            <p className="text-gray-200">Twitter: @example</p>
-            <p className="text-gray-200">GitHub: github.com/example</p>
+            {/* Top Links Block */}
+            <div className="p-6 bg-gray-500 bg-opacity-30 rounded-lg flex-1 overflow-auto">
+              <h2 className="text-xl font-semibold text-white">Links - Personal</h2>
+              <p className="text-gray-200 mt-2">Website: example.com</p>
+              <p className="text-gray-200">Twitter: @example</p>
+            </div>
+
+            {/* Bottom Links Block */}
+            <div className="p-6 bg-gray-500 bg-opacity-30 rounded-lg flex-1 overflow-auto">
+              <h2 className="text-xl font-semibold text-white">Links - Projects</h2>
+              <p className="text-gray-200">GitHub: github.com/example</p>
+            </div>
           </div>
         </div>
       </div>
@@ -209,5 +216,6 @@ const ProfilePage = () => {
 };
 
 export default ProfilePage;
+
 
 
