@@ -21,11 +21,16 @@ const ProfilePage = () => {
   const [avatarPreview, setAvatarPreview] = useState(null);
   const [isSavingAvatar, setIsSavingAvatar] = useState(false);
 
+  // Edit Page (bio editing)
+  const [isEditingBio, setIsEditingBio] = useState(false);
+  const [editedBio, setEditedBio] = useState("");
+
   useEffect(() => {
     const fetchProfile = async () => {
       try {
         const res = await axios.get(`/api/profile?userId=${userId}`);
         setProfile(res.data);
+        setEditedBio(res.data.bio || "");
       } catch (err) {
         console.error("Failed to fetch profile:", err);
       }
@@ -98,6 +103,21 @@ const ProfilePage = () => {
       console.error("Failed to save avatar:", err);
       setIsSavingAvatar(false);
     }
+  };
+
+  // Bio editing handlers
+  const handleStartEditBio = () => setIsEditingBio(true);
+  const handleCancelEditBio = () => {
+    setIsEditingBio(false);
+    setEditedBio(profile.bio || "");
+  };
+  const handleSaveBio = () => {
+    setProfile((prev) => ({
+      ...prev,
+      bio: editedBio,
+    }));
+    setIsEditingBio(false);
+    // Add backend save here if needed with axios.put/post
   };
 
   if (!profile) {
@@ -213,8 +233,46 @@ const ProfilePage = () => {
               overflowY: "auto",
             }}
           >
-            <h2 className="text-xl font-semibold text-white">About</h2>
-            <p className="text-gray-200 mt-2">{profile.bio || "No bio provided."}</p>
+            <h2 className="text-xl font-semibold text-white mb-1">About</h2>
+
+<div className="relative bg-gray-600 bg-opacity-20 p-4 rounded min-h-[100px]">
+  {!isEditingBio && (
+    <>
+      <p className="text-gray-200">{profile.bio || "No bio provided."}</p>
+      <button
+        onClick={handleStartEditBio}
+        className="absolute bottom-2 right-2 text-indigo-300 hover:text-indigo-100 text-sm px-3 py-1 rounded border border-indigo-300"
+      >
+        Edit Bio
+      </button>
+    </>
+  )}
+
+  {isEditingBio && (
+    <>
+      <textarea
+        className="w-full h-32 p-2 rounded border border-gray-300 text-black"
+        value={editedBio}
+        onChange={(e) => setEditedBio(e.target.value)}
+      />
+      <div className="mt-2 flex space-x-2">
+        <button
+          onClick={handleSaveBio}
+          className="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700"
+        >
+          Save
+        </button>
+        <button
+          onClick={handleCancelEditBio}
+          className="px-4 py-2 bg-gray-400 text-black rounded hover:bg-gray-500"
+        >
+          Cancel
+        </button>
+      </div>
+    </>
+  )}
+</div>
+
             <h1 className="text-3xl font-bold mt-8 text-white">{profile.username}</h1>
             <p className="text-gray-300">{profile.email}</p>
           </div>
@@ -229,13 +287,19 @@ const ProfilePage = () => {
           >
             <div className="p-6 bg-gray-500 bg-opacity-30 rounded-lg flex-1 overflow-auto">
               <h2 className="text-xl font-semibold text-white">Links - Personal</h2>
-              <p className="text-gray-200 mt-2">Website: example.com</p>
-              <p className="text-gray-200">Twitter: @example</p>
+              <p className="text-gray-300 mt-2">
+                <a href={profile.website} target="_blank" rel="noreferrer" className="hover:underline">
+                  {profile.website || "No personal website"}
+                </a>
+              </p>
+              <p className="text-gray-300 mt-2">{profile.phone}</p>
             </div>
-
             <div className="p-6 bg-gray-500 bg-opacity-30 rounded-lg flex-1 overflow-auto">
-              <h2 className="text-xl font-semibold text-white">Links - Projects</h2>
-              <p className="text-gray-200">GitHub: github.com/example</p>
+              <h2 className="text-xl font-semibold text-white">Social Links</h2>
+              <p className="text-gray-300 mt-2">{profile.facebook}</p>
+              <p className="text-gray-300 mt-2">{profile.twitter}</p>
+              <p className="text-gray-300 mt-2">{profile.instagram}</p>
+              <p className="text-gray-300 mt-2">{profile.linkedin}</p>
             </div>
           </div>
         </div>
@@ -245,25 +309,39 @@ const ProfilePage = () => {
 
       {/* Banner Modal */}
       {isBannerModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="bg-white rounded-lg shadow-lg p-6 w-96 max-w-full relative">
-            <h3 className="text-xl font-semibold mb-4">Edit Banner</h3>
+        <div
+          className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-70 z-50"
+          onClick={handleCloseBannerModal}
+        >
+          <div
+            className="bg-white p-6 rounded shadow-lg w-96"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h3 className="text-lg font-semibold mb-4">Change Banner</h3>
 
-            <input type="file" accept="image/*" onChange={handleBannerFileChange} />
+            <div className="mb-4">
+              {bannerPreview ? (
+                <img
+                  src={bannerPreview}
+                  alt="Banner preview"
+                  className="w-full h-48 object-cover rounded"
+                />
+              ) : (
+                <p>No new banner selected</p>
+              )}
+            </div>
 
-            {bannerPreview && (
-              <img
-                src={bannerPreview}
-                alt="Banner Preview"
-                className="mt-4 w-full h-40 object-cover rounded-md border"
-              />
-            )}
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handleBannerFileChange}
+              className="mb-4"
+            />
 
-            <div className="mt-6 flex justify-end space-x-4">
+            <div className="flex justify-end space-x-3">
               <button
                 onClick={handleCloseBannerModal}
-                className="px-4 py-2 rounded bg-gray-300 hover:bg-gray-400"
-                disabled={isSavingBanner}
+                className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400"
               >
                 Cancel
               </button>
@@ -285,25 +363,39 @@ const ProfilePage = () => {
 
       {/* Avatar Modal */}
       {isAvatarModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="bg-white rounded-lg shadow-lg p-6 w-96 max-w-full relative">
-            <h3 className="text-xl font-semibold mb-4">Edit Avatar</h3>
+        <div
+          className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-70 z-50"
+          onClick={handleCloseAvatarModal}
+        >
+          <div
+            className="bg-white p-6 rounded shadow-lg w-96"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h3 className="text-lg font-semibold mb-4">Change Avatar</h3>
 
-            <input type="file" accept="image/*" onChange={handleAvatarFileChange} />
+            <div className="mb-4 flex justify-center">
+              {avatarPreview ? (
+                <img
+                  src={avatarPreview}
+                  alt="Avatar preview"
+                  className="w-48 h-48 rounded-full object-cover"
+                />
+              ) : (
+                <p>No new avatar selected</p>
+              )}
+            </div>
 
-            {avatarPreview && (
-              <img
-                src={avatarPreview}
-                alt="Avatar Preview"
-                className="mt-4 w-40 h-40 object-cover rounded-full border"
-              />
-            )}
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handleAvatarFileChange}
+              className="mb-4"
+            />
 
-            <div className="mt-6 flex justify-end space-x-4">
+            <div className="flex justify-end space-x-3">
               <button
                 onClick={handleCloseAvatarModal}
-                className="px-4 py-2 rounded bg-gray-300 hover:bg-gray-400"
-                disabled={isSavingAvatar}
+                className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400"
               >
                 Cancel
               </button>
