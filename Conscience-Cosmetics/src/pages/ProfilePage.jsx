@@ -233,18 +233,18 @@ const ProfilePage = () => {
               overflowY: "auto",
             }}
           >
-            <h2 className="text-xl font-semibold text-white mb-1">About</h2>
+            <h2 className="text-xl font-semibold text-blue mb-1">About</h2>
 
-<div className="relative bg-gray-600 bg-opacity-20 p-4 rounded min-h-[100px]">
+<div className="relative p-4 rounded min-h-[100px]">
   {!isEditingBio && (
     <>
-      <p className="text-gray-200">{profile.bio || "No bio provided."}</p>
-      <button
-        onClick={handleStartEditBio}
-        className="absolute bottom-2 right-2 text-indigo-300 hover:text-indigo-100 text-sm px-3 py-1 rounded border border-indigo-300"
-      >
-        Edit Bio
-      </button>
+      <p className="text-blue-600">{profile.bio || "No bio provided."}</p>
+    <button
+  onClick={handleStartEditBio}
+  className="absolute bottom-2 right-2 bg-blue-600 text-white hover:bg-blue-700 text-sm px-3 py-1 rounded"
+>
+  Edit Bio
+</button>
     </>
   )}
 
@@ -255,7 +255,7 @@ const ProfilePage = () => {
         value={editedBio}
         onChange={(e) => setEditedBio(e.target.value)}
       />
-      <div className="mt-2 flex space-x-2">
+      <div className="mt-2 flex justify-end space-x-2">
         <button
           onClick={handleSaveBio}
           className="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700"
@@ -273,6 +273,7 @@ const ProfilePage = () => {
   )}
 </div>
 
+
             <h1 className="text-3xl font-bold mt-8 text-white">{profile.username}</h1>
             <p className="text-gray-300">{profile.email}</p>
           </div>
@@ -286,8 +287,8 @@ const ProfilePage = () => {
             }}
           >
             <div className="p-6 bg-gray-500 bg-opacity-30 rounded-lg flex-1 overflow-auto">
-              <h2 className="text-xl font-semibold text-white">Links - Personal</h2>
-              <p className="text-gray-300 mt-2">
+              <h2 className="text-xl font-semibold text-blue">Links - Personal</h2>
+              <p className="text-blue-600 mt-2">
                 <a href={profile.website} target="_blank" rel="noreferrer" className="hover:underline">
                   {profile.website || "No personal website"}
                 </a>
@@ -295,7 +296,7 @@ const ProfilePage = () => {
               <p className="text-gray-300 mt-2">{profile.phone}</p>
             </div>
             <div className="p-6 bg-gray-500 bg-opacity-30 rounded-lg flex-1 overflow-auto">
-              <h2 className="text-xl font-semibold text-white">Social Links</h2>
+              <h2 className="text-xl font-semibold text-blue">Social Links</h2>
               <p className="text-gray-300 mt-2">{profile.facebook}</p>
               <p className="text-gray-300 mt-2">{profile.twitter}</p>
               <p className="text-gray-300 mt-2">{profile.instagram}</p>
