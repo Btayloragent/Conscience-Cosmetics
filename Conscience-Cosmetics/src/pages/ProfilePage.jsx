@@ -179,7 +179,7 @@ const ProfilePage = () => {
               <img
                 src={avatarSrc}
                 alt="Avatar"
-                className="w-96 h-96 rounded-full border-4 border-white"
+                className="w-96 h-96 rounded-full"
               />
 
               {/* Pencil edit icon on top right of avatar */}
@@ -235,17 +235,16 @@ const ProfilePage = () => {
           >
             <h2 className="text-xl font-semibold text-blue mb-1">About</h2>
 
-<div className="relative p-4 rounded min-h-[100px]">
+<div className="relative p-4 rounded min-h-[100px] flex flex-col items-end">
   {!isEditingBio && (
-    <>
-      <p className="text-blue-600">{profile.bio || "No bio provided."}</p>
-    <button
-  onClick={handleStartEditBio}
-  className="absolute bottom-2 right-2 bg-blue-600 text-white hover:bg-blue-700 text-sm px-3 py-1 rounded"
->
-  Edit Bio
-</button>
-    </>
+   <>
+  <button
+    onClick={handleStartEditBio}
+    className="mt-[312px] bg-blue-600 text-white hover:bg-blue-700 text-sm px-3 py-1 rounded"
+  >
+    Edit Bio
+  </button>
+</>
   )}
 
   {isEditingBio && (
