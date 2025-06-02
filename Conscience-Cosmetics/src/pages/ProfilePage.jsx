@@ -155,7 +155,7 @@ const ProfilePage = () => {
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              className="h-6 w-6 text-indigo-700"
+              className="h-4 w-4 text-indigo-700"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -217,7 +217,10 @@ const ProfilePage = () => {
             <div className="invisible">{/* Placeholder */}</div>
           </div>
         </div>
-
+        <div className="flex justify-between">
+  <p className="text-blue-600 text-3xl ml-96">user.username</p>
+  <p className="text-blue-600 text-3xl mr-96">user.email</p>
+</div>
         {/* Content Area */}
         <div className="flex pt-24 px-4 gap-10 justify-start relative z-10">
           <div style={{ width: "250px" }}>
@@ -286,16 +289,13 @@ const ProfilePage = () => {
             }}
           >
             <div className="p-6 bg-gray-500 bg-opacity-30 rounded-lg flex-1 overflow-auto">
-              <h2 className="text-xl font-semibold text-blue">Links - Personal</h2>
+              <h2 className="text-xl font-semibold text-blue ml-40">Favorite Videos</h2>
               <p className="text-blue-600 mt-2">
-                <a href={profile.website} target="_blank" rel="noreferrer" className="hover:underline">
-                  {profile.website || "No personal website"}
-                </a>
               </p>
               <p className="text-gray-300 mt-2">{profile.phone}</p>
             </div>
             <div className="p-6 bg-gray-500 bg-opacity-30 rounded-lg flex-1 overflow-auto">
-              <h2 className="text-xl font-semibold text-blue">Social Links</h2>
+              <h2 className="text-xl font-semibold text-blue">Friends</h2>
               <p className="text-gray-300 mt-2">{profile.facebook}</p>
               <p className="text-gray-300 mt-2">{profile.twitter}</p>
               <p className="text-gray-300 mt-2">{profile.instagram}</p>
