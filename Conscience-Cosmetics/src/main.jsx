@@ -11,6 +11,7 @@ import UploadPage from './pages/UploadPage.jsx'
 import FavsPage from './pages/FavsPage.jsx'
 import VideoTube from './pages/VideoTube.jsx'; // you'll create this
 import ProfilePage from './pages/ProfilePage.jsx';
+import ProfileTemplate from "./pages/ProfileTemplate.jsx";
 
 
 let router = createBrowserRouter([
@@ -49,7 +50,11 @@ let router = createBrowserRouter([
  {
   path: "/profile/:userId",
   element: <ProfilePage />
-}
+},
+ {
+    path: "/profile-template",
+    element: <ProfileTemplate />
+  }
 
 
 
