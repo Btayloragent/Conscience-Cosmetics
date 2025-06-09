@@ -7,14 +7,20 @@ import FavoriteVideos from "../components/FavoriteVideos";
 import FriendsSection from "../components/FriendsSection";
 import Footer from "../components/Footer";
 
-const ProfileTemplate = () => {
+const ProfileTemplate = ({ user }) => {
   return (
     <div className="flex flex-col min-h-screen bg-gray-200">
       <NavBar />
       <ProfileBanner />
 
+      {/* Username and Email Section */}
+      <div className="flex justify-between py-2">
+        <p className="text-blue-400 text-3xl ml-96">user name</p>
+        <p className="text-blue-400 text-3xl mr-96">user email</p>
+      </div>
+
       {/* Main layout row */}
-      <div className="flex pt-24 px-4 gap-10 justify-start relative z-10">
+      <div className="flex pt-8 px-4 gap-10 justify-start relative z-10">
         {/* Left: Sidebar */}
         <div style={{ width: "250px" }}>
           <SideBar />
@@ -57,3 +63,4 @@ const ProfileTemplate = () => {
 };
 
 export default ProfileTemplate;
+
