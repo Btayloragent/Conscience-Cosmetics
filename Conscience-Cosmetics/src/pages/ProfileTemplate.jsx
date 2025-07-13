@@ -14,10 +14,14 @@ const ProfileTemplate = ({ user }) => {
       <ProfileBanner />
 
       {/* Username and Email Section */}
-      <div className="flex justify-between py-2">
-        <p className="text-blue-400 text-3xl ml-96">user name</p>
-        <p className="text-blue-400 text-3xl mr-96">user email</p>
-      </div>
+<div className="flex justify-between py-2 px-24">
+  <div className="w-1/2 flex justify-center">
+    <p className="text-blue-400 text-3xl text-center">{user?.username || "user name"}</p>
+  </div>
+  <div className="w-1/2 flex justify-center">
+    <p className="text-blue-400 text-3xl text-center">{user?.email || "user email"}</p>
+  </div>
+</div>
 
       {/* Main layout row */}
       <div className="flex pt-8 px-4 gap-10 justify-start relative z-10">
