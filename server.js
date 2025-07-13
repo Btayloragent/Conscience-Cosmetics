@@ -161,6 +161,7 @@ app.post("/login", async (req, res) => {
                 username: user.username,
                 email: user.email,
                 avatarUrl: user.avatarUrl,
+                bio: user.bio,
             },
         });
     } catch (error) {
@@ -188,6 +189,35 @@ app.get("/api/profile", async (req, res) => {
         res.status(500).send("Error fetching profile");
     }
 });
+
+// ✅ UPDATE BIO
+
+app.put("/api/users/:id/bio", async (req, res) => {
+    const { id } = req.params;
+    const { bio } = req.body;
+
+    if (!bio) {
+        return res.status(400).send("Bio is required");
+    }
+
+    try {
+        const updatedUser = await User.findByIdAndUpdate(
+            id,
+            { bio },
+            { new: true }
+        ).select("-hashedPassword");
+
+        if (!updatedUser) {
+            return res.status(404).send("User not found");
+        }
+
+        res.status(200).json({ bio: updatedUser.bio });
+    } catch (error) {
+        console.error("Error updating bio:", error.message);
+        res.status(500).send("Failed to update bio");
+    }
+});
+
 
 // ✅ POST COMMENT
 app.post("/api/comments", async (req, res) => {
