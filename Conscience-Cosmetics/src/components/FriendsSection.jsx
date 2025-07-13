@@ -6,7 +6,6 @@ const FriendsSection = ({ profile }) => {
 
   return (
     <div className="p-6 bg-gray-500 bg-opacity-30 rounded-lg flex-1 overflow-auto">
-      <h2 className="text-xl font-semibold text-blue">Friends</h2>
       <p className="text-gray-300 mt-2">{profile.facebook}</p>
       <p className="text-gray-300 mt-2">{profile.twitter}</p>
       <p className="text-gray-300 mt-2">{profile.instagram}</p>
