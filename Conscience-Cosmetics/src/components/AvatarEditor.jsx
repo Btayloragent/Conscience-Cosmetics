@@ -1,10 +1,29 @@
-// components/AvatarEditor.js
-import React from "react";
+import React, { useRef } from "react";
 
 const AvatarEditor = ({ avatarUrl, onEditAvatar }) => {
+  const fileInputRef = useRef(null);
+
   const placeholderAvatar = "https://i.pravatar.cc/300";
+
+  // 👇 Construct correct avatar image path
   const avatarSrc =
-    avatarUrl && avatarUrl !== "avatarUrl" ? avatarUrl : placeholderAvatar;
+    avatarUrl?.startsWith("/uploads")
+      ? `http://localhost:5001${avatarUrl}`
+      : avatarUrl || placeholderAvatar;
+
+  const handleEditClick = () => {
+    if (fileInputRef.current) {
+      fileInputRef.current.click();
+    }
+  };
+
+  const handleFileChange = async (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    console.log("Selected file:", file);
+    onEditAvatar(file); // pass file to parent
+  };
 
   return (
     <div
@@ -14,10 +33,11 @@ const AvatarEditor = ({ avatarUrl, onEditAvatar }) => {
       <img
         src={avatarSrc}
         alt="Avatar"
-        className="w-96 h-96 rounded-full"
+        className="w-96 h-96 rounded-full object-cover"
       />
+
       <button
-        onClick={onEditAvatar}
+        onClick={handleEditClick}
         title="Edit Avatar"
         style={{
           position: "absolute",
@@ -46,8 +66,18 @@ const AvatarEditor = ({ avatarUrl, onEditAvatar }) => {
           <path d="M15.232 5.232l3.536 3.536M16.5 3.75a2.121 2.121 0 013 3L7.5 18.75H4.5v-3l12-12z" />
         </svg>
       </button>
+
+      {/* hidden input for file upload */}
+      <input
+        type="file"
+        accept="image/*"
+        style={{ display: "none" }}
+        ref={fileInputRef}
+        onChange={handleFileChange}
+      />
     </div>
   );
 };
 
 export default AvatarEditor;
+

@@ -17,11 +17,14 @@ const ProfileTemplate = ({
   handleStartEditBio,
   handleCancelEditBio,
   handleSaveBio,
+  onEditAvatar, // ✅ make sure this is received
 }) => {
   return (
     <div className="flex flex-col min-h-screen bg-gray-200">
       <NavBar />
-      <ProfileBanner />
+      
+      {/* ✅ Pass onEditAvatar to ProfileBanner */}
+      <ProfileBanner user={user} onEditAvatar={onEditAvatar} />
 
       {/* Username and Email Section */}
       <div className="flex justify-between py-2 px-24">
@@ -64,6 +67,7 @@ const ProfileTemplate = ({
             handleStartEditBio={handleStartEditBio}
             handleCancelEditBio={handleCancelEditBio}
             handleSaveBio={handleSaveBio}
+            onEditAvatar={onEditAvatar} // also pass here if needed
           />
         </div>
 

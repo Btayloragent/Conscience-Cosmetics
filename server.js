@@ -5,12 +5,31 @@ import 'dotenv/config';
 import { createClient } from 'pexels';
 import mongoose from 'mongoose';
 import bcrypt from 'bcrypt';
+import multer from 'multer';
+import path from 'path';
+import fs from 'fs';
+
 
 const app = express();
 const port = 5001;
 
 app.use(express.json());
 app.use(cors());
+
+// Ensure the upload directory exists
+const uploadPath = path.resolve('./uploads/profile-pics');
+fs.mkdirSync(uploadPath, { recursive: true });
+
+// Multer storage config
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => cb(null, uploadPath),
+  filename: (req, file, cb) => cb(null, Date.now() + '-' + file.originalname),
+});
+const upload = multer({ storage });
+
+// Serve uploaded files statically
+app.use('/uploads', express.static(path.resolve('./uploads')));
+
 
 // MongoDB connection URI
 const uri = `mongodb+srv://btayloragent:${process.env.PASS_KEY}@cluster0.zollofg.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
@@ -217,6 +236,26 @@ app.put("/api/users/:id/bio", async (req, res) => {
         res.status(500).send("Failed to update bio");
     }
 });
+
+// ✅ POST Profile Pic
+app.post('/api/users/:id/profile-pic', upload.single('avatar'), async (req, res) => {
+  const avatarUrl = `/uploads/profile-pics/${req.file.filename}`;
+
+  try {
+    const updatedUser = await User.findByIdAndUpdate(
+      req.params.id,
+      { avatarUrl },
+      { new: true }
+    ).select('-hashedPassword');
+
+    if (!updatedUser) return res.status(404).send('User not found');
+    res.status(200).json({ avatarUrl });
+  } catch (err) {
+    console.error("Error updating profile picture:", err.message);
+    res.status(500).send("Failed to update profile picture");
+  }
+});
+
 
 
 // ✅ POST COMMENT

@@ -49,6 +49,35 @@ const ProfilePage = () => {
     }
   };
 
+  // New function to upload avatar
+  const onEditAvatar = async (file) => {
+    if (!file || !user) return;
+
+    const formData = new FormData();
+    formData.append("avatar", file);
+
+    try {
+      const response = await axios.post(
+        `http://localhost:5001/api/users/${user._id}/profile-pic`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+      // Update user state with new avatar URL
+      setUser((prevUser) => ({
+        ...prevUser,
+        avatarUrl: response.data.avatarUrl,
+      }));
+    } catch (error) {
+      console.error("Error uploading avatar:", error);
+      alert("Failed to upload avatar. Please try again.");
+    }
+  };
+
   if (!user) {
     return <div className="text-center mt-10">Loading profile...</div>;
   }
@@ -64,6 +93,7 @@ const ProfilePage = () => {
       handleStartEditBio={handleStartEditBio}
       handleCancelEditBio={handleCancelEditBio}
       handleSaveBio={handleSaveBio}
+      onEditAvatar={onEditAvatar} // pass upload handler
     />
   );
 };
