@@ -2,15 +2,14 @@
 import React from "react";
 import AvatarEditor from "./AvatarEditor"; // Make sure the path is correct
 
-const ProfileBanner = ({ bannerUrl, avatarUrl, onEditBanner, onEditAvatar }) => {
+const ProfileBanner = ({ user, onEditBanner, onEditAvatar }) => {
   return (
     <div
       className="relative w-full h-96 shadow-md bg-cover bg-center"
       style={{
-        backgroundImage: bannerUrl
-          ? `url(${bannerUrl})`
-          : "linear-gradient(to right, #6366f1, #8b5cf6)",
-      }}
+  backgroundImage: "linear-gradient(to right, #6366f1, #8b5cf6)",
+}}
+
     >
       <button
         onClick={onEditBanner}
@@ -34,7 +33,7 @@ const ProfileBanner = ({ bannerUrl, avatarUrl, onEditBanner, onEditAvatar }) => 
       </button>
 
       <div className="h-full flex flex-col justify-center items-center text-center">
-        <AvatarEditor avatarUrl={avatarUrl} onEditAvatar={onEditAvatar} />
+        <AvatarEditor avatarUrl={user?.avatarUrl} onEditAvatar={onEditAvatar} />
         <div className="invisible">{/* Placeholder */}</div>
       </div>
     </div>
