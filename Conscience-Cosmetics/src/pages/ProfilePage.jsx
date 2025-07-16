@@ -49,7 +49,7 @@ const ProfilePage = () => {
     }
   };
 
-  // New function to upload avatar
+  // ✅ Upload avatar image
   const onEditAvatar = async (file) => {
     if (!file || !user) return;
 
@@ -67,7 +67,6 @@ const ProfilePage = () => {
           },
         }
       );
-      // Update user state with new avatar URL
       setUser((prevUser) => ({
         ...prevUser,
         avatarUrl: response.data.avatarUrl,
@@ -75,6 +74,34 @@ const ProfilePage = () => {
     } catch (error) {
       console.error("Error uploading avatar:", error);
       alert("Failed to upload avatar. Please try again.");
+    }
+  };
+
+  // ✅ Upload banner image
+  const onEditBanner = async (file) => {
+    if (!file || !user) return;
+
+    const formData = new FormData();
+    formData.append("banner", file);
+
+    try {
+      const response = await axios.post(
+        `http://localhost:5001/api/users/${user._id}/banner-pic`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+      setUser((prevUser) => ({
+        ...prevUser,
+        bannerUrl: response.data.bannerUrl,
+      }));
+    } catch (error) {
+      console.error("Error uploading banner:", error);
+      alert("Failed to upload banner. Please try again.");
     }
   };
 
@@ -93,10 +120,12 @@ const ProfilePage = () => {
       handleStartEditBio={handleStartEditBio}
       handleCancelEditBio={handleCancelEditBio}
       handleSaveBio={handleSaveBio}
-      onEditAvatar={onEditAvatar} // pass upload handler
+      onEditAvatar={onEditAvatar}
+      onEditBanner={onEditBanner}
     />
   );
 };
 
 export default ProfilePage;
+
 
