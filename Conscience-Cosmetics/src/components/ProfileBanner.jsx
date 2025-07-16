@@ -1,18 +1,35 @@
-// components/ProfileBanner.js
-import React from "react";
-import AvatarEditor from "./AvatarEditor"; // Make sure the path is correct
+import React, { useRef } from "react";
+import AvatarEditor from "../components/AvatarEditor"; // Adjust the path if AvatarEditor is in another folder
+
 
 const ProfileBanner = ({ user, onEditBanner, onEditAvatar }) => {
+  const fileInputRef = useRef(null);
+
+  const handleBannerFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      onEditBanner(file);
+    }
+  };
+
+  const triggerBannerUpload = () => {
+    if (fileInputRef.current) {
+      fileInputRef.current.click();
+    }
+  };
+
   return (
     <div
       className="relative w-full h-96 shadow-md bg-cover bg-center"
-      style={{
-  backgroundImage: "linear-gradient(to right, #6366f1, #8b5cf6)",
+     style={{
+  backgroundImage: user?.bannerUrl
+    ? `url("http://localhost:5001${user.bannerUrl}")`
+    : "linear-gradient(to right, #6366f1, #8b5cf6)",
 }}
 
     >
       <button
-        onClick={onEditBanner}
+        onClick={triggerBannerUpload}
         className="absolute top-4 right-4 p-2 bg-white bg-opacity-80 rounded-full hover:bg-opacity-100 shadow-md focus:outline-none"
         title="Edit Banner"
       >
@@ -32,13 +49,25 @@ const ProfileBanner = ({ user, onEditBanner, onEditAvatar }) => {
         </svg>
       </button>
 
+      <input
+        type="file"
+        accept="image/*"
+        ref={fileInputRef}
+        style={{ display: "none" }}
+        onChange={handleBannerFileChange}
+      />
+
       <div className="h-full flex flex-col justify-center items-center text-center">
-        <AvatarEditor avatarUrl={user?.avatarUrl} onEditAvatar={onEditAvatar} />
+        <AvatarEditor
+          avatarUrl={user?.avatarUrl}
+          onEditAvatar={onEditAvatar}
+        />
         <div className="invisible">{/* Placeholder */}</div>
       </div>
     </div>
   );
 };
+
 
 export default ProfileBanner;
 
