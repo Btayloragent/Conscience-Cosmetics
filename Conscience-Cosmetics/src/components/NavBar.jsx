@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import logo from '../loginpics/LogoPic4.png'; // Adjust the path as needed
-import UploadButton from '../components/UploadButton.jsx'; // Import the UploadButton component
-import { Link } from 'react-router-dom';
-import LoginComponent from '../components/LoginComponent'; // Import the LoginComponent
+import logo from '../loginpics/LogoPic4.png';
+import UploadButton from '../components/UploadButton.jsx';
+import { Link, useNavigate } from 'react-router-dom'; // ✅ include useNavigate
+import LoginComponent from '../components/LoginComponent';
 
 const NavBar = ({ onSearch }) => {
+  const navigate = useNavigate(); // ✅ initialize navigate
+
   const [searchTerm, setSearchTerm] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [authMode, setAuthMode] = useState('login');
@@ -59,8 +61,6 @@ const NavBar = ({ onSearch }) => {
     setIsModalOpen(false);
   };
 
-  // This function must be called by LoginComponent when login/signup succeeds:
-  // It updates username and avatarUrl, then closes modal.
   const handleLoginSuccess = (userName, userAvatarUrl) => {
     setIsLoggedIn(true);
     setUsername(userName);
@@ -75,6 +75,8 @@ const NavBar = ({ onSearch }) => {
     localStorage.removeItem('isLoggedIn');
     localStorage.removeItem('username');
     localStorage.removeItem('avatarUrl');
+
+    navigate('/LogoutPage'); // ✅ redirect to logout page
   };
 
   return (
@@ -210,7 +212,7 @@ const NavBar = ({ onSearch }) => {
             <LoginComponent
               mode={authMode}
               onClose={closeModal}
-              onLoginSuccess={handleLoginSuccess} // <- Make sure this is called properly inside LoginComponent!
+              onLoginSuccess={handleLoginSuccess}
             />
           </div>
         </dialog>
@@ -220,7 +222,5 @@ const NavBar = ({ onSearch }) => {
 };
 
 export default NavBar;
-
-
 
 
