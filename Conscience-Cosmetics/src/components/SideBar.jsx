@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import HomeIcon from '../pictures/SideBarIcons/Home.png';
 import UploadIcon from '../pictures/SideBarIcons/UpLoad.png';
-import FavoritesIcon from '../pictures/SideBarIcons/Favorites.png';
 import MakeUpIcon from '../pictures/SideBarIcons/MakeUp.png';
 import VideosIcon from '../pictures/SideBarIcons/Videos.png';
 import AboutUSIcon from '../pictures/SideBarIcons/AboutUs2.png';
@@ -50,7 +49,6 @@ const SideBar = () => {
     const navItems = [
         { to: '/', icon: HomeIcon, alt: 'Home', key: 'home' },
         { to: '/MakeUpPage', icon: AboutUSIcon, alt: 'AboutUs', key: 'about' },
-        { to: '/FavsPage', icon: FavoritesIcon, alt: 'Favorites', key: 'favs' },
         { to: '/CosmeticPage', icon: MakeUpIcon, alt: 'Cosmetics', key: 'cosmetics' },
         { to: '/VideoPage', icon: VideosIcon, alt: 'Videos', key: 'videos' },
     ];

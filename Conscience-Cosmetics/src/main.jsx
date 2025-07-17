@@ -12,6 +12,7 @@ import FavsPage from './pages/FavsPage.jsx'
 import VideoTube from './pages/VideoTube.jsx'; // you'll create this
 import ProfilePage from './pages/ProfilePage.jsx';
 import ProfileTemplate from "./pages/ProfileTemplate.jsx";
+import LogOutPage from './pages/LogoutPage.jsx'
 
 
 let router = createBrowserRouter([
@@ -36,8 +37,8 @@ let router = createBrowserRouter([
     element: <UploadPage />
   },
   {
-    path: "/FavsPage",
-    element: <FavsPage />
+    path: "/LogOutPage",
+    element: <LogOutPage />
   },
   {
     path: "/VideoPage",
