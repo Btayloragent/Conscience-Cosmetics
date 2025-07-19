@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import logo from '../loginpics/LogoPic4.png';
 import UploadButton from '../components/UploadButton.jsx';
-import { Link, useNavigate } from 'react-router-dom'; // ✅ include useNavigate
+import { Link, useNavigate } from 'react-router-dom';
 import LoginComponent from '../components/LoginComponent';
 
 const NavBar = ({ onSearch }) => {
-  const navigate = useNavigate(); // ✅ initialize navigate
+  const navigate = useNavigate();
 
   const [searchTerm, setSearchTerm] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -14,10 +14,12 @@ const NavBar = ({ onSearch }) => {
   const [username, setUsername] = useState('');
   const [avatarUrl, setAvatarUrl] = useState('');
 
-  useEffect(() => {
-    const savedUsername = localStorage.getItem('username');
-    const savedLoginState = localStorage.getItem('isLoggedIn');
-    const savedAvatarUrl = localStorage.getItem('avatarUrl');
+
+   useEffect(() => {
+  const savedUsername = localStorage.getItem('loggedInUser'); // ← FIXED
+  const savedLoginState = localStorage.getItem('isLoggedIn');
+  const savedAvatarUrl = localStorage.getItem('userAvatarUrl'); // ← FIXED
+
 
     if (savedLoginState === 'true' && savedUsername) {
       setIsLoggedIn(true);
@@ -26,21 +28,7 @@ const NavBar = ({ onSearch }) => {
     }
   }, []);
 
-  useEffect(() => {
-    if (isLoggedIn && username) {
-      localStorage.setItem('isLoggedIn', 'true');
-      localStorage.setItem('username', username);
-      if (avatarUrl) {
-        localStorage.setItem('avatarUrl', avatarUrl);
-      } else {
-        localStorage.removeItem('avatarUrl');
-      }
-    } else {
-      localStorage.removeItem('isLoggedIn');
-      localStorage.removeItem('username');
-      localStorage.removeItem('avatarUrl');
-    }
-  }, [isLoggedIn, username, avatarUrl]);
+  // We remove the previous useEffect that sets localStorage because we now manage localStorage explicitly
 
   const handleInputChange = (e) => {
     setSearchTerm(e.target.value);
@@ -62,21 +50,55 @@ const NavBar = ({ onSearch }) => {
   };
 
   const handleLoginSuccess = (userName, userAvatarUrl) => {
+    console.log('User logged in:', userName);
+
+    // Store login info in localStorage explicitly before updating state
+    localStorage.setItem('isLoggedIn', 'true');
+    localStorage.setItem('username', userName);
+    if (userAvatarUrl) {
+      localStorage.setItem('avatarUrl', userAvatarUrl);
+    } else {
+      localStorage.removeItem('avatarUrl');
+    }
+
+    console.log('NavBar: localStorage after login:', {
+      isLoggedIn: localStorage.getItem('isLoggedIn'),
+      username: localStorage.getItem('username'),
+      avatarUrl: localStorage.getItem('avatarUrl'),
+    });
+
     setIsLoggedIn(true);
     setUsername(userName);
     setAvatarUrl(userAvatarUrl || '');
+
+    // Dispatch event so SideBar can update
+    window.dispatchEvent(new Event('loginStatusChange'));
+
     closeModal();
   };
 
   const handleLogout = () => {
-    setIsLoggedIn(false);
-    setUsername('');
-    setAvatarUrl('');
+    console.log('User logged out');
+
+    // Clear localStorage explicitly first
     localStorage.removeItem('isLoggedIn');
     localStorage.removeItem('username');
     localStorage.removeItem('avatarUrl');
 
-    navigate('/LogoutPage'); // ✅ redirect to logout page
+    console.log('NavBar: localStorage after logout:', {
+      isLoggedIn: localStorage.getItem('isLoggedIn'),
+      username: localStorage.getItem('username'),
+      avatarUrl: localStorage.getItem('avatarUrl'),
+    });
+
+    setIsLoggedIn(false);
+    setUsername('');
+    setAvatarUrl('');
+
+    // Dispatch event so SideBar updates
+    window.dispatchEvent(new Event('loginStatusChange'));
+
+    navigate('/LogoutPage');
   };
 
   return (
@@ -222,5 +244,6 @@ const NavBar = ({ onSearch }) => {
 };
 
 export default NavBar;
+
 
 

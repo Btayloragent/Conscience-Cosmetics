@@ -34,9 +34,11 @@ const LoginComponent = ({ mode, onClose, onLoginSuccess }) => {
       if (response.status === 200) {
         const { token, user } = response.data;
         localStorage.setItem('token', token);
+        localStorage.setItem('isLoggedIn', 'true'); // ✅ ADD THIS
+        window.dispatchEvent(new Event('loginStatusChange')); // ✅ AND THIS
+
         alert(`${currentMode === 'login' ? 'Login' : 'Sign Up'} successful!`);
 
-        // Use avatarUrl from server if available (login), else fallback to selectedAvatar (signup)
         const avatarUrl = user.avatarUrl || selectedAvatar;
 
         onLoginSuccess(user.username, avatarUrl);
