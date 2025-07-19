@@ -15,18 +15,18 @@ const NavBar = ({ onSearch }) => {
   const [avatarUrl, setAvatarUrl] = useState('');
 
 
-   useEffect(() => {
-  const savedUsername = localStorage.getItem('loggedInUser'); // ← FIXED
+useEffect(() => {
+  const savedUsername = localStorage.getItem('username'); // ✅ MATCHED
   const savedLoginState = localStorage.getItem('isLoggedIn');
-  const savedAvatarUrl = localStorage.getItem('userAvatarUrl'); // ← FIXED
+  const savedAvatarUrl = localStorage.getItem('avatarUrl'); // ✅ MATCHED
 
+  if (savedLoginState === 'true' && savedUsername) {
+    setIsLoggedIn(true);
+    setUsername(savedUsername);
+    if (savedAvatarUrl) setAvatarUrl(savedAvatarUrl);
+  }
+}, []);
 
-    if (savedLoginState === 'true' && savedUsername) {
-      setIsLoggedIn(true);
-      setUsername(savedUsername);
-      if (savedAvatarUrl) setAvatarUrl(savedAvatarUrl);
-    }
-  }, []);
 
   // We remove the previous useEffect that sets localStorage because we now manage localStorage explicitly
 
