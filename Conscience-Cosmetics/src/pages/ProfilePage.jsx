@@ -3,24 +3,30 @@ import axios from "axios";
 import ProfileTemplate from "./ProfileTemplate";
 import { useParams } from "react-router-dom";
 
-
 const ProfilePage = () => {
+  const { username } = useParams(); // get username from URL param
   const [user, setUser] = useState(null);
   const [isEditingBio, setIsEditingBio] = useState(false);
   const [editedBio, setEditedBio] = useState("");
-  const username = localStorage.getItem("username");
 
   useEffect(() => {
-    if (username) {
-      axios
-        .get(`http://localhost:5001/api/profile?username=${username}`)
-        .then((res) => {
-          setUser(res.data);
-          setEditedBio(res.data.bio || ""); // Initialize bio for editing
-        })
-        .catch((err) => console.error("Error fetching profile:", err));
-    }
-  }, [username]);
+  console.log("Fetching profile for username:", username);
+  if (username) {
+    axios
+      .get(`http://localhost:5001/api/profile?username=${username}`)
+      .then((res) => {
+        console.log("Profile response data:", res.data);
+        setUser(res.data);
+        setEditedBio(res.data.bio || "");
+      })
+      .catch((err) => {
+        console.error("Error fetching profile:", err);
+        setUser(null);
+        setEditedBio("");
+      });
+  }
+}, [username]);
+
 
   const handleStartEditBio = () => {
     setIsEditingBio(true);
@@ -51,7 +57,6 @@ const ProfilePage = () => {
     }
   };
 
-  // ✅ Upload avatar image
   const onEditAvatar = async (file) => {
     if (!file || !user) return;
 
@@ -79,7 +84,6 @@ const ProfilePage = () => {
     }
   };
 
-  // ✅ Upload banner image
   const onEditBanner = async (file) => {
     if (!file || !user) return;
 

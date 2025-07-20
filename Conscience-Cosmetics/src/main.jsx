@@ -47,10 +47,11 @@ let router = createBrowserRouter([
     path: "/VideoPage/:videoId", // 👈 Add this route
     element: <VideoTube />
   },
- {
-  path: "/profile/:userId",
+{
+  path: "/profile/:username",
   element: <ProfilePage />
-},
+}
+,
  {
     path: "/profile-template",
     element: <ProfileTemplate />
