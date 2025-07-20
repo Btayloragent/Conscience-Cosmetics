@@ -22,7 +22,8 @@ const ProfileTemplate = ({
 }) => {
   return (
     <div className="flex flex-col min-h-screen bg-gray-200">
-      <NavBar />
+      <NavBar onSearch={(query) => console.log('Search query:', query)} />
+
       
       {/* ✅ Pass onEditAvatar to ProfileBanner */}
      <ProfileBanner
