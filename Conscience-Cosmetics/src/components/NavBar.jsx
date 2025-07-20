@@ -3,12 +3,11 @@ import logo from '../loginpics/LogoPic4.png';
 import UploadButton from '../components/UploadButton.jsx';
 import { Link, useNavigate } from 'react-router-dom';
 import LoginComponent from '../components/LoginComponent';
-import SearchBar from '../components/SearchBar'; // Import SearchBar component
+import SearchBar from '../components/SearchBar';
+import axios from 'axios';
 
 const NavBar = () => {
   const navigate = useNavigate();
-
-  // Removed search-related states and logic from here
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [authMode, setAuthMode] = useState('login');
@@ -16,16 +15,59 @@ const NavBar = () => {
   const [username, setUsername] = useState('');
   const [avatarUrl, setAvatarUrl] = useState('');
 
+  // Load login state and user info on mount
   useEffect(() => {
     const savedUsername = localStorage.getItem('username');
     const savedLoginState = localStorage.getItem('isLoggedIn');
-    const savedAvatarUrl = localStorage.getItem('avatarUrl');
 
     if (savedLoginState === 'true' && savedUsername) {
       setIsLoggedIn(true);
       setUsername(savedUsername);
-      if (savedAvatarUrl) setAvatarUrl(savedAvatarUrl);
+
+      // Fetch full user info from backend to get updated avatarUrl
+      axios.get(`http://localhost:5001/api/profile?username=${savedUsername}`)
+        .then(res => {
+          const avatar = res.data.avatarUrl || '';
+          setAvatarUrl(avatar);
+          localStorage.setItem('avatarUrl', avatar);
+        })
+        .catch(() => {
+          // fallback to localStorage avatar if API call fails
+          const savedAvatar = localStorage.getItem('avatarUrl') || '';
+          setAvatarUrl(savedAvatar);
+        });
     }
+  }, []);
+
+  // Listen for loginStatusChange event (login, logout, avatar update)
+  useEffect(() => {
+    const handleLoginStatusChange = () => {
+      const savedUsername = localStorage.getItem('username');
+      const savedLoginState = localStorage.getItem('isLoggedIn');
+
+      setIsLoggedIn(savedLoginState === 'true');
+      setUsername(savedUsername || '');
+
+      if (savedLoginState === 'true' && savedUsername) {
+        axios.get(`http://localhost:5001/api/profile?username=${savedUsername}`)
+          .then(res => {
+            const avatar = res.data.avatarUrl || '';
+            setAvatarUrl(avatar);
+            localStorage.setItem('avatarUrl', avatar);
+          })
+          .catch(() => {
+            const savedAvatar = localStorage.getItem('avatarUrl') || '';
+            setAvatarUrl(savedAvatar);
+          });
+      } else {
+        setAvatarUrl('');
+      }
+    };
+
+    window.addEventListener('loginStatusChange', handleLoginStatusChange);
+    return () => {
+      window.removeEventListener('loginStatusChange', handleLoginStatusChange);
+    };
   }, []);
 
   const openModal = (mode) => {
@@ -51,7 +93,6 @@ const NavBar = () => {
     setAvatarUrl(userAvatarUrl || '');
 
     window.dispatchEvent(new Event('loginStatusChange'));
-
     closeModal();
   };
 
@@ -65,7 +106,6 @@ const NavBar = () => {
     setAvatarUrl('');
 
     window.dispatchEvent(new Event('loginStatusChange'));
-
     navigate('/LogoutPage');
   };
 
@@ -91,7 +131,7 @@ const NavBar = () => {
                 >
                   {avatarUrl && (
                     <img
-                      src={avatarUrl}
+                      src={avatarUrl.startsWith('http') ? avatarUrl : `http://localhost:5001${avatarUrl}`}
                       alt="User Avatar"
                       className="w-8 h-8 rounded-full object-cover cursor-pointer"
                     />
