@@ -10,23 +10,27 @@ const ProfilePage = () => {
   const [editedBio, setEditedBio] = useState("");
 
   useEffect(() => {
-  console.log("Fetching profile for username:", username);
-  if (username) {
-    axios
-      .get(`http://localhost:5001/api/profile?username=${username}`)
-      .then((res) => {
-        console.log("Profile response data:", res.data);
-        setUser(res.data);
-        setEditedBio(res.data.bio || "");
-      })
-      .catch((err) => {
-        console.error("Error fetching profile:", err);
-        setUser(null);
-        setEditedBio("");
-      });
-  }
-}, [username]);
+    console.log("Fetching profile for username:", username);
+    if (username) {
+      axios
+        .get(`http://localhost:5001/api/profile?username=${username}`)
+        .then((res) => {
+          console.log("Profile response data:", res.data);
+          setUser(res.data);
+          setEditedBio(res.data.bio || "");
 
+          // Update avatar in localStorage if available
+          if (res.data.avatarUrl) {
+            localStorage.setItem("avatarUrl", res.data.avatarUrl);
+          }
+        })
+        .catch((err) => {
+          console.error("Error fetching profile:", err);
+          setUser(null);
+          setEditedBio("");
+        });
+    }
+  }, [username]);
 
   const handleStartEditBio = () => {
     setIsEditingBio(true);
@@ -74,10 +78,14 @@ const ProfilePage = () => {
           },
         }
       );
+
+      // Update both local state and localStorage
+      const newAvatarUrl = response.data.avatarUrl;
       setUser((prevUser) => ({
         ...prevUser,
-        avatarUrl: response.data.avatarUrl,
+        avatarUrl: newAvatarUrl,
       }));
+      localStorage.setItem("avatarUrl", newAvatarUrl);
     } catch (error) {
       console.error("Error uploading avatar:", error);
       alert("Failed to upload avatar. Please try again.");
