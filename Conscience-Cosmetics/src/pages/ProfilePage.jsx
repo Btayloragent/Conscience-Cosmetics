@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import ProfileTemplate from "./ProfileTemplate";
+import { useParams } from "react-router-dom";
+
 
 const ProfilePage = () => {
   const [user, setUser] = useState(null);

@@ -2,41 +2,72 @@ import React, { useState, useEffect } from 'react';
 import logo from '../loginpics/LogoPic4.png';
 import UploadButton from '../components/UploadButton.jsx';
 import { Link, useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import LoginComponent from '../components/LoginComponent';
 
-const NavBar = ({ onSearch }) => {
+const NavBar = () => {
   const navigate = useNavigate();
 
   const [searchTerm, setSearchTerm] = useState('');
+  const [userResults, setUserResults] = useState([]);
+  const [showDropdown, setShowDropdown] = useState(false);
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [authMode, setAuthMode] = useState('login');
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [username, setUsername] = useState('');
   const [avatarUrl, setAvatarUrl] = useState('');
 
+  useEffect(() => {
+    const savedUsername = localStorage.getItem('username');
+    const savedLoginState = localStorage.getItem('isLoggedIn');
+    const savedAvatarUrl = localStorage.getItem('avatarUrl');
 
-useEffect(() => {
-  const savedUsername = localStorage.getItem('username'); // ✅ MATCHED
-  const savedLoginState = localStorage.getItem('isLoggedIn');
-  const savedAvatarUrl = localStorage.getItem('avatarUrl'); // ✅ MATCHED
+    if (savedLoginState === 'true' && savedUsername) {
+      setIsLoggedIn(true);
+      setUsername(savedUsername);
+      if (savedAvatarUrl) setAvatarUrl(savedAvatarUrl);
+    }
+  }, []);
 
-  if (savedLoginState === 'true' && savedUsername) {
-    setIsLoggedIn(true);
-    setUsername(savedUsername);
-    if (savedAvatarUrl) setAvatarUrl(savedAvatarUrl);
-  }
-}, []);
+  useEffect(() => {
+    const delayDebounce = setTimeout(() => {
+      if (searchTerm.trim()) {
+        axios
+          .get(`http://localhost:5001/api/users/search?q=${searchTerm}`)
+          .then((res) => {
+            setUserResults(res.data);
+            setShowDropdown(true);
+          })
+          .catch((err) => {
+            console.error('Search error:', err);
+            setUserResults([]);
+            setShowDropdown(false);
+          });
+      } else {
+        setUserResults([]);
+        setShowDropdown(false);
+      }
+    }, 300);
 
-
-  // We remove the previous useEffect that sets localStorage because we now manage localStorage explicitly
+    return () => clearTimeout(delayDebounce);
+  }, [searchTerm]);
 
   const handleInputChange = (e) => {
     setSearchTerm(e.target.value);
   };
 
+  // When clicking search icon or pressing enter, navigate to search results page or first profile
   const handleSearchClick = () => {
-    if (searchTerm) {
-      onSearch(searchTerm);
+    if (!searchTerm.trim()) return;
+    if (userResults.length > 0) {
+      // Navigate to the first matched user profile
+    navigate(`/profile/${userResults[0].username}`);
+      setSearchTerm('');
+      setShowDropdown(false);
+    } else {
+      // Optionally, navigate to a general search page or show "no results"
+      alert('No users found');
     }
   };
 
@@ -50,9 +81,6 @@ useEffect(() => {
   };
 
   const handleLoginSuccess = (userName, userAvatarUrl) => {
-    console.log('User logged in:', userName);
-
-    // Store login info in localStorage explicitly before updating state
     localStorage.setItem('isLoggedIn', 'true');
     localStorage.setItem('username', userName);
     if (userAvatarUrl) {
@@ -61,41 +89,24 @@ useEffect(() => {
       localStorage.removeItem('avatarUrl');
     }
 
-    console.log('NavBar: localStorage after login:', {
-      isLoggedIn: localStorage.getItem('isLoggedIn'),
-      username: localStorage.getItem('username'),
-      avatarUrl: localStorage.getItem('avatarUrl'),
-    });
-
     setIsLoggedIn(true);
     setUsername(userName);
     setAvatarUrl(userAvatarUrl || '');
 
-    // Dispatch event so SideBar can update
     window.dispatchEvent(new Event('loginStatusChange'));
 
     closeModal();
   };
 
   const handleLogout = () => {
-    console.log('User logged out');
-
-    // Clear localStorage explicitly first
     localStorage.removeItem('isLoggedIn');
     localStorage.removeItem('username');
     localStorage.removeItem('avatarUrl');
-
-    console.log('NavBar: localStorage after logout:', {
-      isLoggedIn: localStorage.getItem('isLoggedIn'),
-      username: localStorage.getItem('username'),
-      avatarUrl: localStorage.getItem('avatarUrl'),
-    });
 
     setIsLoggedIn(false);
     setUsername('');
     setAvatarUrl('');
 
-    // Dispatch event so SideBar updates
     window.dispatchEvent(new Event('loginStatusChange'));
 
     navigate('/LogoutPage');
@@ -114,10 +125,18 @@ useEffect(() => {
           <div className="form-control flex flex-row items-center w-3/4 max-w-lg relative">
             <input
               type="text"
-              placeholder="Search"
+              placeholder="Search users"
               value={searchTerm}
               onChange={handleInputChange}
+              onFocus={() => setShowDropdown(userResults.length > 0)}
+              onBlur={() => setTimeout(() => setShowDropdown(false), 200)}
               className="input input-bordered w-full bg-white border-black text-black pr-10"
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  e.preventDefault();
+                  handleSearchClick();
+                }
+              }}
             />
             <button
               className="absolute right-0 top-0 bottom-0 mt-auto mb-auto mr-2 bg-transparent border-none flex items-center justify-center"
@@ -140,6 +159,30 @@ useEffect(() => {
                 />
               </svg>
             </button>
+
+            {showDropdown && userResults.length > 0 && (
+              <ul className="absolute top-full left-0 right-0 bg-white border rounded shadow-md z-50 max-h-60 overflow-y-auto">
+                {userResults.map((user) => (
+                  <li key={user._id} className="hover:bg-gray-100 p-2">
+                    <Link
+                      to={`/profile/${user.username}`}
+                      onClick={() => {
+                        setSearchTerm('');
+                        setShowDropdown(false);
+                      }}
+                      className="flex items-center gap-2"
+                    >
+                      <img
+                        src={user.avatarUrl}
+                        alt={user.username}
+                        className="w-6 h-6 rounded-full object-cover"
+                      />
+                      {user.username}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            )}
           </div>
 
           <div className="flex items-center gap-4 ml-14">
@@ -244,6 +287,8 @@ useEffect(() => {
 };
 
 export default NavBar;
+
+
 
 
 

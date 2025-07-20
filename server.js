@@ -12,34 +12,33 @@ import fs from 'fs';
 const app = express();
 const port = 5001;
 
+// Middleware
 app.use(express.json());
 app.use(cors());
-
-// Static file serving for uploaded images
 app.use('/uploads', express.static(path.resolve('./uploads')));
 
-// MongoDB URI
+// Mongo URI
 const uri = `mongodb+srv://btayloragent:${process.env.PASS_KEY}@cluster0.zollofg.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
 
-// Create necessary folders
+// Create upload folders
 const avatarDir = path.resolve('./uploads/profile-pics');
 const bannerDir = path.resolve('./uploads/banner-pics');
 fs.mkdirSync(avatarDir, { recursive: true });
 fs.mkdirSync(bannerDir, { recursive: true });
 
-// Multer configs
+// Multer setup
 const avatarStorage = multer.diskStorage({
-  destination: (req, file, cb) => cb(null, avatarDir),
-  filename: (req, file, cb) => cb(null, Date.now() + '-' + file.originalname),
+  destination: (_, __, cb) => cb(null, avatarDir),
+  filename: (_, file, cb) => cb(null, Date.now() + '-' + file.originalname),
 });
 const bannerStorage = multer.diskStorage({
-  destination: (req, file, cb) => cb(null, bannerDir),
-  filename: (req, file, cb) => cb(null, Date.now() + '-' + file.originalname),
+  destination: (_, __, cb) => cb(null, bannerDir),
+  filename: (_, file, cb) => cb(null, Date.now() + '-' + file.originalname),
 });
 const uploadAvatar = multer({ storage: avatarStorage });
 const uploadBanner = multer({ storage: bannerStorage });
 
-// Schema Definitions
+// Schemas
 const userSchema = new mongoose.Schema({
   username: { type: String, required: true, unique: true },
   hashedPassword: { type: String, required: true },
@@ -60,30 +59,30 @@ const commentSchema = new mongoose.Schema({
 commentSchema.index({ videoId: 1 });
 const Comment = mongoose.model("Comment", commentSchema);
 
-// MongoDB Connect
+// DB connection
 async function connectDb() {
   try {
     await mongoose.connect(uri);
     console.log("✅ Successfully connected to MongoDB!");
-  } catch (error) {
-    console.log("❌ Error connecting to MongoDB: " + error.message);
+  } catch (err) {
+    console.error("❌ MongoDB connection error:", err.message);
     process.exit(1);
   }
 }
 
-// ✅ SIGNUP
+// ✅ Routes
+
+// Signup
 app.post("/signup", async (req, res) => {
   try {
     const { username, password, email, avatarUrl, bio } = req.body;
-    if (!username || !password || !email || !avatarUrl) {
+    if (!username || !password || !email || !avatarUrl)
       return res.status(400).send("All fields are required");
-    }
 
     const existingUser = await User.findOne({ username });
     if (existingUser) return res.status(400).send("Username already taken");
 
     const hashedPassword = await bcrypt.hash(password, 10);
-
     const newUser = new User({
       username,
       hashedPassword,
@@ -102,14 +101,14 @@ app.post("/signup", async (req, res) => {
         bio: newUser.bio,
       },
     });
-  } catch (error) {
-    console.error("Signup error:", error);
-    if (error.code === 11000) return res.status(400).send("Duplicate field");
+  } catch (err) {
+    console.error("Signup error:", err);
+    if (err.code === 11000) return res.status(400).send("Duplicate field");
     res.status(500).send("Signup failed");
   }
 });
 
-// ✅ LOGIN
+// Login
 app.post("/login", async (req, res) => {
   try {
     const { username, password } = req.body;
@@ -135,7 +134,7 @@ app.post("/login", async (req, res) => {
   }
 });
 
-// ✅ GET PROFILE
+// Get profile
 app.get("/api/profile", async (req, res) => {
   try {
     const { username } = req.query;
@@ -148,7 +147,7 @@ app.get("/api/profile", async (req, res) => {
   }
 });
 
-// ✅ UPDATE BIO
+// Update bio
 app.put("/api/users/:id/bio", async (req, res) => {
   try {
     const { id } = req.params;
@@ -162,7 +161,7 @@ app.put("/api/users/:id/bio", async (req, res) => {
   }
 });
 
-// ✅ UPLOAD AVATAR
+// Upload avatar
 app.post("/api/users/:id/profile-pic", uploadAvatar.single("avatar"), async (req, res) => {
   try {
     const avatarUrl = `/uploads/profile-pics/${req.file.filename}`;
@@ -179,11 +178,8 @@ app.post("/api/users/:id/profile-pic", uploadAvatar.single("avatar"), async (req
   }
 });
 
-// ✅ UPLOAD BANNER
+// Upload banner
 app.post("/api/users/:id/banner-pic", uploadBanner.single("banner"), async (req, res) => {
-    console.log("File uploaded:", req.file); // ✅ LOG THIS
-  console.log("User ID:", req.params.id);
-
   try {
     const bannerUrl = `/uploads/banner-pics/${req.file.filename}`;
     const updatedUser = await User.findByIdAndUpdate(
@@ -199,13 +195,11 @@ app.post("/api/users/:id/banner-pic", uploadBanner.single("banner"), async (req,
   }
 });
 
-// ✅ POST COMMENT
+// Post comment
 app.post("/api/comments", async (req, res) => {
   try {
     const { videoId, username, text } = req.body;
-    if (!videoId || !username || !text) {
-      return res.status(400).send("Missing fields");
-    }
+    if (!videoId || !username || !text) return res.status(400).send("Missing fields");
     const newComment = new Comment({ videoId, username, text });
     await newComment.save();
     res.status(201).json(newComment);
@@ -215,7 +209,7 @@ app.post("/api/comments", async (req, res) => {
   }
 });
 
-// ✅ GET COMMENTS
+// Get comments
 app.get("/api/comments/:videoId", async (req, res) => {
   try {
     const comments = await Comment.find({ videoId: req.params.videoId }).sort({ createdAt: -1 });
@@ -226,7 +220,7 @@ app.get("/api/comments/:videoId", async (req, res) => {
   }
 });
 
-// ✅ COSMETIC PRODUCTS
+// Products
 let cosmeticsData;
 axios.get('https://makeup-api.herokuapp.com/api/v1/products.json')
   .then(response => { cosmeticsData = response.data; })
@@ -237,9 +231,8 @@ app.get("/api/Products", async (req, res) => {
   res.json(cosmeticsData);
 });
 
-// ✅ MAKEUP VIDEOS (PEXELS)
+// Videos (PEXELS)
 const pexelsClient = createClient(process.env.VID_KEY);
-
 app.get("/api/MakeUpVids", async (req, res) => {
   try {
     const query = "african american women applying makeup";
@@ -251,8 +244,32 @@ app.get("/api/MakeUpVids", async (req, res) => {
   }
 });
 
+// ✅ SEARCH USERS
+app.get("/api/users/search", async (req, res) => {
+  const { q } = req.query;
+  console.log("🔍 Search query received:", q);
+
+  if (!q || q.trim() === "") {
+    return res.status(400).send("Query is required");
+  }
+
+  try {
+    const users = await User.find({
+      username: { $regex: q, $options: "i" },
+    })
+      .select("username avatarUrl _id")
+      .limit(10);
+
+    res.status(200).json(users);
+  } catch (error) {
+    console.error("User search error:", error.message);
+    res.status(500).send("Failed to search users");
+  }
+});
+
 // ✅ START SERVER
 app.listen(port, async () => {
   await connectDb();
   console.log(`🚀 Server is running at http://localhost:${port}`);
 });
+

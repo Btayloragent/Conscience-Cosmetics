@@ -48,7 +48,7 @@ const LogOutPage = () => {
 
   return (
     <div style={backgroundImageStyle}>
-      <NavBar />
+      <NavBar onSearch={(query) => console.log('Search query:', query)} />
       <SideBar />
       <div style={contentStyle}>
         <div style={iconStyle}>👋</div>

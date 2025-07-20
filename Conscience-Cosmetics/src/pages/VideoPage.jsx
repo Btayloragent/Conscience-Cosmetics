@@ -30,7 +30,7 @@ const VideoPage = () => {
 
   return (
     <>
-      <NavBar />
+      <NavBar onSearch={(query) => console.log('Search query:', query)} />
       <div className="video-page-container" style={containerStyle}>
         <SideBar style={{ width: '80px' }} /> {/* Set a fixed width for the sidebar */}
         <div className="video-grid" style={{ flex: 1, paddingLeft: '20px' }}>

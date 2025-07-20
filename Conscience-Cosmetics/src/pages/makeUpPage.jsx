@@ -78,7 +78,7 @@ const MakeUpPage = () => {
     return (
         <div style={pageStyle}>
             {/* NavBar */}
-            <NavBar />
+           <NavBar onSearch={(query) => console.log('Search query:', query)} />
 
             {/* Main content area */}
             <div style={contentStyle}>
