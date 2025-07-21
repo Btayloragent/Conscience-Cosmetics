@@ -8,11 +8,11 @@ import MakeUpPage from './pages/makeUpPage.jsx'
 import VideoPage from './pages/VideoPage.jsx'
 import CosmeticPage from './pages/CosmeticPage.jsx'
 import UploadPage from './pages/UploadPage.jsx'
-import VideoTube from './pages/VideoTube.jsx'; // you'll create this
-import ProfilePage from './pages/ProfilePage.jsx';
-import ProfileTemplate from "./pages/ProfileTemplate.jsx";
+import VideoTube from './pages/VideoTube.jsx'
+import ProfilePage from './pages/ProfilePage.jsx'
+import ProfileTemplate from "./pages/ProfileTemplate.jsx"
 import LogOutPage from './pages/LogoutPage.jsx'
-
+import EditProfilePage from './pages/EditProfilePage.jsx' // 👈 Add this line
 
 let router = createBrowserRouter([
   {
@@ -44,27 +44,25 @@ let router = createBrowserRouter([
     element: <VideoPage />
   },
   {
-    path: "/VideoPage/:videoId", // 👈 Add this route
+    path: "/VideoPage/:videoId",
     element: <VideoTube />
   },
-{
-  path: "/profile/:username",
-  element: <ProfilePage />
-}
-,
- {
+  {
+    path: "/profile/:username",
+    element: <ProfilePage />
+  },
+  {
+    path: "/profile/:username/edit", // 👈 Add this route
+    element: <EditProfilePage />
+  },
+  {
     path: "/profile-template",
     element: <ProfileTemplate />
   }
-
-
-
-]);
-
-
+])
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <RouterProvider router={router} />
-  </React.StrictMode>,
+  </React.StrictMode>
 )

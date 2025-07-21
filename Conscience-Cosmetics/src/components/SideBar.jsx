@@ -1,36 +1,34 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation, useParams } from 'react-router-dom';
 import HomeIcon from '../pictures/SideBarIcons/Home.png';
 import MakeUpIcon from '../pictures/SideBarIcons/MakeUp.png';
 import VideosIcon from '../pictures/SideBarIcons/Videos.png';
 import AboutUSIcon from '../pictures/SideBarIcons/AboutUs2.png';
+import EditIcon from '../pictures/SideBarIcons/EditPage3.png'; // Edit icon
 
 const SideBar = () => {
   const [hoveredIcon, setHoveredIcon] = useState(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-  // Central login state check
+  const location = useLocation();
+  const params = useParams();
+
+  const loggedInUsername = localStorage.getItem('username');
+
   const checkLogin = () => {
     const loginState = localStorage.getItem('isLoggedIn');
-    console.log('SideBar: Checking login state:', loginState);
     setIsLoggedIn(loginState === 'true');
   };
 
   useEffect(() => {
-    // Run on mount
-    console.log('SideBar mounted');
     checkLogin();
 
-    // Listen for custom login event (same-tab)
     const onLoginStatusChange = () => {
-      console.log('SideBar: loginStatusChange event received');
       checkLogin();
     };
 
-    // Listen for cross-tab storage change
     const onStorageChange = (e) => {
       if (e.key === 'isLoggedIn') {
-        console.log('SideBar: storage event detected');
         checkLogin();
       }
     };
@@ -44,7 +42,9 @@ const SideBar = () => {
     };
   }, []);
 
-  // Styles
+  const onOwnProfilePage =
+    isLoggedIn && location.pathname === `/profile/${loggedInUsername}`;
+
   const sidebarStyle = {
     width: '150px',
     backgroundColor: 'transparent',
@@ -59,7 +59,6 @@ const SideBar = () => {
   };
 
   const ulStyle = { listStyleType: 'none', padding: '0' };
-
   const liStyle = { marginBottom: '30px' };
 
   const aStyle = {
@@ -108,7 +107,6 @@ const SideBar = () => {
               onClick={(e) => {
                 if (isProtected && !isLoggedIn) {
                   e.preventDefault();
-                  console.log(`SideBar: Prevented navigation to ${to} - not logged in`);
                 }
               }}
               tabIndex={isProtected && !isLoggedIn ? -1 : 0}
@@ -118,12 +116,29 @@ const SideBar = () => {
             </Link>
           </li>
         ))}
+
+        {/* Conditionally render Edit Page icon when on your own profile */}
+        {onOwnProfilePage && (
+          <li style={liStyle} key="edit">
+            <Link
+              to={`/profile/${loggedInUsername}/edit`}
+              style={aStyle}
+              onMouseEnter={() => setHoveredIcon('edit')}
+              onMouseLeave={() => setHoveredIcon(null)}
+            >
+              <img src={EditIcon} alt="Edit Page" style={iconStyle('edit')} />
+            </Link>
+          </li>
+        )}
       </ul>
     </div>
   );
 };
 
 export default SideBar;
+
+
+
 
 
 
