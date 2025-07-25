@@ -80,6 +80,7 @@ const ProfileTemplate = ({
             handleSaveBio={handleSaveBio}
             onEditAvatar={onEditAvatar}
             onEditBanner={onEditBanner}
+            isEditable={isEditable}  // <-- pass isEditable here
           />
         </div>
 
@@ -106,5 +107,6 @@ const ProfileTemplate = ({
 };
 
 export default ProfileTemplate;
+
 
 
