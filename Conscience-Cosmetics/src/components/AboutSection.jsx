@@ -10,6 +10,7 @@ const AboutSection = ({
   profile,
   setProfile,
   setIsEditingBio,
+  isEditable = false, // new prop to control editing UI
 }) => {
   const handleSaveBio = async () => {
     try {
@@ -50,13 +51,19 @@ const AboutSection = ({
       <div className="relative p-4 rounded min-h-[100px] flex flex-col items-end">
         {!isEditingBio ? (
           <>
-            <p className="w-full text-left text-white whitespace-pre-wrap">{profile?.bio || "No bio yet."}</p>
-            <button
-              onClick={handleStartEditBio}
-              className="mt-[312px] bg-blue-600 text-white hover:bg-blue-700 text-sm px-3 py-1 rounded"
-            >
-              Edit Bio
-            </button>
+            <p className="w-full text-left text-white whitespace-pre-wrap">
+              {profile?.bio || "No bio yet."}
+            </p>
+
+            {/* Only show Edit button if isEditable */}
+            {isEditable && (
+              <button
+                onClick={handleStartEditBio}
+                className="mt-[312px] bg-blue-600 text-white hover:bg-blue-700 text-sm px-3 py-1 rounded"
+              >
+                Edit Bio
+              </button>
+            )}
           </>
         ) : (
           <>
@@ -87,4 +94,5 @@ const AboutSection = ({
 };
 
 export default AboutSection;
+
 

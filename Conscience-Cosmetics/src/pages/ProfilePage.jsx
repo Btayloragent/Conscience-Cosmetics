@@ -3,38 +3,31 @@ import axios from "axios";
 import ProfileTemplate from "./ProfileTemplate";
 import { useParams } from "react-router-dom";
 
-const ProfilePage = () => {
-  const { username } = useParams(); // get username from URL param
+const EditProfilePage = () => {
+  const { username } = useParams();
   const [user, setUser] = useState(null);
   const [isEditingBio, setIsEditingBio] = useState(false);
   const [editedBio, setEditedBio] = useState("");
 
   useEffect(() => {
-    console.log("Fetching profile for username:", username);
     if (username) {
       axios
         .get(`http://localhost:5001/api/profile?username=${username}`)
         .then((res) => {
-          console.log("Profile response data:", res.data);
           setUser(res.data);
           setEditedBio(res.data.bio || "");
-
-          // Update avatar in localStorage if available
           if (res.data.avatarUrl) {
             localStorage.setItem("avatarUrl", res.data.avatarUrl);
           }
         })
-        .catch((err) => {
-          console.error("Error fetching profile:", err);
+        .catch(() => {
           setUser(null);
           setEditedBio("");
         });
     }
   }, [username]);
 
-  const handleStartEditBio = () => {
-    setIsEditingBio(true);
-  };
+  const handleStartEditBio = () => setIsEditingBio(true);
 
   const handleCancelEditBio = () => {
     setIsEditingBio(false);
@@ -53,10 +46,9 @@ const ProfilePage = () => {
           },
         }
       );
-      setUser((prevUser) => ({ ...prevUser, bio: response.data.bio }));
+      setUser((prev) => ({ ...prev, bio: response.data.bio }));
       setIsEditingBio(false);
-    } catch (error) {
-      console.error("Failed to update bio:", error);
+    } catch {
       alert("Could not save bio. Please try again.");
     }
   };
@@ -78,16 +70,10 @@ const ProfilePage = () => {
           },
         }
       );
-
-      // Update both local state and localStorage
       const newAvatarUrl = response.data.avatarUrl;
-      setUser((prevUser) => ({
-        ...prevUser,
-        avatarUrl: newAvatarUrl,
-      }));
+      setUser((prev) => ({ ...prev, avatarUrl: newAvatarUrl }));
       localStorage.setItem("avatarUrl", newAvatarUrl);
-    } catch (error) {
-      console.error("Error uploading avatar:", error);
+    } catch {
       alert("Failed to upload avatar. Please try again.");
     }
   };
@@ -109,12 +95,8 @@ const ProfilePage = () => {
           },
         }
       );
-      setUser((prevUser) => ({
-        ...prevUser,
-        bannerUrl: response.data.bannerUrl,
-      }));
-    } catch (error) {
-      console.error("Error uploading banner:", error);
+      setUser((prev) => ({ ...prev, bannerUrl: response.data.bannerUrl }));
+    } catch {
       alert("Failed to upload banner. Please try again.");
     }
   };
@@ -136,10 +118,11 @@ const ProfilePage = () => {
       handleSaveBio={handleSaveBio}
       onEditAvatar={onEditAvatar}
       onEditBanner={onEditBanner}
+      isEditable={true} // enable editing UI here
     />
   );
 };
 
-export default ProfilePage;
+export default EditProfilePage;
 
 
