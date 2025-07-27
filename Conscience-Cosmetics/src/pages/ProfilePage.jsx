@@ -8,7 +8,8 @@ const ProfilePage = () => {
   const [user, setUser] = useState(null);
   const [isEditingBio, setIsEditingBio] = useState(false);
   const [editedBio, setEditedBio] = useState("");
-  const loggedInUsername = localStorage.getItem("username"); // get logged-in username from localStorage
+
+  const loggedInUsername = localStorage.getItem("username");
 
   useEffect(() => {
     if (username) {
@@ -119,8 +120,8 @@ const ProfilePage = () => {
       handleSaveBio={handleSaveBio}
       onEditAvatar={onEditAvatar}
       onEditBanner={onEditBanner}
-      isEditable={loggedInUsername === user.username}
-      loggedInUsername={loggedInUsername} // pass down for FollowButton logic
+      isEditable={false} // no editing UI on this page
+      loggedInUsername={loggedInUsername}
     />
   );
 };

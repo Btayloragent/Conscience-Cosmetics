@@ -9,6 +9,9 @@ const EditProfilePage = () => {
   const [isEditingBio, setIsEditingBio] = useState(false);
   const [editedBio, setEditedBio] = useState("");
 
+  // Get logged in username from localStorage or your auth system
+  const loggedInUsername = localStorage.getItem("username");
+
   useEffect(() => {
     if (username) {
       axios
@@ -118,12 +121,14 @@ const EditProfilePage = () => {
       handleSaveBio={handleSaveBio}
       onEditAvatar={onEditAvatar}
       onEditBanner={onEditBanner}
-      isEditable={true} // enable editing UI here!
+      isEditable={true} // editing UI enabled
+      loggedInUsername={loggedInUsername} // pass logged-in username for Follow button logic
     />
   );
 };
 
 export default EditProfilePage;
+
 
 
 
