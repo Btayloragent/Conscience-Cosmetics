@@ -20,6 +20,7 @@ const ProfileTemplate = ({
   onEditAvatar,
   onEditBanner,
   isEditable = false,
+  loggedInUsername,
   editProfileButton,
 }) => {
   return (
@@ -33,6 +34,7 @@ const ProfileTemplate = ({
         onEditAvatar={onEditAvatar}
         onEditBanner={onEditBanner}
         isEditable={isEditable}
+        showFollowButton={loggedInUsername !== user.username} // show Follow button only if viewing another user
       />
 
       {/* Username and Email */}
@@ -78,9 +80,7 @@ const ProfileTemplate = ({
             handleStartEditBio={handleStartEditBio}
             handleCancelEditBio={handleCancelEditBio}
             handleSaveBio={handleSaveBio}
-            onEditAvatar={onEditAvatar}
-            onEditBanner={onEditBanner}
-            isEditable={isEditable}  // <-- pass isEditable here
+            isEditable={isEditable}
           />
         </div>
 
