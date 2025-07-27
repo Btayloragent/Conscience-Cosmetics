@@ -1,5 +1,6 @@
 import React, { useRef } from "react";
 import AvatarEditor from "../components/AvatarEditor"; // Adjust path if needed
+import FollowButton from "../components/FollowButton";
 
 const ProfileBanner = ({
   user,
@@ -75,10 +76,16 @@ const ProfileBanner = ({
         />
         <div className="invisible">{/* Placeholder */}</div>
       </div>
+
+      {/* FollowButton positioned bottom-right */}
+      <div className="absolute bottom-4 right-4">
+        <FollowButton />
+      </div>
     </div>
   );
 };
 
 export default ProfileBanner;
+
 
 
