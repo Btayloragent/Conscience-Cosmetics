@@ -4,16 +4,14 @@ import HomeIcon from '../pictures/SideBarIcons/Home.png';
 import MakeUpIcon from '../pictures/SideBarIcons/MakeUp.png';
 import VideosIcon from '../pictures/SideBarIcons/Videos.png';
 import AboutUSIcon from '../pictures/SideBarIcons/AboutUs2.png';
-import EditIcon from '../pictures/SideBarIcons/EditPage3.png'; // Edit icon
+import EditIcon from '../pictures/SideBarIcons/EditPage3.png';
 
 const SideBar = () => {
   const [hoveredIcon, setHoveredIcon] = useState(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-
   const location = useLocation();
-  const params = useParams();
-
   const loggedInUsername = localStorage.getItem('username');
+  const avatarUrl = localStorage.getItem('avatarUrl');
 
   const checkLogin = () => {
     const loginState = localStorage.getItem('isLoggedIn');
@@ -44,6 +42,8 @@ const SideBar = () => {
 
   const onOwnProfilePage =
     isLoggedIn && location.pathname === `/profile/${loggedInUsername}`;
+  const onEditProfilePage =
+    isLoggedIn && location.pathname === `/profile/${loggedInUsername}/edit`;
 
   const sidebarStyle = {
     width: '150px',
@@ -117,7 +117,7 @@ const SideBar = () => {
           </li>
         ))}
 
-        {/* Conditionally render Edit Page icon when on your own profile */}
+        {/* Show Edit Page button when on your own profile */}
         {onOwnProfilePage && (
           <li style={liStyle} key="edit">
             <Link
@@ -125,8 +125,35 @@ const SideBar = () => {
               style={aStyle}
               onMouseEnter={() => setHoveredIcon('edit')}
               onMouseLeave={() => setHoveredIcon(null)}
+              title="Edit Profile"
             >
               <img src={EditIcon} alt="Edit Page" style={iconStyle('edit')} />
+            </Link>
+          </li>
+        )}
+
+        {/* Show avatar as View Profile button when on the edit page */}
+        {onEditProfilePage && avatarUrl && (
+          <li style={liStyle} key="view-profile">
+            <Link
+              to={`/profile/${loggedInUsername}`}
+              style={aStyle}
+              onMouseEnter={() => setHoveredIcon('view-profile')}
+              onMouseLeave={() => setHoveredIcon(null)}
+              title="View Profile"
+            >
+              <img
+                src={avatarUrl.startsWith('http') ? avatarUrl : `http://localhost:5001${avatarUrl}`}
+                alt="View Profile"
+                style={{
+                  ...iconStyle('view-profile'),
+                  borderRadius: '50%',
+                  width: '35px',
+                  height: '35px',
+                  objectFit: 'cover',
+                  cursor: 'pointer',
+                }}
+              />
             </Link>
           </li>
         )}
@@ -136,6 +163,7 @@ const SideBar = () => {
 };
 
 export default SideBar;
+
 
 
 

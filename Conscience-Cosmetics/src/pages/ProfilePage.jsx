@@ -118,7 +118,7 @@ const EditProfilePage = () => {
       handleSaveBio={handleSaveBio}
       onEditAvatar={onEditAvatar}
       onEditBanner={onEditBanner}
-      isEditable={true} // enable editing UI here
+      isEditable={false} // enable editing UI here
     />
   );
 };
