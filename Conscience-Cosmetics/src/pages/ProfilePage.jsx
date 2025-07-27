@@ -3,11 +3,12 @@ import axios from "axios";
 import ProfileTemplate from "./ProfileTemplate";
 import { useParams } from "react-router-dom";
 
-const EditProfilePage = () => {
+const ProfilePage = () => {
   const { username } = useParams();
   const [user, setUser] = useState(null);
   const [isEditingBio, setIsEditingBio] = useState(false);
   const [editedBio, setEditedBio] = useState("");
+  const loggedInUsername = localStorage.getItem("username"); // get logged-in username from localStorage
 
   useEffect(() => {
     if (username) {
@@ -118,11 +119,13 @@ const EditProfilePage = () => {
       handleSaveBio={handleSaveBio}
       onEditAvatar={onEditAvatar}
       onEditBanner={onEditBanner}
-      isEditable={false} // enable editing UI here
+      isEditable={loggedInUsername === user.username}
+      loggedInUsername={loggedInUsername} // pass down for FollowButton logic
     />
   );
 };
 
-export default EditProfilePage;
+export default ProfilePage;
+
 
 

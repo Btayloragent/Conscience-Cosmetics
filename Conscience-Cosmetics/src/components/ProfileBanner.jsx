@@ -6,7 +6,8 @@ const ProfileBanner = ({
   user,
   onEditBanner,
   onEditAvatar,
-  isEditable = false, // new prop to control edit UI
+  isEditable = false,
+  showFollowButton = false, // controls rendering of FollowButton only
 }) => {
   const fileInputRef = useRef(null);
 
@@ -23,12 +24,19 @@ const ProfileBanner = ({
     }
   };
 
+  const bannerUrl =
+    user?.bannerUrl && user.bannerUrl.startsWith("http")
+      ? user.bannerUrl
+      : user?.bannerUrl
+      ? `http://localhost:5001${user.bannerUrl}`
+      : null;
+
   return (
     <div
       className="relative w-full h-96 shadow-md bg-cover bg-center"
       style={{
-        backgroundImage: user?.bannerUrl
-          ? `url("http://localhost:5001${user.bannerUrl}")`
+        backgroundImage: bannerUrl
+          ? `url("${bannerUrl}")`
           : "linear-gradient(to right, #6366f1, #8b5cf6)",
       }}
     >
@@ -40,6 +48,7 @@ const ProfileBanner = ({
             className="absolute top-4 right-4 p-2 bg-white bg-opacity-80 rounded-full hover:bg-opacity-100 shadow-md focus:outline-none"
             title="Edit Banner"
             type="button"
+            aria-label="Edit banner image"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -68,19 +77,25 @@ const ProfileBanner = ({
       )}
 
       <div className="h-full flex flex-col justify-center items-center text-center">
-        {/* Pass isEditable to AvatarEditor so it can show edit UI conditionally */}
         <AvatarEditor
           avatarUrl={user?.avatarUrl}
           onEditAvatar={onEditAvatar}
           isEditable={isEditable}
         />
-        <div className="invisible">{/* Placeholder */}</div>
       </div>
 
-      {/* FollowButton positioned bottom-right */}
-      <div className="absolute bottom-4 right-4">
-        <FollowButton />
-      </div>
+      {/* Render FollowButton only if showFollowButton is true */}
+      {showFollowButton && (
+        <div className="absolute bottom-4 right-4">
+          <FollowButton
+            isFriend={false} // Replace with actual friend state if available
+            onFollowToggle={(newState) => {
+              console.log("Follow toggled:", newState);
+              // You can call your API here or lift state up as needed
+            }}
+          />
+        </div>
+      )}
     </div>
   );
 };
