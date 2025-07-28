@@ -34,7 +34,7 @@ const ProfileTemplate = ({
         onEditAvatar={onEditAvatar}
         onEditBanner={onEditBanner}
         isEditable={isEditable}
-        showFollowButton={loggedInUsername !== user.username} // show Follow button only if viewing another user
+        loggedInUsername={loggedInUsername} // pass logged-in username
       />
 
       {/* Username and Email */}
@@ -80,6 +80,8 @@ const ProfileTemplate = ({
             handleStartEditBio={handleStartEditBio}
             handleCancelEditBio={handleCancelEditBio}
             handleSaveBio={handleSaveBio}
+            onEditAvatar={onEditAvatar}
+            onEditBanner={onEditBanner}
             isEditable={isEditable}
           />
         </div>
@@ -107,6 +109,7 @@ const ProfileTemplate = ({
 };
 
 export default ProfileTemplate;
+
 
 
 
