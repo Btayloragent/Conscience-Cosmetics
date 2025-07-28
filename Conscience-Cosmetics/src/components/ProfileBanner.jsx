@@ -8,6 +8,8 @@ const ProfileBanner = ({
   onEditAvatar,
   isEditable = false,
   loggedInUsername,
+  onFollowToggle,
+  isFollowing,
 }) => {
   const fileInputRef = useRef(null);
 
@@ -79,13 +81,16 @@ const ProfileBanner = ({
           onEditAvatar={onEditAvatar}
           isEditable={isEditable}
         />
-        <div className="invisible">{/* Placeholder */}</div>
       </div>
 
       {/* FollowButton positioned bottom-right */}
       {showFollowButton && (
         <div className="absolute bottom-4 right-4">
-          <FollowButton />
+          <FollowButton
+            profileUsername={user?.username}
+            onFollowToggle={onFollowToggle}
+            isFriend={isFollowing}
+          />
         </div>
       )}
     </div>

@@ -1,51 +1,84 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
+import axios from "axios";
 
-const FollowButton = ({ isFriend, onFollowToggle }) => {
-  const [following, setFollowing] = useState(isFriend);
-  const [loading, setLoading] = useState(false);
+const FollowButton = ({ profileUserId }) => {
+  const [isFollowing, setIsFollowing] = useState(false);
+  const [loading, setLoading] = useState(true);
+
+  const token = localStorage.getItem("token");
 
   useEffect(() => {
-    setFollowing(isFriend);
-  }, [isFriend]);
+  if (!token || !profileUserId) {
+    setLoading(false);
+    return;
+  }
 
-  const handleClick = async () => {
-    setLoading(true);
+  const checkFollowing = async () => {
+
     try {
-      await onFollowToggle(!following);
-      setFollowing(!following);
-    } catch (error) {
-      console.error("Follow toggle failed", error);
+      const res = await axios.get(
+        `http://localhost:5001/api/users/${profileUserId}/is-following`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      setIsFollowing(res.data.following); // ✅ Fixed here
+    } catch (err) {
+      console.error("Error checking follow status:", err);
     } finally {
       setLoading(false);
     }
   };
 
+  checkFollowing();
+}, [profileUserId, token]);
+
+
+  const handleToggleFollow = async () => {
+    if (!token || !profileUserId) {
+      alert("Please login to follow users.");
+      return;
+    }
+
+    try {
+      if (isFollowing) {
+        await axios.post(
+          `http://localhost:5001/api/users/${profileUserId}/unfollow`,
+          {},
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
+        setIsFollowing(false);
+      } else {
+        await axios.post(
+          `http://localhost:5001/api/users/${profileUserId}/follow`,
+          {},
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
+        setIsFollowing(true);
+      }
+    } catch (err) {
+      console.error("Follow/unfollow error:", err);
+      alert("Failed to update follow status.");
+    }
+  };
+
+  if (loading) return null;
+
   return (
     <button
-      onClick={handleClick}
-      disabled={loading}
-      className={`flex items-center gap-2 px-4 py-2 rounded-md font-bold text-white text-base
-        transition-transform duration-200
-        ${
-          following
-            ? "bg-gray-400 hover:bg-gray-500"
-            : "bg-blue-400 hover:bg-blue-500"
-        }
-        active:scale-95
-      `}
+      onClick={handleToggleFollow}
+      className={`px-4 py-2 rounded-full text-white shadow-md ${
+        isFollowing ? "bg-gray-400" : "bg-indigo-600"
+      }`}
     >
-      {/* Inline SVG icon (user + plus sign) */}
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        fill="white"
-        viewBox="0 0 24 24"
-        className="w-5 h-5"
-      >
-        <path d="M15 14c-2.67 0-8 1.34-8 4v2h8v-2c0-1.1.9-2 2-2h3v-2h-3zm-4-2c1.66 0 3-1.34 3-3S12.66 6 11 6s-3 1.34-3 3 1.34 3 3 3zm10-1V9h-2V7h-2v2h-2v2h2v2h2v-2h2z" />
-      </svg>
-      {loading ? "..." : following ? "Following" : "Follow"}
+      {isFollowing ? "Following" : "Follow"}
     </button>
   );
 };
 
 export default FollowButton;
+
