@@ -391,7 +391,7 @@ app.get('/api/users/:id/is-following', verifyToken, async (req, res) => {
       (id) => id.toString() === userIdToCheck
     );
 
-    res.status(200).json({ following: isFollowing });
+    res.status(200).json({ isFollowing: isFollowing });
   } catch (err) {
     console.error("Check following error:", err);
     res.status(500).json({ error: 'Server error' });
