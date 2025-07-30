@@ -19,7 +19,10 @@ const port = 5001;
 
 // Middleware
 app.use(express.json());
-app.use(cors());
+app.use(cors({
+  origin: 'http://localhost:5173', // Your frontend's origin
+  credentials: true
+}));
 app.use('/uploads', express.static(path.resolve('./uploads')));
 
 // Mongo URI

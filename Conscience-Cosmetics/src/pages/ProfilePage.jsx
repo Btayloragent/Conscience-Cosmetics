@@ -14,48 +14,47 @@ const ProfilePage = () => {
   const token = localStorage.getItem("token");
 
   useEffect(() => {
-    if (username) {
-      // Fetch profile data and follow status
-      axios
-        .get(`http://localhost:5001/api/profile?username=${username}`, {
-          headers: {
-            Authorization: token ? `Bearer ${token}` : "",
-          },
-        })
-        .then((res) => {
-          setUser(res.data);
-          setEditedBio(res.data.bio || "");
-          if (res.data.avatarUrl) {
-            localStorage.setItem("avatarUrl", res.data.avatarUrl);
-          }
+    if (!username || !token) return;
+console.log("Token being sent:", token);
 
-          // Also fetch follow status if logged in and not viewing own profile
-          if (loggedInUsername && loggedInUsername !== username) {
-            axios
-              .get(
-                `http://localhost:5001/api/users/${res.data._id}/is-following`,
-                {
-                  headers: {
-                    Authorization: token ? `Bearer ${token}` : "",
-                  },
-                }
-              )
-              .then((res) => {
-                setIsFollowing(res.data.isFollowing);
-              })
-              .catch(() => {
-                setIsFollowing(false);
-              });
-          } else {
-            setIsFollowing(false);
-          }
-        })
-        .catch(() => {
-          setUser(null);
-          setEditedBio("");
+    axios
+      .get(`http://localhost:5001/api/profile?username=${username}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then((res) => {
+        setUser(res.data);
+        setEditedBio(res.data.bio || "");
+        if (res.data.avatarUrl) {
+          localStorage.setItem("avatarUrl", res.data.avatarUrl);
+        }
+
+        if (loggedInUsername && loggedInUsername !== username) {
+          axios
+            .get(
+              `http://localhost:5001/api/users/${res.data._id}/is-following`,
+              {
+                headers: {
+                  Authorization: `Bearer ${token}`,
+                },
+              }
+            )
+            .then((res) => {
+              setIsFollowing(res.data.isFollowing);
+            })
+            .catch(() => {
+              setIsFollowing(false);
+            });
+        } else {
           setIsFollowing(false);
-        });
-    }
+        }
+      })
+      .catch(() => {
+        setUser(null);
+        setEditedBio("");
+        setIsFollowing(false);
+      });
   }, [username, loggedInUsername, token]);
 
   const handleStartEditBio = () => setIsEditingBio(true);
@@ -132,7 +131,6 @@ const ProfilePage = () => {
     }
   };
 
-  // New function to toggle follow status:
   const onFollowToggle = async (shouldFollow) => {
     if (!user || !token) return;
 
@@ -157,7 +155,6 @@ const ProfilePage = () => {
       setIsFollowing(shouldFollow);
     } catch (error) {
       alert("Failed to update follow status. Please try again.");
-      throw error;
     }
   };
 
@@ -178,9 +175,8 @@ const ProfilePage = () => {
       handleSaveBio={handleSaveBio}
       onEditAvatar={onEditAvatar}
       onEditBanner={onEditBanner}
-      isEditable={false} // no editing UI on this page
+      isEditable={false}
       loggedInUsername={loggedInUsername}
-      // Pass follow props to ProfileTemplate, which should pass to ProfileBanner
       isFollowing={isFollowing}
       onFollowToggle={onFollowToggle}
     />
@@ -188,6 +184,7 @@ const ProfilePage = () => {
 };
 
 export default ProfilePage;
+
 
 
 
