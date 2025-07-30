@@ -3,79 +3,63 @@ import axios from "axios";
 
 const FollowButton = ({ profileUserId }) => {
   const [isFollowing, setIsFollowing] = useState(false);
-  const [loading, setLoading] = useState(true);
-
-  const token = localStorage.getItem("token");
 
   useEffect(() => {
-  if (!token || !profileUserId) {
-    setLoading(false);
-    return;
-  }
+    const checkFollowStatus = async () => {
+      const token = localStorage.getItem("token");
+      if (!token) return;
 
-  const checkFollowing = async () => {
+      try {
+        const res = await axios.get(
+          `http://localhost:5001/api/users/${profileUserId}/is-following`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        setIsFollowing(res.data.isFollowing);
+      } catch (err) {
+        console.error("Error checking follow status", err);
+      }
+    };
 
-    try {
-      const res = await axios.get(
-        `http://localhost:5001/api/users/${profileUserId}/is-following`,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
-      setIsFollowing(res.data.following); // ✅ Fixed here
-    } catch (err) {
-      console.error("Error checking follow status:", err);
-    } finally {
-      setLoading(false);
-    }
-  };
+    checkFollowStatus();
+  }, [profileUserId]);
 
-  checkFollowing();
-}, [profileUserId, token]);
+  const handleFollowToggle = async () => {
+    const token = localStorage.getItem("token");
+    console.log("Token in follow button:", token);
 
-
-  const handleToggleFollow = async () => {
-    if (!token || !profileUserId) {
-      alert("Please login to follow users.");
+    if (!token) {
+      alert("Please login to follow users");
       return;
     }
 
     try {
-      if (isFollowing) {
-        await axios.post(
-          `http://localhost:5001/api/users/${profileUserId}/unfollow`,
-          {},
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          }
-        );
-        setIsFollowing(false);
-      } else {
-        await axios.post(
-          `http://localhost:5001/api/users/${profileUserId}/follow`,
-          {},
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          }
-        );
-        setIsFollowing(true);
-      }
+      const url = `http://localhost:5001/api/users/${profileUserId}/${isFollowing ? "unfollow" : "follow"}`;
+      console.log("Sending request to:", url);
+
+      await axios.post(url, null, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      setIsFollowing(!isFollowing);
     } catch (err) {
-      console.error("Follow/unfollow error:", err);
-      alert("Failed to update follow status.");
+      console.error("Error toggling follow:", err);
     }
   };
 
-  if (loading) return null;
-
   return (
     <button
-      onClick={handleToggleFollow}
-      className={`px-4 py-2 rounded-full text-white shadow-md ${
-        isFollowing ? "bg-gray-400" : "bg-indigo-600"
+      onClick={handleFollowToggle}
+      className={`px-4 py-2 rounded ${
+        isFollowing ? "bg-red-500 text-white" : "bg-blue-500 text-white"
       }`}
     >
-      {isFollowing ? "Following" : "Follow"}
+      {isFollowing ? "Unfollow" : "Follow"}
     </button>
   );
 };

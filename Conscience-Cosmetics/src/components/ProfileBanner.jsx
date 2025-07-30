@@ -85,14 +85,11 @@ const ProfileBanner = ({
 
       {/* FollowButton positioned bottom-right */}
       {showFollowButton && (
-        <div className="absolute bottom-4 right-4">
-          <FollowButton
-            profileUsername={user?.username}
-            onFollowToggle={onFollowToggle}
-            isFriend={isFollowing}
-          />
-        </div>
-      )}
+  <div className="absolute bottom-4 right-4">
+    <FollowButton profileUserId={user?._id} />
+  </div>
+)}
+
     </div>
   );
 };
