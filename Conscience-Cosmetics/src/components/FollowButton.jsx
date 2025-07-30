@@ -3,34 +3,36 @@ import axios from "axios";
 
 const FollowButton = ({ profileUserId }) => {
   const [isFollowing, setIsFollowing] = useState(false);
+  const [token, setToken] = useState(null);
 
+  // Get token from localStorage once on mount
   useEffect(() => {
-    const checkFollowStatus = async () => {
-      const token = localStorage.getItem("token");
-      if (!token) return;
+    const storedToken = localStorage.getItem("token");
+    setToken(storedToken);
+  }, []);
 
+  // Check follow status when token and userId are available
+  useEffect(() => {
+    if (!token || !profileUserId) return;
+
+    const checkFollowStatus = async () => {
       try {
         const res = await axios.get(
           `http://localhost:5001/api/users/${profileUserId}/is-following`,
           {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
+            headers: { Authorization: `Bearer ${token}` },
           }
         );
-        setIsFollowing(res.data.isFollowing);
+        setIsFollowing(res.data.isFollowing); // <-- backend must return this correctly
       } catch (err) {
         console.error("Error checking follow status", err);
       }
     };
 
     checkFollowStatus();
-  }, [profileUserId]);
+  }, [token, profileUserId]);
 
   const handleFollowToggle = async () => {
-    const token = localStorage.getItem("token");
-    console.log("Token in follow button:", token);
-
     if (!token) {
       alert("Please login to follow users");
       return;
@@ -38,15 +40,11 @@ const FollowButton = ({ profileUserId }) => {
 
     try {
       const url = `http://localhost:5001/api/users/${profileUserId}/${isFollowing ? "unfollow" : "follow"}`;
-      console.log("Sending request to:", url);
-
       await axios.post(url, null, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        headers: { Authorization: `Bearer ${token}` },
       });
 
-      setIsFollowing(!isFollowing);
+      setIsFollowing(!isFollowing); // optimistic update
     } catch (err) {
       console.error("Error toggling follow:", err);
     }
