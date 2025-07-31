@@ -158,7 +158,9 @@ app.post("/login", async (req, res) => {
 app.get("/api/profile", async (req, res) => {
   try {
     const { username } = req.query;
-    const user = await User.findOne({ username }).select("-hashedPassword");
+    const user = await User.findOne({ username })
+  .select("-hashedPassword")
+  .populate("followers", "username avatarUrl _id");
     if (!user) return res.status(404).send("User not found");
     res.status(200).json(user);
   } catch (err) {

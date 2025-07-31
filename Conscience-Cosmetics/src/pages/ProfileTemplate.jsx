@@ -98,7 +98,7 @@ const ProfileTemplate = ({
           </div>
           <div className="p-6 bg-gray-500 bg-opacity-30 rounded-lg flex-1 overflow-auto">
             <h2 className="text-xl font-semibold text-blue-500 ml-40">Friends</h2>
-            <FriendsSection />
+            <FriendsSection profile={user} />
           </div>
         </div>
       </div>
