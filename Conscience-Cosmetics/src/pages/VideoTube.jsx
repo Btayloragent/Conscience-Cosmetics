@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import CommentSection from '../components/CommentSection';
 import Rating from '../components/Rating';
 import axios from 'axios';
+import FavoriteButton from '../components/FavoriteButton';
 
 function VideoTube() {
   const navigate = useNavigate();
@@ -65,9 +66,12 @@ function VideoTube() {
           </div>
 
           {/* Rating */}
-          <div className="flex justify-end max-w-[640px] w-full mx-auto mt-2">
-            <Rating />
-          </div>
+         <div className="flex justify-between items-center w-full max-w-[640px] mx-auto mt-2 px-1">
+  <FavoriteButton videoId={currentVideo.id} />
+  <Rating />
+</div>
+
+
 
           {/* Comment Section */}
           <div className="mt-6 text-white flex justify-center">
