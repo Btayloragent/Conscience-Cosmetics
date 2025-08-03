@@ -7,8 +7,9 @@ export default function CommentSection({ videoId, currentUser }) {
   const [showBox, setShowBox] = useState(false);
 
   useEffect(() => {
-    axios.get(`/api/comments/${videoId}`)
-      .then(res => {
+    axios
+      .get(`/api/comments/${videoId}`)
+      .then((res) => {
         if (Array.isArray(res.data)) {
           setComments(res.data);
         } else {
@@ -16,7 +17,7 @@ export default function CommentSection({ videoId, currentUser }) {
           setComments([]);
         }
       })
-      .catch(err => {
+      .catch((err) => {
         console.error("Failed to load comments:", err);
         setComments([]);
       });
@@ -26,16 +27,28 @@ export default function CommentSection({ videoId, currentUser }) {
     if (!text.trim()) return;
 
     try {
-      const res = await axios.post("/api/comments", {
-        videoId,
-        username: currentUser || "Anonymous",
-        text,
-      });
+      const token = localStorage.getItem("token");
+
+      const res = await axios.post(
+        "/api/comments",
+        {
+          videoId,
+          username: currentUser?.username || "Anonymous",
+          avatarUrl: currentUser?.avatarUrl || null,
+          text,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
       setComments([res.data, ...comments]);
       setText("");
       setShowBox(false);
     } catch (err) {
-      console.error("Failed to post comment:", err);
+      console.error("Failed to post comment:", err?.response?.data || err.message);
     }
   };
 
@@ -81,13 +94,28 @@ export default function CommentSection({ videoId, currentUser }) {
 
       <ul className="mt-4">
         {comments.map((c) => (
-          <li key={c._id || c.createdAt} className="border-t py-2">
-            <div className="text-sm font-semibold">{c.username}</div>
-            <div className="text-gray-700">{c.text}</div>
-            <div className="text-xs text-gray-400">{new Date(c.createdAt).toLocaleString()}</div>
+          <li key={c._id || c.createdAt} className="border-t py-3 flex gap-3 items-start">
+            {c.avatarUrl ? (
+              <img
+                src={c.avatarUrl}
+                alt="avatar"
+                className="w-8 h-8 rounded-full object-cover"
+              />
+            ) : (
+              <div className="w-8 h-8 rounded-full bg-gray-300" />
+            )}
+            <div>
+              <div className="text-sm font-semibold">{c.username}</div>
+              <div className="text-gray-700">{c.text}</div>
+              <div className="text-xs text-gray-400">
+                {new Date(c.createdAt).toLocaleString()}
+              </div>
+            </div>
           </li>
         ))}
       </ul>
     </div>
   );
 }
+
+

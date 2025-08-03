@@ -76,7 +76,14 @@ function VideoTube() {
           {/* Comment Section */}
           <div className="mt-6 text-white flex justify-center">
             <div className="w-full max-w-[640px]">
-              <CommentSection videoId={currentVideo.id} currentUser={localStorage.getItem("username") || "Anonymous"} />
+              <CommentSection
+  videoId={currentVideo.id}
+  currentUser={{
+    username: localStorage.getItem("username"),
+    avatarUrl: localStorage.getItem("avatarUrl")
+  }}
+/>
+
             </div>
           </div>
         </div>
