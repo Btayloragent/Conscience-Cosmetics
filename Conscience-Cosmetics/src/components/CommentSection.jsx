@@ -7,6 +7,7 @@ export default function CommentSection({ videoId, currentUser }) {
   const [showBox, setShowBox] = useState(false);
 
   useEffect(() => {
+     console.log("Current User Avatar URL:", currentUser?.avatarUrl);
     axios
       .get(`/api/comments/${videoId}`)
       .then((res) => {
@@ -52,14 +53,26 @@ export default function CommentSection({ videoId, currentUser }) {
     }
   };
 
+const getFullAvatarUrl = (url) => {
+  if (!url || typeof url !== "string") {
+    return "https://avatar.iran.liara.run/public/boy/1.png";
+  }
+
+  if (url.startsWith("http")) return url;
+
+  // If it's like /uploads/profile-pics/xxx.png
+  return `http://localhost:5001${url.startsWith("/") ? url : `/${url}`}`;
+};
+
+
   return (
     <div className="mt-6">
-      <h3 className="text-lg font-semibold mb-2">Comments</h3>
+      <h3 className="text-lg font-semibold mb-2 text-white">Comments</h3>
 
       {!showBox ? (
         <button
           onClick={() => setShowBox(true)}
-          className="text-sm text-blue-600 hover:underline"
+          className="text-sm text-blue-400 hover:underline"
         >
           Add a public comment...
         </button>
@@ -94,20 +107,19 @@ export default function CommentSection({ videoId, currentUser }) {
 
       <ul className="mt-4">
         {comments.map((c) => (
-          <li key={c._id || c.createdAt} className="border-t py-3 flex gap-3 items-start">
-            {c.avatarUrl ? (
-              <img
-                src={c.avatarUrl}
-                alt="avatar"
-                className="w-8 h-8 rounded-full object-cover"
-              />
-            ) : (
-              <div className="w-8 h-8 rounded-full bg-gray-300" />
-            )}
+          <li
+            key={c._id || c.createdAt}
+            className="border-t py-3 flex gap-3 items-start text-white"
+          >
+            <img
+              src={getFullAvatarUrl(c.avatarUrl)}
+              alt="avatar"
+              className="w-8 h-8 rounded-full object-cover"
+            />
             <div>
               <div className="text-sm font-semibold">{c.username}</div>
-              <div className="text-gray-700">{c.text}</div>
-              <div className="text-xs text-gray-400">
+              <div className="text-gray-300">{c.text}</div>
+              <div className="text-xs text-gray-500">
                 {new Date(c.createdAt).toLocaleString()}
               </div>
             </div>
@@ -117,5 +129,4 @@ export default function CommentSection({ videoId, currentUser }) {
     </div>
   );
 }
-
 

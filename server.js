@@ -245,14 +245,14 @@ app.post("/api/users/:id/banner-pic", verifyToken, uploadBanner.single("banner")
 // Post comment (protected)
 app.post("/api/comments", verifyToken, async (req, res) => {
   try {
-    const { videoId, username, text } = req.body;
+    const { videoId, username, avatarUrl, text } = req.body; // add avatarUrl here
     if (!videoId || !username || !text) return res.status(400).send("Missing fields");
 
     if (username !== req.username) {
       return res.status(403).send("Username mismatch");
     }
 
-    const newComment = new Comment({ videoId, username, text });
+    const newComment = new Comment({ videoId, username, avatarUrl, text });  // include avatarUrl
     await newComment.save();
     res.status(201).json(newComment);
   } catch (err) {
@@ -260,6 +260,7 @@ app.post("/api/comments", verifyToken, async (req, res) => {
     res.status(500).send("Failed to post comment");
   }
 });
+
 
 // Get comments (no auth)
 app.get("/api/comments/:videoId", async (req, res) => {
