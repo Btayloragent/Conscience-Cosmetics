@@ -3,7 +3,7 @@ import NavBar from "../components/NavBar";
 import SideBar from "../components/SideBar";
 import ProfileBanner from "../components/ProfileBanner";
 import AboutSection from "../components/AboutSection";
-import FavoriteVideos from "../components/FavoriteVideos";
+import FavoriteVideos from "../components/FavoriteVideos"; // updated component
 import FriendsSection from "../components/FriendsSection";
 import Footer from "../components/Footer";
 
@@ -34,7 +34,7 @@ const ProfileTemplate = ({
         onEditAvatar={onEditAvatar}
         onEditBanner={onEditBanner}
         isEditable={isEditable}
-        loggedInUsername={loggedInUsername} // pass logged-in username
+        loggedInUsername={loggedInUsername}
       />
 
       {/* Username and Email */}
@@ -90,16 +90,20 @@ const ProfileTemplate = ({
           className="flex flex-col gap-4"
           style={{ maxWidth: "30vw", width: "100%", height: "500px" }}
         >
-          <div className="p-6 bg-gray-500 bg-opacity-30 rounded-lg flex-1 overflow-auto">
-            <h2 className="text-xl font-semibold text-blue-500 ml-40">
-              Favorite Videos
-            </h2>
-            <FavoriteVideos />
-          </div>
+    <div className="p-6 bg-gray-500 bg-opacity-30 rounded-lg flex-1">
+  <h2 className="text-xl font-semibold text-blue-500 ml-40 mb-4">
+    Favorite Videos
+  </h2>
+  <div className="overflow-auto" style={{ maxHeight: "440px" }}>
+    <FavoriteVideos />
+  </div>
+</div>
+
+
+
           <div className="p-6 bg-gray-500 bg-opacity-30 rounded-lg flex-1 overflow-auto">
             <h2 className="text-xl font-semibold text-blue-500 ml-40">Friends</h2>
             <FriendsSection profile={user} />
-
           </div>
         </div>
       </div>
@@ -110,7 +114,6 @@ const ProfileTemplate = ({
 };
 
 export default ProfileTemplate;
-
 
 
 
