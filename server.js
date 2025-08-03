@@ -1,3 +1,5 @@
+// src/server.js (or your main backend file)
+
 import express from 'express';
 import axios from 'axios';
 import cors from 'cors';
@@ -56,7 +58,6 @@ const userSchema = new mongoose.Schema({
   followers: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
   following: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
 
-  // New field for favorites
   favorites: [
     {
       videoId: { type: String, required: true },
@@ -88,7 +89,7 @@ async function connectDb() {
   }
 }
 
-// ✅ Routes
+// --- Routes ---
 
 // Signup (no auth required)
 app.post("/signup", async (req, res) => {
@@ -109,7 +110,7 @@ app.post("/signup", async (req, res) => {
       bio: bio || "",
       followers: [],
       following: [],
-      favorites: [], // initialize empty favorites
+      favorites: [],
     });
 
     await newUser.save();
@@ -129,7 +130,7 @@ app.post("/signup", async (req, res) => {
   }
 });
 
-// Login - with JWT token creation (no auth required)
+// Login (no auth required)
 app.post("/login", async (req, res) => {
   try {
     const { username, password } = req.body;
@@ -139,7 +140,6 @@ app.post("/login", async (req, res) => {
     const isMatch = await bcrypt.compare(password, user.hashedPassword);
     if (!isMatch) return res.status(400).send("Invalid password");
 
-    // Create JWT token:
     const token = jwt.sign(
       { userId: user._id, username: user.username },
       process.env.JWT_SECRET || 'your_jwt_secret',
@@ -150,7 +150,7 @@ app.post("/login", async (req, res) => {
       message: "Login successful",
       token,
       user: {
-        _id: user._id, // send user ID for frontend use
+        _id: user._id,
         username: user.username,
         email: user.email,
         avatarUrl: user.avatarUrl,
@@ -183,7 +183,6 @@ app.put("/api/users/:id/bio", verifyToken, async (req, res) => {
     const { id } = req.params;
     const { bio } = req.body;
 
-    // Optional: Verify that the logged-in user is the owner of this profile
     if (id !== req.userId) {
       return res.status(403).send("Unauthorized to update this bio");
     }
@@ -247,7 +246,6 @@ app.post("/api/comments", verifyToken, async (req, res) => {
     const { videoId, username, text } = req.body;
     if (!videoId || !username || !text) return res.status(400).send("Missing fields");
 
-    // Optionally check that username matches logged-in user:
     if (username !== req.username) {
       return res.status(403).send("Username mismatch");
     }
@@ -319,7 +317,7 @@ app.get("/api/users/search", async (req, res) => {
   }
 });
 
-// --- FOLLOW / UNFOLLOW ROUTES (protected) ---
+// --- FOLLOW / UNFOLLOW ROUTES ---
 
 // Follow user
 app.post('/api/users/:id/follow', verifyToken, async (req, res) => {
@@ -383,7 +381,7 @@ app.post('/api/users/:id/unfollow', verifyToken, async (req, res) => {
   }
 });
 
-// NEW: Check if current user is following a user (protected)
+// Check if current user is following a user
 app.get('/api/users/:id/is-following', verifyToken, async (req, res) => {
   try {
     const userIdToCheck = req.params.id;
@@ -396,7 +394,6 @@ app.get('/api/users/:id/is-following', verifyToken, async (req, res) => {
     const currentUser = await User.findById(currentUserId);
     if (!currentUser) return res.status(404).json({ error: 'Current user not found' });
 
-    // Check if current user is following userIdToCheck
     const isFollowing = currentUser.following.some(
       (id) => id.toString() === userIdToCheck
     );
@@ -408,10 +405,20 @@ app.get('/api/users/:id/is-following', verifyToken, async (req, res) => {
   }
 });
 
+// --- NEW: Get users a user is following (with avatar and username)
+app.get('/api/users/:id/following', async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id).populate('following', 'username avatarUrl');
+    if (!user) return res.status(404).send("User not found");
 
-// === New favorite routes (protected) ===
+    res.status(200).json({ following: user.following });
+  } catch (err) {
+    console.error("Error fetching following list:", err.message);
+    res.status(500).send("Server error");
+  }
+});
 
-// Get all favorites of the logged-in user
+// Favorites routes (protected)
 app.get('/api/users/:id/favorites', verifyToken, async (req, res) => {
   try {
     const userId = req.params.id;
@@ -427,7 +434,6 @@ app.get('/api/users/:id/favorites', verifyToken, async (req, res) => {
   }
 });
 
-// Add a video to favorites
 app.post('/api/users/:id/favorites', verifyToken, async (req, res) => {
   try {
     const userId = req.params.id;
@@ -439,7 +445,6 @@ app.post('/api/users/:id/favorites', verifyToken, async (req, res) => {
     const user = await User.findById(userId);
     if (!user) return res.status(404).send('User not found');
 
-    // Avoid duplicates
     const exists = user.favorites.some(fav => fav.videoId === videoId);
     if (!exists) {
       user.favorites.push({ videoId, videoFile, videoThumbnail });
@@ -453,7 +458,6 @@ app.post('/api/users/:id/favorites', verifyToken, async (req, res) => {
   }
 });
 
-// Remove a video from favorites
 app.delete('/api/users/:id/favorites/:videoId', verifyToken, async (req, res) => {
   try {
     const userId = req.params.id;
