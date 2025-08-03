@@ -1,14 +1,18 @@
 import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import CommentSection from '../components/CommentSection';
-import Rating from '../components/Rating';
+import Rating from '../components/rating'; // Make sure the file name matches
 import axios from 'axios';
 import FavoriteButton from '../components/FavoriteButton';
 
 function VideoTube() {
   const navigate = useNavigate();
   const [videos, setVideos] = useState([]);
-  const [currentVideo, setCurrentVideo] = useState(null); // Initially null
+  const [currentVideo, setCurrentVideo] = useState(null);
+
+  // Get userId and token from localStorage for auth
+  const currentUserId = localStorage.getItem("userId");
+  const token = localStorage.getItem("token");
 
   useEffect(() => {
     const fetchVideos = async () => {
@@ -19,9 +23,12 @@ function VideoTube() {
           videoFile: video.video_files[0].link,
           videoThumbnail: video.image,
         }));
+
         setVideos(videoList);
+
         if (videoList.length > 0) {
-          setCurrentVideo(videoList[0]); // Set first video as current
+          setCurrentVideo(videoList[0]);
+          localStorage.setItem('currentVideoId', videoList[0].id); // <-- Set on initial load
         }
       } catch (error) {
         console.error("Error fetching side videos:", error.message);
@@ -32,6 +39,7 @@ function VideoTube() {
 
   const handleThumbnailClick = (video) => {
     setCurrentVideo(video);
+    localStorage.setItem('currentVideoId', video.id);  // <-- Set on thumbnail click
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -70,20 +78,23 @@ function VideoTube() {
               videoFile={currentVideo.videoFile}
               videoThumbnail={currentVideo.videoThumbnail}
             />
-            <Rating />
+            <Rating
+              videoId={currentVideo.id}
+              userId={currentUserId}
+              token={token}
+            />
           </div>
 
           {/* Comment Section */}
           <div className="mt-6 text-white flex justify-center">
             <div className="w-full max-w-[640px]">
               <CommentSection
-  videoId={currentVideo.id}
-  currentUser={{
-    username: localStorage.getItem("username"),
-    avatarUrl: localStorage.getItem("avatarUrl")
-  }}
-/>
-
+                videoId={currentVideo.id}
+                currentUser={{
+                  username: localStorage.getItem("username"),
+                  avatarUrl: localStorage.getItem("avatarUrl")
+                }}
+              />
             </div>
           </div>
         </div>
@@ -118,4 +129,5 @@ function VideoTube() {
 }
 
 export default VideoTube;
+
 
