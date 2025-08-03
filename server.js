@@ -1,5 +1,3 @@
-// src/server.js (or your main backend file)
-
 import express from 'express';
 import axios from 'axios';
 import cors from 'cors';
@@ -57,13 +55,18 @@ const userSchema = new mongoose.Schema({
   bannerUrl: { type: String, default: "" },
   followers: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
   following: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
-
   favorites: [
     {
       videoId: { type: String, required: true },
       videoFile: { type: String },
       videoThumbnail: { type: String },
     },
+  ],
+  ratings: [   // <-- NEW: ratings array added here
+    {
+      videoId: { type: String, required: true },
+      rating: { type: Number, required: true },
+    }
   ],
 });
 userSchema.index({ username: 1 });
@@ -113,6 +116,7 @@ app.post("/signup", async (req, res) => {
       followers: [],
       following: [],
       favorites: [],
+      ratings: [],  // initialize empty ratings array
     });
 
     await newUser.save();
@@ -260,7 +264,6 @@ app.post("/api/comments", verifyToken, async (req, res) => {
     res.status(500).send("Failed to post comment");
   }
 });
-
 
 // Get comments (no auth)
 app.get("/api/comments/:videoId", async (req, res) => {
@@ -482,8 +485,74 @@ app.delete('/api/users/:id/favorites/:videoId', verifyToken, async (req, res) =>
   }
 });
 
-// Start server
-app.listen(port, async () => {
-  await connectDb();
-  console.log(`🚀 Server is running at http://localhost:${port}`);
+// --- NEW: Ratings routes (protected)
+
+// Get all ratings for user
+app.get('/api/users/:id/ratings', verifyToken, async (req, res) => {
+  try {
+    const userId = req.params.id;
+    if (userId !== req.userId) return res.status(403).send('Unauthorized');
+
+    const user = await User.findById(userId);
+    if (!user) return res.status(404).send('User not found');
+
+    res.status(200).json(user.ratings || []);
+  } catch (err) {
+    console.error('Get ratings error:', err);
+    res.status(500).send('Failed to fetch ratings');
+  }
+});
+
+// Get single rating for a video
+app.get('/api/users/:id/ratings/:videoId', verifyToken, async (req, res) => {
+  try {
+    const { id, videoId } = req.params;
+    if (id !== req.userId) return res.status(403).send('Unauthorized');
+
+    const user = await User.findById(id);
+    if (!user) return res.status(404).send('User not found');
+
+    const ratingEntry = user.ratings.find(r => r.videoId === videoId);
+    res.status(200).json({ rating: ratingEntry ? ratingEntry.rating : 0 });
+  } catch (err) {
+    console.error('Get rating error:', err);
+    res.status(500).send('Server error');
+  }
+});
+
+// Save or update a rating for a video
+app.post('/api/users/:id/ratings', verifyToken, async (req, res) => {
+  try {
+    const userId = req.params.id;
+    if (userId !== req.userId) return res.status(403).send('Unauthorized');
+
+    const { videoId, rating } = req.body;
+    if (!videoId || typeof rating !== 'number') return res.status(400).send('Invalid input');
+
+    const user = await User.findById(userId);
+    if (!user) return res.status(404).send('User not found');
+
+    // Find existing rating for this video
+    const existingRatingIndex = user.ratings.findIndex(r => r.videoId === videoId);
+    if (existingRatingIndex >= 0) {
+      // Update existing rating
+      user.ratings[existingRatingIndex].rating = rating;
+    } else {
+      // Add new rating
+      user.ratings.push({ videoId, rating });
+    }
+
+    await user.save();
+    res.status(200).json({ message: 'Rating saved' });
+  } catch (err) {
+    console.error('Save rating error:', err);
+    res.status(500).send('Failed to save rating');
+  }
+});
+
+// --- Start server ---
+connectDb().then(() => {
+  app.listen(port, () => {
+    console.log(`Server running on http://localhost:${port}`);
+  });
 });
