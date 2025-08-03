@@ -19,8 +19,10 @@ const NavBar = () => {
   useEffect(() => {
     const savedUsername = localStorage.getItem('username');
     const savedLoginState = localStorage.getItem('isLoggedIn');
+    const savedToken = localStorage.getItem('token');
+    const savedUserId = localStorage.getItem('userId');
 
-    if (savedLoginState === 'true' && savedUsername) {
+    if (savedLoginState === 'true' && savedUsername && savedToken && savedUserId) {
       setIsLoggedIn(true);
       setUsername(savedUsername);
 
@@ -79,9 +81,13 @@ const NavBar = () => {
     setIsModalOpen(false);
   };
 
-  const handleLoginSuccess = (userName, userAvatarUrl) => {
+  // Updated to accept userId and token and save them
+  const handleLoginSuccess = (userName, userAvatarUrl, userId, token) => {
     localStorage.setItem('isLoggedIn', 'true');
     localStorage.setItem('username', userName);
+    localStorage.setItem('userId', userId);  // <-- Store userId
+    localStorage.setItem('token', token);    // <-- Store token
+
     if (userAvatarUrl) {
       localStorage.setItem('avatarUrl', userAvatarUrl);
     } else {
@@ -100,6 +106,8 @@ const NavBar = () => {
     localStorage.removeItem('isLoggedIn');
     localStorage.removeItem('username');
     localStorage.removeItem('avatarUrl');
+    localStorage.removeItem('userId');   // <-- Remove userId
+    localStorage.removeItem('token');    // <-- Remove token
 
     setIsLoggedIn(false);
     setUsername('');

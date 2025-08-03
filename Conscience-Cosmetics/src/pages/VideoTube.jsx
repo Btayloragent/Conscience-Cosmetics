@@ -1,4 +1,4 @@
-import { useNavigate, useParams, useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import CommentSection from '../components/CommentSection';
 import Rating from '../components/Rating';
@@ -7,13 +7,8 @@ import FavoriteButton from '../components/FavoriteButton';
 
 function VideoTube() {
   const navigate = useNavigate();
-  const { videoId } = useParams();
-  const location = useLocation();
-  const { videoFile, videoThumbnail } = location.state || {};
-  const currentUser = localStorage.getItem("username") || "Anonymous";
-
   const [videos, setVideos] = useState([]);
-  const [currentVideo, setCurrentVideo] = useState({ videoFile, videoThumbnail });
+  const [currentVideo, setCurrentVideo] = useState(null); // Initially null
 
   useEffect(() => {
     const fetchVideos = async () => {
@@ -25,6 +20,9 @@ function VideoTube() {
           videoThumbnail: video.image,
         }));
         setVideos(videoList);
+        if (videoList.length > 0) {
+          setCurrentVideo(videoList[0]); // Set first video as current
+        }
       } catch (error) {
         console.error("Error fetching side videos:", error.message);
       }
@@ -37,8 +35,8 @@ function VideoTube() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  if (!currentVideo.videoFile) {
-    return <div className="text-white text-center mt-10">Video not found</div>;
+  if (!currentVideo) {
+    return <div className="text-white text-center mt-10">Loading video...</div>;
   }
 
   return (
@@ -47,7 +45,7 @@ function VideoTube() {
 
         {/* Main Video Area */}
         <div className="flex flex-col flex-1">
-          {/* Back Button - UNCHANGED */}
+          {/* Back Button */}
           <button
             onClick={() => navigate('/VideoPage')}
             className="text-white flex items-center mb-4 hover:underline"
@@ -65,18 +63,20 @@ function VideoTube() {
             />
           </div>
 
-          {/* Rating */}
-         <div className="flex justify-between items-center w-full max-w-[640px] mx-auto mt-2 px-1">
-  <FavoriteButton videoId={currentVideo.id} />
-  <Rating />
-</div>
-
-
+          {/* Rating & Favorite */}
+          <div className="flex justify-between items-center w-full max-w-[640px] mx-auto mt-2 px-1">
+            <FavoriteButton
+              videoId={currentVideo.id}
+              videoFile={currentVideo.videoFile}
+              videoThumbnail={currentVideo.videoThumbnail}
+            />
+            <Rating />
+          </div>
 
           {/* Comment Section */}
           <div className="mt-6 text-white flex justify-center">
             <div className="w-full max-w-[640px]">
-              <CommentSection videoId={videoId} currentUser={currentUser} />
+              <CommentSection videoId={currentVideo.id} currentUser={localStorage.getItem("username") || "Anonymous"} />
             </div>
           </div>
         </div>
@@ -87,17 +87,17 @@ function VideoTube() {
           {videos.length === 0 ? (
             <p className="text-white text-sm">Loading videos...</p>
           ) : (
-            videos.map((video, index) => (
+            videos.map((video) => (
               <div
-                key={index}
+                key={video.id}
                 className={`relative mb-3 cursor-pointer group border-2 rounded-lg ${
-                  video.videoFile === currentVideo.videoFile ? 'border-white' : 'border-transparent'
+                  video.id === currentVideo.id ? 'border-white' : 'border-transparent'
                 }`}
                 onClick={() => handleThumbnailClick(video)}
               >
                 <img
                   src={video.videoThumbnail}
-                  alt={`Thumbnail ${index}`}
+                  alt={`Thumbnail ${video.id}`}
                   className="w-full h-28 object-cover rounded-lg transition-transform duration-200 group-hover:scale-105"
                 />
                 <div className="absolute inset-0 bg-black bg-opacity-30 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200" />

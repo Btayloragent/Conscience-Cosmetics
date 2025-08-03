@@ -13,7 +13,6 @@ import verifyToken from './middleware/verifyToken.js'; // Adjust path if needed
 
 console.log("Using JWT secret:", process.env.JWT_SECRET);
 
-
 const app = express();
 const port = 5001;
 
@@ -56,6 +55,15 @@ const userSchema = new mongoose.Schema({
   bannerUrl: { type: String, default: "" },
   followers: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
   following: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
+
+  // New field for favorites
+  favorites: [
+    {
+      videoId: { type: String, required: true },
+      videoFile: { type: String },
+      videoThumbnail: { type: String },
+    },
+  ],
 });
 userSchema.index({ username: 1 });
 const User = mongoose.model("User", userSchema);
@@ -101,6 +109,7 @@ app.post("/signup", async (req, res) => {
       bio: bio || "",
       followers: [],
       following: [],
+      favorites: [], // initialize empty favorites
     });
 
     await newUser.save();
@@ -141,6 +150,7 @@ app.post("/login", async (req, res) => {
       message: "Login successful",
       token,
       user: {
+        _id: user._id, // send user ID for frontend use
         username: user.username,
         email: user.email,
         avatarUrl: user.avatarUrl,
@@ -395,6 +405,73 @@ app.get('/api/users/:id/is-following', verifyToken, async (req, res) => {
   } catch (err) {
     console.error("Check following error:", err);
     res.status(500).json({ error: 'Server error' });
+  }
+});
+
+
+// === New favorite routes (protected) ===
+
+// Get all favorites of the logged-in user
+app.get('/api/users/:id/favorites', verifyToken, async (req, res) => {
+  try {
+    const userId = req.params.id;
+    if (userId !== req.userId) return res.status(403).send('Unauthorized');
+
+    const user = await User.findById(userId);
+    if (!user) return res.status(404).send('User not found');
+
+    res.status(200).json(user.favorites);
+  } catch (err) {
+    console.error("Get favorites error:", err);
+    res.status(500).send("Failed to fetch favorites");
+  }
+});
+
+// Add a video to favorites
+app.post('/api/users/:id/favorites', verifyToken, async (req, res) => {
+  try {
+    const userId = req.params.id;
+    if (userId !== req.userId) return res.status(403).send('Unauthorized');
+
+    const { videoId, videoFile, videoThumbnail } = req.body;
+    if (!videoId) return res.status(400).send('videoId is required');
+
+    const user = await User.findById(userId);
+    if (!user) return res.status(404).send('User not found');
+
+    // Avoid duplicates
+    const exists = user.favorites.some(fav => fav.videoId === videoId);
+    if (!exists) {
+      user.favorites.push({ videoId, videoFile, videoThumbnail });
+      await user.save();
+    }
+
+    res.status(200).json(user.favorites);
+  } catch (error) {
+    console.error('Add favorite error:', error);
+    res.status(500).send('Server error');
+  }
+});
+
+// Remove a video from favorites
+app.delete('/api/users/:id/favorites/:videoId', verifyToken, async (req, res) => {
+  try {
+    const userId = req.params.id;
+    if (userId !== req.userId) return res.status(403).send('Unauthorized');
+
+    const { videoId } = req.params;
+    if (!videoId) return res.status(400).send('videoId is required');
+
+    const user = await User.findById(userId);
+    if (!user) return res.status(404).send('User not found');
+
+    user.favorites = user.favorites.filter(fav => fav.videoId !== videoId);
+    await user.save();
+
+    res.status(200).json(user.favorites);
+  } catch (error) {
+    console.error('Remove favorite error:', error);
+    res.status(500).send('Server error');
   }
 });
 
