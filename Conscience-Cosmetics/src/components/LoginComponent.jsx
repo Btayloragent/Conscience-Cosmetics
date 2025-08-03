@@ -34,14 +34,18 @@ const LoginComponent = ({ mode, onClose, onLoginSuccess }) => {
       if (response.status === 200) {
         const { token, user } = response.data;
         localStorage.setItem('token', token);
-        localStorage.setItem('isLoggedIn', 'true'); // ✅ ADD THIS
-        window.dispatchEvent(new Event('loginStatusChange')); // ✅ AND THIS
+        localStorage.setItem('userId', user._id);
+        localStorage.setItem('isLoggedIn', 'true');
+        window.dispatchEvent(new Event('loginStatusChange'));
 
         alert(`${currentMode === 'login' ? 'Login' : 'Sign Up'} successful!`);
 
         const avatarUrl = user.avatarUrl || selectedAvatar;
 
-        onLoginSuccess(user.username, avatarUrl);
+        console.log('Login response:', response.data);
+
+        // Pass userId and token here to NavBar
+        onLoginSuccess(user.username, avatarUrl, user._id, token);
         onClose();
       }
     } catch (error) {
@@ -234,4 +238,5 @@ const arrowButtonStyle = {
 };
 
 export default LoginComponent;
+
 
