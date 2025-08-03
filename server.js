@@ -72,9 +72,11 @@ const User = mongoose.model("User", userSchema);
 const commentSchema = new mongoose.Schema({
   videoId: { type: String, required: true },
   username: { type: String, required: true },
+  avatarUrl: { type: String },
   text: { type: String, required: true },
   createdAt: { type: Date, default: Date.now },
 });
+
 commentSchema.index({ videoId: 1 });
 const Comment = mongoose.model("Comment", commentSchema);
 
