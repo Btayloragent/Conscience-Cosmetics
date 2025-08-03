@@ -9,6 +9,13 @@ const SearchBar = () => {
   const [userResults, setUserResults] = useState([]);
   const [showDropdown, setShowDropdown] = useState(false);
 
+  // Helper to normalize avatar URLs
+  const getAvatarUrl = (url) => {
+    if (!url) return 'https://avatar.iran.liara.run/public/boy/1.png'; // fallback avatar
+    if (url.startsWith('http')) return url;
+    return `http://localhost:5001${url}`; // adjust your backend URL accordingly
+  };
+
   useEffect(() => {
     const delayDebounce = setTimeout(() => {
       if (searchTerm.trim()) {
@@ -98,7 +105,7 @@ const SearchBar = () => {
                 className="flex items-center gap-2"
               >
                 <img
-                  src={user.avatarUrl}
+                  src={getAvatarUrl(user.avatarUrl)}
                   alt={user.username}
                   className="w-6 h-6 rounded-full object-cover"
                 />
@@ -113,3 +120,4 @@ const SearchBar = () => {
 };
 
 export default SearchBar;
+
