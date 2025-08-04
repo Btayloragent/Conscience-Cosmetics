@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { Link } from "react-router-dom";
 
 const FavoriteVideos = () => {
   const [favorites, setFavorites] = useState([]);
@@ -39,17 +40,24 @@ const FavoriteVideos = () => {
   return (
     <div className="flex flex-wrap gap-4 p-4">
       {favorites.map((fav) => (
-        <div key={fav.videoId} className="w-32">
+        <Link
+          to={`/VideoPage/${fav.videoId}`}
+          key={fav.videoId}
+          className="w-32"
+          title="Go to video"
+        >
           <img
             src={fav.videoThumbnail || "default-thumbnail.png"}
             alt={`Video ${fav.videoId}`}
-            className="rounded-lg object-cover w-full h-20"
+            className="rounded-lg object-cover w-full h-20 cursor-pointer"
           />
-        </div>
+        </Link>
       ))}
     </div>
   );
 };
 
 export default FavoriteVideos;
+
+
 
