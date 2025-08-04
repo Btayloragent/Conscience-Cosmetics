@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { Link } from "react-router-dom";
 
 const FriendsSection = () => {
   const [following, setFollowing] = useState([]);
@@ -28,14 +29,19 @@ const FriendsSection = () => {
   return (
     <div className="flex gap-4 p-4">
       {following.map((friend) => (
-        <div key={friend._id} className="flex flex-col items-center">
+        <Link
+          to={`/profile/${friend.username}`}
+          key={friend._id}
+          className="flex flex-col items-center cursor-pointer"
+          title={`Go to ${friend.username}'s profile`}
+        >
           <img
             src={`http://localhost:5001${friend.avatarUrl}`}
             alt={friend.username}
             className="w-16 h-16 rounded-full object-cover"
           />
           <span className="mt-1 text-sm text-gray-700">{friend.username}</span>
-        </div>
+        </Link>
       ))}
     </div>
   );
