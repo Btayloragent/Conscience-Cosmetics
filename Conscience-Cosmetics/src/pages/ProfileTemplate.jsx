@@ -38,6 +38,8 @@ const ProfileTemplate = ({
         loggedInUsername={loggedInUsername}
       />
 
+      <SideBar />
+
       {/* Username and Email */}
       <div className="flex justify-between py-2 px-24">
         <div className="w-1/2 flex justify-center">

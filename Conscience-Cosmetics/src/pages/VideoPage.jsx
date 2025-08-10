@@ -4,7 +4,10 @@ import './VideoPage.css';
 import NavBar from '../components/NavBar';
 import SideBar from '../components/SideBar';
 import axios from 'axios';
-import Footer from '../components/Footer'; // Import the Footer component
+import Footer from '../components/Footer';
+
+// ✅ Import the PNG for Vite
+import MakeupTitleImage from '../pictures/PageTitlePics/MakeupTitle.png';
 
 const VideoPage = () => {
   const [videos, setVideos] = useState([]);
@@ -24,15 +27,23 @@ const VideoPage = () => {
   }, []);
 
   const containerStyle = {
-    marginTop: '40px',
+    marginTop: '250px', // ⬅ Push videos further down
     display: 'flex',
   };
 
   return (
     <>
       <NavBar onSearch={(query) => console.log('Search query:', query)} />
+
+      {/* Page title PNG in top-right corner */}
+      <img
+        src={MakeupTitleImage}
+        alt="Makeup Page Title"
+        className="page-title-image"
+      />
+
       <div className="video-page-container" style={containerStyle}>
-        <SideBar style={{ width: '80px' }} /> {/* Set a fixed width for the sidebar */}
+        <SideBar style={{ width: '80px' }} />
         <div className="video-grid" style={{ flex: 1, paddingLeft: '20px' }}>
           {videos && videos.map((video) => {
             const videoFile = video.video_files.length > 0 ? video.video_files[0].link : '';
@@ -49,11 +60,13 @@ const VideoPage = () => {
           })}
         </div>
       </div>
-      <Footer /> {/* Add the Footer component here */}
+      <Footer />
     </>
   );
 }
 
 export default VideoPage;
+
+
 
 
