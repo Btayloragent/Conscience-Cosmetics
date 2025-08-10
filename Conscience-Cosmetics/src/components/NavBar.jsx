@@ -188,7 +188,7 @@ const NavBar = () => {
             justifyContent: 'center',
             border: 'none',
             margin: '0',
-            backgroundColor: 'rgba(0, 0, 0, 0.5)',
+            backgroundColor: 'transparent',
             zIndex: 1000,
             position: 'fixed',
             top: '30%',
