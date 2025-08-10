@@ -61,6 +61,11 @@ const ProfileTemplate = ({
         className="flex flex-col px-24 gap-10 relative z-10"
         style={{ maxWidth: "1200px", marginLeft: "auto", marginRight: "auto" }}
       >
+        {/* Add Sidebar here exactly where it was */}
+        <div style={{ width: "250px" }}>
+          <SideBar />
+        </div>
+
         {/* Top row: About + Right columns */}
         <div className="flex gap-10 justify-start">
           {/* About Section */}
