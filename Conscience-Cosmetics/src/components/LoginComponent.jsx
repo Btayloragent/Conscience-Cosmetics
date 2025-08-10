@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import ComPic4 from '../pictures/LoginComPics/ComPic4.png'; 
 
 const LoginComponent = ({ mode, onClose, onLoginSuccess }) => {
   const [username, setUsername] = useState('');
@@ -73,7 +74,9 @@ const LoginComponent = ({ mode, onClose, onLoginSuccess }) => {
   return (
     <div
       style={{
-        backgroundColor: '#f9f6f0',
+        backgroundImage: `url(${ComPic4})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
         borderRadius: '18px',
         padding: '20px',
         boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)',
@@ -81,6 +84,8 @@ const LoginComponent = ({ mode, onClose, onLoginSuccess }) => {
         maxWidth: '400px',
         textAlign: 'center',
         position: 'relative',
+        color: '#000',
+        backdropFilter: 'brightness(0.25)', // optional slight darkening for text readability
       }}
     >
       {/* Tabs */}
@@ -206,7 +211,7 @@ const LoginComponent = ({ mode, onClose, onLoginSuccess }) => {
           width: '100%',
           padding: '10px',
           borderRadius: '4px',
-          backgroundColor: 'rgba(8, 94, 192, 0.5)',
+          backgroundColor: 'rgba(8, 94, 192, 0.95)',
           color: 'white',
           cursor: 'pointer',
         }}
