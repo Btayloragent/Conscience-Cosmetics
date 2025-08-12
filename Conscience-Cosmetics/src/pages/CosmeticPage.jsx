@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
-import MakeUpSearch from "../components/MakeUPSearch"; // Make sure the path is correct
+import MakeUpSearch from "../components/MakeUPSearch";
 import SideBar from "../components/SideBar";
 import NavBar from "../components/NavBar";
 import axios from 'axios';
-import Footer from '../components/Footer'; // Import the Footer component
+import Footer from '../components/Footer';
+import CosPic8 from '../pictures/CosPics/CosPic8.png';
 
 const CosmeticPage = () => {
     const [cosmeticsData, setCosmeticsData] = useState();
@@ -20,7 +21,6 @@ const CosmeticPage = () => {
             setLipstickData(getFilteredProducts(data, "lipstick"))
             if(!tags.length > 0) tags = getTags(data);
             setTagsData(tags);
-
         }
         getCosmeticsData();
 
@@ -28,11 +28,11 @@ const CosmeticPage = () => {
         const uploadButton = document.querySelector('.upload-button');
 
         if (searchBar) {
-            searchBar.style.marginRight = '20px'; // Adjust as needed
+            searchBar.style.marginRight = '20px';
         }
 
         if (uploadButton) {
-            uploadButton.style.marginLeft = '-10px'; // Adjust as needed
+            uploadButton.style.marginLeft = '-10px';
         }
     }, []);
 
@@ -44,19 +44,17 @@ const CosmeticPage = () => {
         return uniqueTags;
     }
     const getFilteredProducts = (cosmeticsData, category) => {
-        return cosmeticsData.filter(product => {
-            return product.category === category
-        })
+        return cosmeticsData.filter(product => product.category === category)
     }
 
     const pageStyle = {
-        backgroundImage: "url('src/pictures/MakeBack/PicBack2.jpg')", // Adjust this to the correct path in your project
+        backgroundImage: "url('src/pictures/MakeBack/PicBack2.jpg')",
         backgroundSize: "cover",
         backgroundPosition: "center",
         height: "200vh",
         width: "100vw",
         display: "flex",
-        flexDirection: "column", // Stack items vertically
+        flexDirection: "column",
         alignItems: "center",
         justifyContent: "center",
         position: "relative"
@@ -66,7 +64,16 @@ const CosmeticPage = () => {
         position: "absolute",
         top: 2,
         width: "95%",
-        zIndex: 10 // Ensure the navbar is above other content
+        zIndex: 10
+    };
+
+    // Style for centered image below navbar
+    const imageStyle = {
+        display: "block",
+        margin: "28px auto -40px auto", // top margin to push below navbar, centered horizontally, bottom margin
+        width: "425px",
+        height: "auto",
+        zIndex: 10
     };
 
     return (
@@ -74,11 +81,17 @@ const CosmeticPage = () => {
             <div style={navBarStyle}>
                 <NavBar />
             </div>
-           { tagsData && <MakeUpSearch tagsData={tagsData} cosmeticsData={cosmeticsData} />}
+
+            {/* Centered larger image below navbar */}
+            <img src={CosPic8} alt="Cosmetic" style={imageStyle} />
+
+            {tagsData && <MakeUpSearch tagsData={tagsData} cosmeticsData={cosmeticsData} />}
+
             <SideBar />
-            <Footer /> {/* Add the Footer component here */} 
+            <Footer />
         </div>
     );
 };
 
 export default CosmeticPage;
+
