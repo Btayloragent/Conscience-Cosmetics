@@ -34,6 +34,12 @@ const LoginComponent = ({ mode, onClose, onLoginSuccess }) => {
 
       if (response.status === 200) {
         const { token, user } = response.data;
+
+        if (!user || !user._id) {
+          throw new Error('User data missing from server response');
+        }
+
+        // Save login info safely
         localStorage.setItem('token', token);
         localStorage.setItem('userId', user._id);
         localStorage.setItem('isLoggedIn', 'true');
@@ -43,13 +49,12 @@ const LoginComponent = ({ mode, onClose, onLoginSuccess }) => {
 
         const avatarUrl = user.avatarUrl || selectedAvatar;
 
-        console.log('Login response:', response.data);
-
-        // Pass userId and token here to NavBar
+        // Pass user info back
         onLoginSuccess(user.username, avatarUrl, user._id, token);
         onClose();
       }
     } catch (error) {
+      console.error(error);
       setErrorMessage(
         currentMode === 'login'
           ? 'Invalid username or password.'
@@ -85,7 +90,7 @@ const LoginComponent = ({ mode, onClose, onLoginSuccess }) => {
         textAlign: 'center',
         position: 'relative',
         color: '#000',
-        backdropFilter: 'brightness(0.25)', // optional slight darkening for text readability
+        backdropFilter: 'brightness(0.25)',
       }}
     >
       {/* Tabs */}
@@ -243,5 +248,7 @@ const arrowButtonStyle = {
 };
 
 export default LoginComponent;
+
+
 
 
