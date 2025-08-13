@@ -15,7 +15,7 @@ const NavBar = () => {
   const [username, setUsername] = useState('');
   const [avatarUrl, setAvatarUrl] = useState('');
 
-  // Load login state and user info on mount
+  // Load login state on mount
   useEffect(() => {
     const savedUsername = localStorage.getItem('username');
     const savedLoginState = localStorage.getItem('isLoggedIn');
@@ -26,7 +26,6 @@ const NavBar = () => {
       setIsLoggedIn(true);
       setUsername(savedUsername);
 
-      // Fetch full user info from backend to get updated avatarUrl
       axios.get(`http://localhost:5001/api/profile?username=${savedUsername}`)
         .then(res => {
           const avatar = res.data.avatarUrl || '';
@@ -34,14 +33,13 @@ const NavBar = () => {
           localStorage.setItem('avatarUrl', avatar);
         })
         .catch(() => {
-          // fallback to localStorage avatar if API call fails
           const savedAvatar = localStorage.getItem('avatarUrl') || '';
           setAvatarUrl(savedAvatar);
         });
     }
   }, []);
 
-  // Listen for loginStatusChange event (login, logout, avatar update)
+  // Listen for loginStatusChange
   useEffect(() => {
     const handleLoginStatusChange = () => {
       const savedUsername = localStorage.getItem('username');
@@ -67,9 +65,7 @@ const NavBar = () => {
     };
 
     window.addEventListener('loginStatusChange', handleLoginStatusChange);
-    return () => {
-      window.removeEventListener('loginStatusChange', handleLoginStatusChange);
-    };
+    return () => window.removeEventListener('loginStatusChange', handleLoginStatusChange);
   }, []);
 
   const openModal = (mode) => {
@@ -77,22 +73,15 @@ const NavBar = () => {
     setIsModalOpen(true);
   };
 
-  const closeModal = () => {
-    setIsModalOpen(false);
-  };
+  const closeModal = () => setIsModalOpen(false);
 
-  // Updated to accept userId and token and save them
-  const handleLoginSuccess = (userName, userAvatarUrl, userId, token) => {
+  const handleLoginSuccess = (userName, userAvatarUrl, userId, token, isNewUser = false) => {
     localStorage.setItem('isLoggedIn', 'true');
     localStorage.setItem('username', userName);
-    localStorage.setItem('userId', userId);  // <-- Store userId
-    localStorage.setItem('token', token);    // <-- Store token
-
-    if (userAvatarUrl) {
-      localStorage.setItem('avatarUrl', userAvatarUrl);
-    } else {
-      localStorage.removeItem('avatarUrl');
-    }
+    localStorage.setItem('userId', userId);
+    localStorage.setItem('token', token);
+    if (userAvatarUrl) localStorage.setItem('avatarUrl', userAvatarUrl);
+    else localStorage.removeItem('avatarUrl');
 
     setIsLoggedIn(true);
     setUsername(userName);
@@ -100,21 +89,27 @@ const NavBar = () => {
 
     window.dispatchEvent(new Event('loginStatusChange'));
     closeModal();
+
+    // If new signup, show welcome message
+    if (isNewUser) alert(`Welcome ${userName}! Your account has been created successfully.`);
+
+    // Redirect to profile page
+    navigate(`/profile/${userName}`);
   };
 
   const handleLogout = () => {
     localStorage.removeItem('isLoggedIn');
     localStorage.removeItem('username');
     localStorage.removeItem('avatarUrl');
-    localStorage.removeItem('userId');   // <-- Remove userId
-    localStorage.removeItem('token');    // <-- Remove token
+    localStorage.removeItem('userId');
+    localStorage.removeItem('token');
 
     setIsLoggedIn(false);
     setUsername('');
     setAvatarUrl('');
 
     window.dispatchEvent(new Event('loginStatusChange'));
-    navigate('/LogoutPage');
+    navigate('/LogOutPage');
   };
 
   return (
@@ -127,16 +122,11 @@ const NavBar = () => {
         </div>
 
         <div className="flex-1 flex justify-center items-center relative">
-          {/* Insert SearchBar here */}
           <SearchBar />
-
           <div className="flex items-center gap-4 ml-14">
             {isLoggedIn ? (
               <div className="flex items-center text-beige hover:text-[#007BFF] space-x-3">
-                <Link
-                  to={`/profile/${username}`}
-                  className="flex items-center space-x-3 hover:underline"
-                >
+                <Link to={`/profile/${username}`} className="flex items-center space-x-3 hover:underline">
                   {avatarUrl && (
                     <img
                       src={avatarUrl.startsWith('http') ? avatarUrl : `http://localhost:5001${avatarUrl}`}
@@ -146,27 +136,14 @@ const NavBar = () => {
                   )}
                   <span>Welcome, {username}!</span>
                 </Link>
-                <button
-                  onClick={handleLogout}
-                  className="ml-4 text-beige hover:text-[#007BFF]"
-                >
+                <button onClick={handleLogout} className="ml-4 text-beige hover:text-[#007BFF]">
                   Log Out
                 </button>
               </div>
             ) : (
               <>
-                <button
-                  onClick={() => openModal('login')}
-                  className="text-beige hover:text-[#007BFF]"
-                >
-                  Log In
-                </button>
-                <button
-                  onClick={() => openModal('signup')}
-                  className="text-beige hover:text-[#007BFF]"
-                >
-                  Sign Up
-                </button>
+                <button onClick={() => openModal('login')} className="text-beige hover:text-[#007BFF]">Log In</button>
+                <button onClick={() => openModal('signup')} className="text-beige hover:text-[#007BFF]">Sign Up</button>
               </>
             )}
           </div>
@@ -177,7 +154,6 @@ const NavBar = () => {
         </div>
       </div>
 
-      {/* Modal */}
       {isModalOpen && (
         <dialog
           open
@@ -196,25 +172,12 @@ const NavBar = () => {
             transform: 'translate(-50%, -50%)',
           }}
         >
-          <div
-            style={{
-              width: '400px',
-              borderRadius: '8px',
-              padding: '20px',
-              position: 'relative',
-            }}
-          >
+          <div style={{ width: '400px', borderRadius: '8px', padding: '20px', position: 'relative' }}>
             <button
               type="button"
               className="btn btn-sm btn-circle btn-ghost absolute right-6 top-8"
               onClick={closeModal}
-              style={{
-                border: 'none',
-                color: '#D2B48C',
-                fontSize: '20px',
-                cursor: 'pointer',
-                zIndex: 1050,
-              }}
+              style={{ border: 'none', color: '#D2B48C', fontSize: '20px', cursor: 'pointer', zIndex: 1050 }}
             >
               ✕
             </button>

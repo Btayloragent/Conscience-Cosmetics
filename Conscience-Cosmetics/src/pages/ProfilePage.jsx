@@ -15,46 +15,45 @@ const ProfilePage = () => {
 
   useEffect(() => {
     if (!username || !token) return;
-console.log("Token being sent:", token);
 
-    axios
-      .get(`http://localhost:5001/api/profile?username=${username}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
-      .then((res) => {
-        setUser(res.data);
-        setEditedBio(res.data.bio || "");
-        if (res.data.avatarUrl) {
-          localStorage.setItem("avatarUrl", res.data.avatarUrl);
+    const fetchProfile = async () => {
+      try {
+        // Fetch profile data
+        const res = await axios.get(
+          `http://localhost:5001/api/profile?username=${username}`,
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+
+        const profileData = res.data;
+        setUser(profileData);
+        setEditedBio(profileData.bio || "");
+
+        if (profileData.avatarUrl) {
+          localStorage.setItem("avatarUrl", profileData.avatarUrl);
         }
 
-        if (loggedInUsername && loggedInUsername !== username) {
-          axios
-            .get(
-              `http://localhost:5001/api/users/${res.data._id}/is-following`,
-              {
-                headers: {
-                  Authorization: `Bearer ${token}`,
-                },
-              }
-            )
-            .then((res) => {
-              setIsFollowing(res.data.isFollowing);
-            })
-            .catch(() => {
-              setIsFollowing(false);
-            });
+        // Check if logged-in user is following this profile
+        if (loggedInUsername && loggedInUsername !== username && profileData._id) {
+          try {
+            const followRes = await axios.get(
+              `http://localhost:5001/api/users/${profileData._id}/is-following`,
+              { headers: { Authorization: `Bearer ${token}` } }
+            );
+            setIsFollowing(followRes.data.isFollowing);
+          } catch {
+            setIsFollowing(false);
+          }
         } else {
           setIsFollowing(false);
         }
-      })
-      .catch(() => {
+      } catch {
         setUser(null);
         setEditedBio("");
         setIsFollowing(false);
-      });
+      }
+    };
+
+    fetchProfile();
   }, [username, loggedInUsername, token]);
 
   const handleStartEditBio = () => setIsEditingBio(true);
@@ -65,16 +64,13 @@ console.log("Token being sent:", token);
   };
 
   const handleSaveBio = async () => {
+    if (!user?._id) return;
+
     try {
       const response = await axios.put(
         `http://localhost:5001/api/users/${user._id}/bio`,
         { bio: editedBio },
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        }
+        { headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` } }
       );
       setUser((prev) => ({ ...prev, bio: response.data.bio }));
       setIsEditingBio(false);
@@ -84,7 +80,7 @@ console.log("Token being sent:", token);
   };
 
   const onEditAvatar = async (file) => {
-    if (!file || !user) return;
+    if (!file || !user?._id) return;
 
     const formData = new FormData();
     formData.append("avatar", file);
@@ -109,7 +105,7 @@ console.log("Token being sent:", token);
   };
 
   const onEditBanner = async (file) => {
-    if (!file || !user) return;
+    if (!file || !user?._id) return;
 
     const formData = new FormData();
     formData.append("banner", file);
@@ -132,28 +128,24 @@ console.log("Token being sent:", token);
   };
 
   const onFollowToggle = async (shouldFollow) => {
-    if (!user || !token) return;
+    if (!user?._id || !token) return;
 
     try {
       if (shouldFollow) {
         await axios.post(
           `http://localhost:5001/api/users/${user._id}/follow`,
           {},
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          }
+          { headers: { Authorization: `Bearer ${token}` } }
         );
       } else {
         await axios.post(
           `http://localhost:5001/api/users/${user._id}/unfollow`,
           {},
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          }
+          { headers: { Authorization: `Bearer ${token}` } }
         );
       }
       setIsFollowing(shouldFollow);
-    } catch (error) {
+    } catch {
       alert("Failed to update follow status. Please try again.");
     }
   };
@@ -184,6 +176,7 @@ console.log("Token being sent:", token);
 };
 
 export default ProfilePage;
+
 
 
 
