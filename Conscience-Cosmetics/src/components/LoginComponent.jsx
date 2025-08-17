@@ -45,13 +45,21 @@ const LoginComponent = ({ mode, onClose, onLoginSuccess }) => {
         localStorage.setItem('isLoggedIn', 'true');
         window.dispatchEvent(new Event('loginStatusChange'));
 
-        alert(`${currentMode === 'login' ? 'Login' : 'Sign Up'} successful!`);
+        // ✅ Custom messages
+        if (currentMode === 'signup') {
+          alert(`Welcome to Conscience-Cosmetics, ${user.username}!`);
+        } else {
+          alert(`Welcome back, ${user.username}!`);
+        }
 
         const avatarUrl = user.avatarUrl || selectedAvatar;
 
         // Pass user info back
         onLoginSuccess(user.username, avatarUrl, user._id, token);
         onClose();
+
+        // ✅ Redirect directly to profile page
+        window.location.href = `/profile/${user.username}`;
       }
     } catch (error) {
       console.error(error);
@@ -77,153 +85,155 @@ const LoginComponent = ({ mode, onClose, onLoginSuccess }) => {
   }, [currentMode]);
 
   return (
-    <div
-      style={{
-        backgroundImage: `url(${ComPic4})`,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        borderRadius: '18px',
-        padding: '20px',
-        boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)',
-        width: '100%',
-        maxWidth: '400px',
-        textAlign: 'center',
-        position: 'relative',
-        color: '#000',
-        backdropFilter: 'brightness(0.25)',
-      }}
-    >
-      {/* Tabs */}
-      <div style={{ position: 'relative' }}>
-        <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '20px' }}>
-          <div
-            onClick={() => switchMode('login')}
-            style={{
-              marginRight: '20px',
-              fontWeight: currentMode === 'login' ? 'bold' : 'normal',
-              color: '#D2B48C',
-              cursor: 'pointer',
-            }}
-          >
-            Login
-          </div>
-          <div
-            onClick={() => switchMode('signup')}
-            style={{
-              fontWeight: currentMode === 'signup' ? 'bold' : 'normal',
-              color: '#4DA6FF',
-              cursor: 'pointer',
-            }}
-          >
-            Sign Up
-          </div>
-        </div>
-
-        {/* Indicator */}
-        <div
-          style={{
-            height: '4px',
-            backgroundColor: '#D2B48C',
-            width: '50%',
-            position: 'absolute',
-            bottom: '0',
-            left: `${indicatorPosition}%`,
-            transition: 'left 0.3s ease',
-          }}
-        />
-      </div>
-
-      {/* Title */}
-      <div style={{ marginBottom: '10px', fontSize: '24px', color: '#D2B48C' }}>
-        {currentMode === 'login' ? 'Login To Conscience Cosmetics' : 'Create an Account'}
-      </div>
-
-      {/* Error Message */}
-      {errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>}
-
-      {/* Inputs */}
-      <input
-        type="text"
-        placeholder="Username"
-        style={inputStyle}
-        value={username}
-        onChange={(e) => setUsername(e.target.value)}
-      />
-      <input
-        type="password"
-        placeholder="Password"
-        style={inputStyle}
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-      />
-      {currentMode === 'signup' && (
-        <>
-          <input
-            type="email"
-            placeholder="Email"
-            style={inputStyle}
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
-          <input
-            type="password"
-            placeholder="Confirm Password"
-            style={inputStyle}
-          />
-        </>
-      )}
-
-      {/* Avatar Selection */}
-      {currentMode === 'signup' && (
-        <div
-          style={{
-            margin: '20px 0',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: '10px',
-          }}
-        >
-          <button
-            onClick={() => setAvatarId((prev) => (prev <= 1 ? 99 : prev - 1))}
-            style={arrowButtonStyle}
-          >
-            ◀
-          </button>
-          <img
-            src={selectedAvatar}
-            alt="Selected Avatar"
-            style={{
-              width: '80px',
-              height: '80px',
-              borderRadius: '50%',
-              border: '2px solid #D2B48C',
-            }}
-          />
-          <button
-            onClick={() => setAvatarId((prev) => (prev >= 99 ? 1 : prev + 1))}
-            style={arrowButtonStyle}
-          >
-            ▶
-          </button>
-        </div>
-      )}
-
-      {/* Submit Button */}
-      <button
-        onClick={handleSubmit}
+    <div style={{ marginTop: '225px' }}> {/* 👈 pushes down without altering layout */}
+      <div
         style={{
+          backgroundImage: `url(${ComPic4})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          borderRadius: '18px',
+          padding: '20px',
+          boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)',
           width: '100%',
-          padding: '10px',
-          borderRadius: '4px',
-          backgroundColor: 'rgba(8, 94, 192, 0.95)',
-          color: 'white',
-          cursor: 'pointer',
+          maxWidth: '400px',
+          textAlign: 'center',
+          position: 'relative',
+          color: '#000',
+          backdropFilter: 'brightness(0.25)',
         }}
-        disabled={isLoading}
       >
-        {currentMode === 'login' ? 'Login' : 'Sign Up'}
-      </button>
+        {/* Tabs */}
+        <div style={{ position: 'relative' }}>
+          <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '20px' }}>
+            <div
+              onClick={() => switchMode('login')}
+              style={{
+                marginRight: '20px',
+                fontWeight: currentMode === 'login' ? 'bold' : 'normal',
+                color: '#D2B48C',
+                cursor: 'pointer',
+              }}
+            >
+              Login
+            </div>
+            <div
+              onClick={() => switchMode('signup')}
+              style={{
+                fontWeight: currentMode === 'signup' ? 'bold' : 'normal',
+                color: '#4DA6FF',
+                cursor: 'pointer',
+              }}
+            >
+              Sign Up
+            </div>
+          </div>
+
+          {/* Indicator */}
+          <div
+            style={{
+              height: '4px',
+              backgroundColor: '#D2B48C',
+              width: '50%',
+              position: 'absolute',
+              bottom: '0',
+              left: `${indicatorPosition}%`,
+              transition: 'left 0.3s ease',
+            }}
+          />
+        </div>
+
+        {/* Title */}
+        <div style={{ marginBottom: '10px', fontSize: '24px', color: '#D2B48C' }}>
+          {currentMode === 'login' ? 'Login To Conscience Cosmetics' : 'Create an Account'}
+        </div>
+
+        {/* Error Message */}
+        {errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>}
+
+        {/* Inputs */}
+        <input
+          type="text"
+          placeholder="Username"
+          style={inputStyle}
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+        />
+        <input
+          type="password"
+          placeholder="Password"
+          style={inputStyle}
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+        />
+        {currentMode === 'signup' && (
+          <>
+            <input
+              type="email"
+              placeholder="Email"
+              style={inputStyle}
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+            <input
+              type="password"
+              placeholder="Confirm Password"
+              style={inputStyle}
+            />
+          </>
+        )}
+
+        {/* Avatar Selection */}
+        {currentMode === 'signup' && (
+          <div
+            style={{
+              margin: '20px 0',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '10px',
+            }}
+          >
+            <button
+              onClick={() => setAvatarId((prev) => (prev <= 1 ? 99 : prev - 1))}
+              style={arrowButtonStyle}
+            >
+              ◀
+            </button>
+            <img
+              src={selectedAvatar}
+              alt="Selected Avatar"
+              style={{
+                width: '80px',
+                height: '80px',
+                borderRadius: '50%',
+                border: '2px solid #D2B48C',
+              }}
+            />
+            <button
+              onClick={() => setAvatarId((prev) => (prev >= 99 ? 1 : prev + 1))}
+              style={arrowButtonStyle}
+            >
+              ▶
+            </button>
+          </div>
+        )}
+
+        {/* Submit Button */}
+        <button
+          onClick={handleSubmit}
+          style={{
+            width: '100%',
+            padding: '10px',
+            borderRadius: '4px',
+            backgroundColor: 'rgba(8, 94, 192, 0.95)',
+            color: 'white',
+            cursor: 'pointer',
+          }}
+          disabled={isLoading}
+        >
+          {currentMode === 'login' ? 'Login' : 'Sign Up'}
+        </button>
+      </div>
     </div>
   );
 };
@@ -248,6 +258,7 @@ const arrowButtonStyle = {
 };
 
 export default LoginComponent;
+
 
 
 
