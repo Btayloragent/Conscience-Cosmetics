@@ -1,59 +1,75 @@
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import CommentSection from '../components/CommentSection';
-import Rating from '../components/rating'; // Make sure the file name matches
+import Rating from '../components/rating';
 import axios from 'axios';
 import FavoriteButton from '../components/FavoriteButton';
 
 function VideoTube() {
   const navigate = useNavigate();
+  const { videoId } = useParams();
+  const location = useLocation();
   const [videos, setVideos] = useState([]);
   const [currentVideo, setCurrentVideo] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-  // Get userId and token from localStorage for auth
-  const currentUserId = localStorage.getItem("userId");
-  const token = localStorage.getItem("token");
+  const currentUserId = localStorage.getItem('userId');
+  const token = localStorage.getItem('token');
+
+  const videoFromState = location.state?.video;
 
   useEffect(() => {
     const fetchVideos = async () => {
       try {
-        const response = await axios.get('http://localhost:5001/api/MakeUpVids');
-        const videoList = response.data.videos.videos.map((video, index) => ({
-          id: index.toString(),
-          videoFile: video.video_files[0].link,
-          videoThumbnail: video.image,
-        }));
+        const response = await axios.get(
+          'http://localhost:5001/api/MakeUpVids'
+        );
+        const videoList = response.data.videos.videos
+          .filter((v) => v.video_files && v.video_files.length > 0)
+          .map((v) => ({
+            id: v.id, // actual Pexels video ID
+            videoFile: v.video_files[0].link,
+            videoThumbnail: v.image,
+          }));
 
         setVideos(videoList);
 
-        if (videoList.length > 0) {
+        if (videoFromState) {
+          setCurrentVideo(videoFromState);
+        } else if (videoId) {
+          const found = videoList.find((v) => v.id === parseInt(videoId));
+          setCurrentVideo(found || videoList[0]);
+        } else {
           setCurrentVideo(videoList[0]);
-          localStorage.setItem('currentVideoId', videoList[0].id); // <-- Set on initial load
         }
+
+        setLoading(false);
       } catch (error) {
-        console.error("Error fetching side videos:", error.message);
+        console.error('Error fetching videos:', error);
+        setLoading(false);
       }
     };
+
     fetchVideos();
-  }, []);
+  }, [videoId, videoFromState]);
 
   const handleThumbnailClick = (video) => {
     setCurrentVideo(video);
-    localStorage.setItem('currentVideoId', video.id);  // <-- Set on thumbnail click
+    navigate(`/VideoPage/${video.id}`, { state: { video } });
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  if (!currentVideo) {
-    return <div className="text-white text-center mt-10">Loading video...</div>;
+  if (loading || !currentVideo) {
+    return (
+      <div className="text-white text-center mt-10">Loading video...</div>
+    );
   }
 
   return (
     <div className="min-h-screen bg-black p-4 flex justify-center">
       <div className="flex flex-col lg:flex-row w-full max-w-7xl gap-6">
-
         {/* Main Video Area */}
         <div className="flex flex-col flex-1">
-          {/* Back Button */}
           <button
             onClick={() => navigate('/VideoPage')}
             className="text-white flex items-center mb-4 hover:underline"
@@ -61,7 +77,6 @@ function VideoTube() {
             <span className="text-xl mr-2">←</span> Back to Video Page
           </button>
 
-          {/* Video Player */}
           <div className="flex justify-center">
             <video
               src={currentVideo.videoFile}
@@ -71,13 +86,13 @@ function VideoTube() {
             />
           </div>
 
-          {/* Rating & Favorite */}
           <div className="flex justify-between items-center w-full max-w-[640px] mx-auto mt-2 px-1">
             <FavoriteButton
-              videoId={currentVideo.id}
-              videoFile={currentVideo.videoFile}
-              videoThumbnail={currentVideo.videoThumbnail}
-            />
+  videoId={currentVideo.id?.toString()} // ensure it's a string
+  videoFile={currentVideo.videoFile || ''}
+  videoThumbnail={currentVideo.videoThumbnail || ''}
+/>
+
             <Rating
               videoId={currentVideo.id}
               userId={currentUserId}
@@ -85,14 +100,13 @@ function VideoTube() {
             />
           </div>
 
-          {/* Comment Section */}
           <div className="mt-6 text-white flex justify-center">
             <div className="w-full max-w-[640px]">
               <CommentSection
                 videoId={currentVideo.id}
                 currentUser={{
-                  username: localStorage.getItem("username"),
-                  avatarUrl: localStorage.getItem("avatarUrl")
+                  username: localStorage.getItem('username'),
+                  avatarUrl: localStorage.getItem('avatarUrl'),
                 }}
               />
             </div>
@@ -109,7 +123,9 @@ function VideoTube() {
               <div
                 key={video.id}
                 className={`relative mb-3 cursor-pointer group border-2 rounded-lg ${
-                  video.id === currentVideo.id ? 'border-white' : 'border-transparent'
+                  video.id === currentVideo.id
+                    ? 'border-white'
+                    : 'border-transparent'
                 }`}
                 onClick={() => handleThumbnailClick(video)}
               >
@@ -129,5 +145,9 @@ function VideoTube() {
 }
 
 export default VideoTube;
+
+
+
+
 
 
