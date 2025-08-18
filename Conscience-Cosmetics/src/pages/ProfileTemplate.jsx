@@ -24,6 +24,7 @@ const ProfileTemplate = ({
   loggedInUsername,
   editProfileButton,
   topBrands = [],
+  children,
 }) => {
   return (
     <div className="flex flex-col min-h-screen bg-gray-200">
@@ -116,7 +117,13 @@ const ProfileTemplate = ({
         </div>
 
         {/* Bottom row: FavMakeUPSection spanning full width */}
-        <FavMakeUPSection userId={user._id} initialTopBrands={topBrands} />
+        {children || (
+          <FavMakeUPSection
+            userId={user._id}
+            isEditable={isEditable}
+            initialTopBrands={topBrands}
+          />
+        )}
       </div>
 
       <Footer />
@@ -125,6 +132,7 @@ const ProfileTemplate = ({
 };
 
 export default ProfileTemplate;
+
 
 
 
