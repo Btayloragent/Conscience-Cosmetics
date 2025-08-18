@@ -1,10 +1,14 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import ProfileTemplate from "./ProfileTemplate";
-import { useParams } from "react-router-dom";
+import { useParams, useLocation } from "react-router-dom";
+import FavMakeUPSection from "../components/FavMakeUPSection";
 
 const EditProfilePage = () => {
   const { username } = useParams();
+  const location = useLocation();
+  const isEditable = location.pathname === `/profile/${username}/edit`;
+
   const [user, setUser] = useState(null);
   const [isEditingBio, setIsEditingBio] = useState(false);
   const [editedBio, setEditedBio] = useState("");
@@ -12,6 +16,7 @@ const EditProfilePage = () => {
 
   const loggedInUsername = localStorage.getItem("username");
 
+  // Fetch user profile
   useEffect(() => {
     if (username) {
       axios
@@ -32,6 +37,7 @@ const EditProfilePage = () => {
     }
   }, [username]);
 
+  // Bio edit handlers
   const handleStartEditBio = () => setIsEditingBio(true);
   const handleCancelEditBio = () => {
     setIsEditingBio(false);
@@ -57,9 +63,9 @@ const EditProfilePage = () => {
     }
   };
 
+  // Avatar upload
   const onEditAvatar = async (file) => {
     if (!file || !user) return;
-
     const formData = new FormData();
     formData.append("avatar", file);
 
@@ -82,9 +88,9 @@ const EditProfilePage = () => {
     }
   };
 
+  // Banner upload
   const onEditBanner = async (file) => {
     if (!file || !user) return;
-
     const formData = new FormData();
     formData.append("banner", file);
 
@@ -122,10 +128,13 @@ const EditProfilePage = () => {
       handleSaveBio={handleSaveBio}
       onEditAvatar={onEditAvatar}
       onEditBanner={onEditBanner}
-      isEditable={true}
+      isEditable={isEditable} // pass edit mode
       loggedInUsername={loggedInUsername}
-      topBrands={topBrands} // pass top brands to template
-    />
+      editProfileButton={null} // optional
+      topBrands={topBrands}
+    >
+      <FavMakeUPSection userId={user._id} isEditable={isEditable} initialTopBrands={topBrands} />
+    </ProfileTemplate>
   );
 };
 
