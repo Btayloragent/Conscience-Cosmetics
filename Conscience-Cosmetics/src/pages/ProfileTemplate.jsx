@@ -23,6 +23,7 @@ const ProfileTemplate = ({
   isEditable = false,
   loggedInUsername,
   editProfileButton,
+  topBrands = [],
 }) => {
   return (
     <div className="flex flex-col min-h-screen bg-gray-200">
@@ -58,7 +59,7 @@ const ProfileTemplate = ({
         <div className="flex justify-center mb-4">{editProfileButton}</div>
       )}
 
-      {/* Main content and FavMakeUPSection container */}
+      {/* Main content */}
       <div
         className="flex flex-col px-24 gap-10 relative z-10"
         style={{ maxWidth: "1200px", marginLeft: "auto", marginRight: "auto" }}
@@ -96,7 +97,6 @@ const ProfileTemplate = ({
             className="flex flex-col gap-4"
             style={{ maxWidth: "30vw", width: "100%", height: "500px" }}
           >
-            {/* Favorite Videos */}
             <div className="p-6 bg-gray-500 bg-opacity-30 rounded-lg flex-1">
               <h2 className="text-xl font-semibold text-blue-500 ml-40 mb-4">
                 Favorite Videos
@@ -106,7 +106,6 @@ const ProfileTemplate = ({
               </div>
             </div>
 
-            {/* Friends */}
             <div className="p-6 bg-gray-500 bg-opacity-30 rounded-lg flex-1 overflow-auto">
               <h2 className="text-xl font-semibold text-blue-500 ml-40">
                 Friends
@@ -116,8 +115,8 @@ const ProfileTemplate = ({
           </div>
         </div>
 
-        {/* Bottom row: FavMakeUPSection spanning full width of above */}
-        <FavMakeUPSection />
+        {/* Bottom row: FavMakeUPSection spanning full width */}
+        <FavMakeUPSection userId={user._id} initialTopBrands={topBrands} />
       </div>
 
       <Footer />
@@ -126,6 +125,7 @@ const ProfileTemplate = ({
 };
 
 export default ProfileTemplate;
+
 
 
 

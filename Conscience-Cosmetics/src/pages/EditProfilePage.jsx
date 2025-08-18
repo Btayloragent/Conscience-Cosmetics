@@ -8,8 +8,8 @@ const EditProfilePage = () => {
   const [user, setUser] = useState(null);
   const [isEditingBio, setIsEditingBio] = useState(false);
   const [editedBio, setEditedBio] = useState("");
+  const [topBrands, setTopBrands] = useState([]);
 
-  // Get logged in username from localStorage or your auth system
   const loggedInUsername = localStorage.getItem("username");
 
   useEffect(() => {
@@ -19,6 +19,7 @@ const EditProfilePage = () => {
         .then((res) => {
           setUser(res.data);
           setEditedBio(res.data.bio || "");
+          setTopBrands(res.data.favoriteBrands || []);
           if (res.data.avatarUrl) {
             localStorage.setItem("avatarUrl", res.data.avatarUrl);
           }
@@ -26,12 +27,12 @@ const EditProfilePage = () => {
         .catch(() => {
           setUser(null);
           setEditedBio("");
+          setTopBrands([]);
         });
     }
   }, [username]);
 
   const handleStartEditBio = () => setIsEditingBio(true);
-
   const handleCancelEditBio = () => {
     setIsEditingBio(false);
     setEditedBio(user?.bio || "");
@@ -121,13 +122,15 @@ const EditProfilePage = () => {
       handleSaveBio={handleSaveBio}
       onEditAvatar={onEditAvatar}
       onEditBanner={onEditBanner}
-      isEditable={true} // editing UI enabled
-      loggedInUsername={loggedInUsername} // pass logged-in username for Follow button logic
+      isEditable={true}
+      loggedInUsername={loggedInUsername}
+      topBrands={topBrands} // pass top brands to template
     />
   );
 };
 
 export default EditProfilePage;
+
 
 
 
