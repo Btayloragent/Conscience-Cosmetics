@@ -1,12 +1,37 @@
-import React, { useState, useEffect } from "react";
-import brandLogos from "../brandLogos.json"; // all brands
+import React, { useEffect, useState } from "react";
+import brandLogos from "../brandLogos.json"; 
 import axios from "axios";
 
-const FavMakeUPSection = ({ userId, initialTopBrands = [] }) => {
-  const [selectedBrands, setSelectedBrands] = useState(initialTopBrands);
+const FavMakeUPSection = ({ userId, isEditable = false, initialTopBrands = [] }) => {
+  const [selectedBrands, setSelectedBrands] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  // Toggle selection
+  // Fetch existing saved brands on mount
+  useEffect(() => {
+    const fetchUserBrands = async () => {
+      try {
+        const response = await axios.get(
+          `http://localhost:5001/api/users/${userId}/favorite-brands`,
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          }
+        );
+        setSelectedBrands(response.data.favoriteBrands || initialTopBrands || []);
+      } catch (err) {
+        console.error("Failed to fetch user brands:", err);
+        setSelectedBrands(initialTopBrands || []);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchUserBrands();
+  }, [userId, initialTopBrands]);
+
+  // Toggle selection of a brand
   const toggleBrand = (brandName) => {
+    if (!isEditable) return; // Only editable in edit mode
     if (selectedBrands.includes(brandName)) {
       setSelectedBrands(selectedBrands.filter((b) => b !== brandName));
     } else {
@@ -33,59 +58,60 @@ const FavMakeUPSection = ({ userId, initialTopBrands = [] }) => {
       );
       setSelectedBrands(response.data.favoriteBrands);
       alert("Top 5 brands saved!");
-    } catch {
+    } catch (err) {
+      console.error(err);
       alert("Failed to save top brands.");
     }
   };
 
+  if (loading) return <p>Loading favorite brands...</p>;
+
+  // Only show top 5 when not editing
+  const displayedBrands = isEditable
+    ? brandLogos
+    : brandLogos.filter((brand) => selectedBrands.includes(brand.name)).slice(0, 5);
+
   return (
     <div
-      className="bg-gray-700 bg-opacity-40 rounded-lg mt-4 p-4"
-      style={{
-        width: "100%",
-        height: "auto",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-      }}
+      className="bg-gray-700 bg-opacity-40 rounded-lg mt-4 p-4 flex flex-col items-center"
+      style={{ width: "100%" }}
     >
       <h2 className="text-xl font-semibold text-blue mb-4 text-center">
-        Favorite MakeUp Brands (Select up to 5)
+        Favorite MakeUp Brands {isEditable ? "(Select up to 5)" : ""}
       </h2>
 
       <div className="flex flex-wrap justify-center gap-6">
-        {brandLogos.map((brand, index) => {
+        {displayedBrands.map((brand, index) => {
           const isSelected = selectedBrands.includes(brand.name);
           return (
             <div
-              key={index}
-              onClick={() => toggleBrand(brand.name)}
-              className={`flex flex-col items-center w-[120px] text-center cursor-pointer p-1 transition-all duration-200
-                ${isSelected ? "ring-4 ring-blue-400 rounded-xl scale-110" : ""}`}
-            >
-              <img
-                src={brand.logo}
-                alt={brand.name}
-                className="w-24 h-24 object-contain mb-2"
-              />
-              <p
-                className={`text-sm font-semibold ${
-                  isSelected ? "text-blue-400" : "text-white"
-                }`}
-              >
-                {brand.name}
-              </p>
-            </div>
+  key={index}
+  onClick={() => toggleBrand(brand.name)}
+  className={`cursor-pointer transition-all duration-200
+    ${isEditable && isSelected ? "ring-4 ring-blue-400 rounded-xl scale-110" : ""}
+    ${isEditable && !isSelected ? "hover:ring-2 hover:ring-blue-300 hover:scale-105" : ""}`}
+>
+  <div className="w-24 h-24 flex items-center justify-center bg-white rounded p-1">
+    <img
+      src={brand.logo}
+      alt={brand.name}
+      className="max-w-full max-h-full object-contain"
+    />
+  </div>
+</div>
+
           );
         })}
       </div>
 
-      <button
-        onClick={handleSaveTopBrands}
-        className="mt-4 px-6 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition"
-      >
-        Save Top 5 Brands
-      </button>
+      {isEditable && (
+        <button
+          onClick={handleSaveTopBrands}
+          className="mt-4 px-6 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition"
+        >
+          Save Top 5 Brands
+        </button>
+      )}
     </div>
   );
 };
