@@ -1,0 +1,75 @@
+[
+  {
+    "name": "Armani",
+    "logo": "/logos/armanilogo.png"
+  },
+  {
+    "name": "Chanel",
+    "logo": "/logos/chanellogo.png"
+  },
+  {
+    "name": "Clinique",
+    "logo": "/logos/cliniquelogo.png"
+  },
+  {
+    "name": "ColourPop",
+    "logo": "/logos/colourpoplogo.png"
+  },
+  {
+    "name": "CoverGirl",
+    "logo": "/logos/covergirllogo.png"
+  },
+  {
+    "name": "Dior",
+    "logo": "/logos/diorlogo.png"
+  },
+  {
+    "name": "elf",
+    "logo": "/logos/elflogo.png"
+  },
+  {
+    "name": "EsteeLauder",
+    "logo": "/logos/estéelauderlogo.png"
+  },
+  {
+    "name": "Fenty",
+    "logo": "/logos/fentylogo.png"
+  },
+  {
+    "name": "Kylie",
+    "logo": "/logos/kylielogo.png"
+  },
+  {
+    "name": "Loreal",
+    "logo": "/logos/loreallogo.png"
+  },
+  {
+    "name": "Mac",
+    "logo": "/logos/maclogo.png"
+  },
+  {
+    "name": "MaryKay",
+    "logo": "/logos/marykaylogo.png"
+  },
+  {
+    "name": "MayBelline",
+    "logo": "/logos/maybellinelogo.png"
+  },
+  {
+    "name": "NYX",
+    "logo": "/logos/nyxlogo.png"
+  },
+  {
+    "name": "Revlon",
+    "logo": "/logos/revlonlogo.png"
+  },
+  {
+    "name": "UrbanDecay",
+    "logo": "/logos/urbandecaylogo.png"
+  }
+]
+
+
+
+
+
