@@ -12,7 +12,8 @@ import VideoTube from './pages/VideoTube.jsx'
 import ProfilePage from './pages/ProfilePage.jsx'
 import ProfileTemplate from "./pages/ProfileTemplate.jsx"
 import LogOutPage from './pages/LogoutPage.jsx'
-import EditProfilePage from './pages/EditProfilePage.jsx' // 👈 Add this line
+import EditProfilePage from './pages/EditProfilePage.jsx' 
+import MessageBoardPage from './pages/MessageBoardPage.jsx'
 
 let router = createBrowserRouter([
   {
@@ -58,7 +59,14 @@ let router = createBrowserRouter([
   {
     path: "/profile-template",
     element: <ProfileTemplate />
+  },
+   {
+    path: "/MessageBoardPage",
+    element: <MessageBoardPage />
   }
+
+
+
 ])
 
 ReactDOM.createRoot(document.getElementById('root')).render(

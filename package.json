@@ -20,6 +20,7 @@
     "mongodb": "^6.9.0",
     "mongoose": "^8.6.2",
     "multer": "^2.0.1",
-    "pexels": "^1.4.0"
+    "pexels": "^1.4.0",
+    "socket.io": "^4.8.1"
   }
 }
