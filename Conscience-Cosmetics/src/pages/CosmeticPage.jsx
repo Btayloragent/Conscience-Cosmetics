@@ -51,26 +51,32 @@ const CosmeticPage = () => {
         backgroundImage: "url('src/pictures/MakeBack/PicBack2.jpg')",
         backgroundSize: "cover",
         backgroundPosition: "center",
-        height: "200vh",
+        // 👇 Key Change 1: Allow page to grow past viewport height
+        minHeight: "100vh", 
+        // 👆 Replaces original 'height: "200vh"'
+        backgroundAttachment: "fixed", // Mimics VideoPage background behavior
         width: "100vw",
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
-        justifyContent: "center",
-        position: "relative"
+        justifyContent: "flex-start", // Changed from "center" to "flex-start" to stack content from the top
+        position: "relative",
+        paddingTop: "100px" // Add top padding to clear space for the fixed NavBar
     };
 
     const navBarStyle = {
-        position: "absolute",
-        top: 2,
-        width: "95%",
-        zIndex: 10
+        // 👇 Key Change 2: Make NavBar fixed for scroll persistence
+        position: "fixed", 
+        top: 0,
+        width: "100%", // Ensures fixed NavBar spans the whole width
+        zIndex: 100 // High zIndex for fixed element
     };
 
     // Style for centered image below navbar
     const imageStyle = {
         display: "block",
-        margin: "28px auto -40px auto", // top margin to push below navbar, centered horizontally, bottom margin
+        // Adjusted margin to account for paddingTop and position of fixed NavBar
+        margin: "0 auto -40px auto", 
         width: "425px",
         height: "auto",
         zIndex: 10
@@ -78,13 +84,15 @@ const CosmeticPage = () => {
 
     return (
         <div style={pageStyle}>
+            {/* The NavBar is now fixed to the top */}
             <div style={navBarStyle}>
                 <NavBar />
             </div>
 
-            {/* Centered larger image below navbar */}
+            {/* Centered larger image */}
             <img src={CosPic8} alt="Cosmetic" style={imageStyle} />
 
+            {/* The rest of the content will now flow and cause the page to scroll */}
             {tagsData && <MakeUpSearch tagsData={tagsData} cosmeticsData={cosmeticsData} />}
 
             <SideBar />
@@ -94,4 +102,3 @@ const CosmeticPage = () => {
 };
 
 export default CosmeticPage;
-
