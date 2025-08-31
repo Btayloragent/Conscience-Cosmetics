@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import ComPic4 from '../pictures/LoginComPics/ComPic4.png'; 
+import ComPic4 from '../pictures/LoginComPics/ComPic4.png';
 
 const LoginComponent = ({ mode, onClose, onLoginSuccess }) => {
   const [username, setUsername] = useState('');
@@ -32,20 +32,14 @@ const LoginComponent = ({ mode, onClose, onLoginSuccess }) => {
 
       const response = await axios.post(url, payload);
 
-      if (response.status === 200) {
+      if (response.status === 200 || response.status === 201) {
         const { token, user } = response.data;
 
         if (!user || !user._id) {
           throw new Error('User data missing from server response');
         }
 
-        // Save login info safely
-        localStorage.setItem('token', token);
-        localStorage.setItem('userId', user._id);
-        localStorage.setItem('isLoggedIn', 'true');
-        window.dispatchEvent(new Event('loginStatusChange'));
-
-        // ✅ Custom messages
+        // Custom messages
         if (currentMode === 'signup') {
           alert(`Welcome to Conscience-Cosmetics, ${user.username}!`);
         } else {
@@ -57,17 +51,19 @@ const LoginComponent = ({ mode, onClose, onLoginSuccess }) => {
         // Pass user info back
         onLoginSuccess(user.username, avatarUrl, user._id, token);
         onClose();
-
-        // ✅ Redirect directly to profile page
-        window.location.href = `/profile/${user.username}`;
       }
     } catch (error) {
-      console.error(error);
-      setErrorMessage(
-        currentMode === 'login'
-          ? 'Invalid username or password.'
-          : 'Sign up failed. Please try again.'
-      );
+      console.log('Error from the server:', error);
+      
+      if (error.response && error.response.data) {
+        setErrorMessage(error.response.data.message || error.response.data);
+      } else {
+        setErrorMessage(
+          currentMode === 'login'
+            ? 'Invalid username or password.'
+            : 'Sign up failed. Please try again.'
+        );
+      }
     } finally {
       setIsLoading(false);
     }
@@ -85,7 +81,7 @@ const LoginComponent = ({ mode, onClose, onLoginSuccess }) => {
   }, [currentMode]);
 
   return (
-    <div style={{ marginTop: '225px' }}> {/* 👈 pushes down without altering layout */}
+    <div style={{ marginTop: '225px' }}>
       <div
         style={{
           backgroundImage: `url(${ComPic4})`,
