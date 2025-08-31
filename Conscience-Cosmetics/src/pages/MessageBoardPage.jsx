@@ -1,86 +1,74 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import axios from 'axios'; // For making HTTP requests to your backend
-import { io } from 'socket.io-client'; // For real-time WebSocket communication
+import axios from 'axios';
+import { io } from 'socket.io-client';
+import { useNavigate } from 'react-router-dom'; // 👈 Import useNavigate
 
 // IMPORTANT: Replace with your backend URL.
-// Using import.meta.env for Vite compatibility, and VITE_ prefix for env variable
-const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:5001'; // Default to 5001
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:5001';
 
-let socket; // Declare socket outside to maintain its instance across renders
+let socket;
 
-function MessageBoardPage() { // Renamed from App to MessageBoardPage
+function MessageBoardPage() {
   const [messages, setMessages] = useState([]);
   const [newMessageContent, setNewMessageContent] = useState('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [channels, setChannels] = useState(['General Chat', 'Makeup Looks', 'Product Reviews', 'Tips & Tricks']);
   const [currentChannel, setCurrentChannel] = useState('General Chat');
-  const [user, setUser] = useState(null); // Stores logged-in user info { _id, username, avatarUrl }
+  const [user, setUser] = useState(null);
 
   const messagesEndRef = useRef(null);
+  const navigate = useNavigate(); // 👈 Initialize the hook
 
-  // Function to get user data from localStorage (e.g., after login)
+  // Function to go back
+  const handleGoBack = () => {
+    navigate(-1); // This navigates back one step in the browser history
+  };
+
   const getAuthUser = () => {
     try {
-      const token = localStorage.getItem('token'); // Assuming you store JWT here
+      const token = localStorage.getItem('token');
       if (token) {
-        // Decode JWT to get user info (assuming it contains userId, username, avatarUrl)
-        // In a real app, you'd send this token to your backend for verification
-        // and fetch fresh user data to prevent forged tokens.
-        // For simplicity here, we'll decode it on the client side.
         const decodedToken = JSON.parse(atob(token.split('.')[1]));
         return {
           _id: decodedToken.userId,
           username: decodedToken.username,
-          avatarUrl: decodedToken.avatarUrl // Assuming avatarUrl is in the token
+          avatarUrl: decodedToken.avatarUrl
         };
       }
     } catch (e) {
       console.error("Failed to parse user token:", e);
-      localStorage.removeItem('token'); // Clear invalid token
+      localStorage.removeItem('token');
     }
     return null;
   };
 
-  // --- Effect for User Authentication and Socket.IO Connection ---
   useEffect(() => {
-    // Authenticate user (or set up anonymous for testing)
     const authenticatedUser = getAuthUser();
     if (authenticatedUser) {
       setUser(authenticatedUser);
     } else {
-      // For testing without a full login flow, you might generate an anonymous ID
-      // In a production app, anonymous users might not be allowed to chat,
-      // or you'd have a backend API to create a temporary anonymous session.
-      // For this example, let's just use a placeholder if not logged in.
       setUser({ _id: 'anonymous-user-' + Math.random().toString(36).substr(2, 9), username: 'Guest', avatarUrl: 'https://placehold.co/40x40/cccccc/000000?text=G' });
     }
 
-    // Initialize Socket.IO client connection
-    // Pass the user ID or token if your backend needs it for auth on connection
     socket = io(BACKEND_URL, {
-      withCredentials: true, // Important for CORS and potential session/cookie handling
-      query: { userId: authenticatedUser?._id, username: authenticatedUser?.username } // Pass user info
+      withCredentials: true,
+      query: { userId: authenticatedUser?._id, username: authenticatedUser?.username }
     });
 
     socket.on('connect', () => {
       console.log('Connected to Socket.IO server!');
       setLoading(false);
-      // Automatically join the current channel on connect
       socket.emit('joinChannel', currentChannel);
     });
 
     socket.on('disconnect', () => {
       console.log('Disconnected from Socket.IO server.');
-      // Handle reconnection logic if needed
     });
 
-    // Listen for new messages from the server
     socket.on('receiveMessage', (message) => {
-      // Only add the message if it belongs to the currently active channel
       if (message.channelName === currentChannel) {
         setMessages((prevMessages) => [...prevMessages, message]);
-        // Scroll to the bottom of messages after new messages arrive
         setTimeout(() => {
           messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
         }, 100);
@@ -98,12 +86,11 @@ function MessageBoardPage() { // Renamed from App to MessageBoardPage
       socket.off('connect');
       socket.off('disconnect');
       socket.off('connect_error');
-      socket.emit('leaveChannel', currentChannel); // Leave channel on component unmount/cleanup
-      socket.disconnect(); // Disconnect socket on component unmount
+      socket.emit('leaveChannel', currentChannel);
+      socket.disconnect();
     };
-  }, []); // Run once on component mount for initial setup
+  }, []);
 
-  // --- Effect for fetching messages when channel changes ---
   useEffect(() => {
     const fetchMessages = async () => {
       if (!user || !currentChannel) {
@@ -114,10 +101,9 @@ function MessageBoardPage() { // Renamed from App to MessageBoardPage
       setError(null);
       try {
         const response = await axios.get(`${BACKEND_URL}/api/channels/${currentChannel}/messages`);
-        // Ensure messages are sorted by timestamp
         const sortedMessages = response.data.sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
         setMessages(sortedMessages);
-        setTimeout(() => { // Scroll to bottom after loading new channel history
+        setTimeout(() => {
           messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
         }, 100);
       } catch (err) {
@@ -128,9 +114,7 @@ function MessageBoardPage() { // Renamed from App to MessageBoardPage
       }
     };
 
-    // If socket is already connected, handle joining/leaving channels
     if (socket && socket.connected) {
-      // Before changing channel, leave the old one
       const prevChannel = messages.length > 0 ? messages[0].channelName : null;
       if (prevChannel && prevChannel !== currentChannel) {
         socket.emit('leaveChannel', prevChannel);
@@ -138,21 +122,16 @@ function MessageBoardPage() { // Renamed from App to MessageBoardPage
       socket.emit('joinChannel', currentChannel);
     }
     fetchMessages();
+  }, [currentChannel, user]);
 
-    // Cleanup: When the channel changes, ensure we're set to fetch for the new one.
-    // The socket.off('receiveMessage') in the first useEffect's cleanup handles the main listener.
-  }, [currentChannel, user]); // Re-run when currentChannel or user changes
-
-  // Handler for changing channels
   const handleChannelChange = (channelName) => {
     if (socket && socket.connected) {
-      socket.emit('leaveChannel', currentChannel); // Explicitly leave old channel room
+      socket.emit('leaveChannel', currentChannel);
     }
     setCurrentChannel(channelName);
-    setMessages([]); // Clear messages when switching channels to show loading state for new channel
+    setMessages([]);
   };
 
-  // Handler for sending a new message
   const handleSendMessage = async (e) => {
     e.preventDefault();
     if (!newMessageContent.trim()) {
@@ -168,7 +147,6 @@ function MessageBoardPage() { // Renamed from App to MessageBoardPage
       return;
     }
 
-    // Emit message via Socket.IO
     socket.emit('sendMessage', {
       channelName: currentChannel,
       content: newMessageContent,
@@ -176,7 +154,7 @@ function MessageBoardPage() { // Renamed from App to MessageBoardPage
       username: user.username,
       avatarUrl: user.avatarUrl
     });
-    setNewMessageContent(''); // Clear input immediately
+    setNewMessageContent('');
     setError(null);
   };
 
@@ -196,14 +174,21 @@ function MessageBoardPage() { // Renamed from App to MessageBoardPage
 
   return (
     <div className="flex h-screen bg-gradient-to-br from-pink-50 to-purple-50 font-inter text-gray-800">
-      {/* Tailwind CSS CDN script */}
       <script src="https://cdn.tailwindcss.com"></script>
       <title>Makeup Chat Board</title>
       <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
       {/* Left Sidebar for Channels */}
       <div className="w-1/4 min-w-[200px] max-w-[300px] bg-purple-800 text-white flex flex-col shadow-lg rounded-r-xl p-4">
-        <h2 className="text-2xl font-bold mb-6 text-pink-300 text-center">Channels</h2>
+        <div className="flex justify-between items-center mb-6">
+          <h2 className="text-2xl font-bold text-pink-300">Channels</h2>
+          <button
+            onClick={handleGoBack}
+            className="text-white bg-purple-600 hover:bg-purple-700 font-bold py-2 px-4 rounded-xl transition duration-300"
+          >
+            Go Back
+          </button>
+        </div>
         {user && (
           <div className="bg-purple-900 text-pink-200 text-xs font-mono px-3 py-2 rounded-lg mb-4 text-center break-all">
             Logged in as: <span className="font-semibold">{user.username}</span> (ID: {user._id.substring(0, 8)}...)
@@ -237,7 +222,7 @@ function MessageBoardPage() { // Renamed from App to MessageBoardPage
             <strong className="font-bold">Error!</strong>
             <span className="block sm:inline ml-2">{error}</span>
             <span className="absolute top-0 bottom-0 right-0 px-4 py-3" onClick={() => setError(null)}>
-              <svg className="fill-current h-6 w-6 text-red-500" role="button" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><title>Close</title><path d="M14.348 14.849a1.2 1.2 0 0 1-1.697 0L10 11.819l-2.651 3.029a1.2 1.2 0 1 1-1.697-1.697l2.758-3.15-2.759-3.152a1.2 1.2 0 1 1 1.697-1.697L10 8.183l2.651-3.031a1.2 1.2 0 1 1 1.697 1.697l-2.758 3.152 2.758 3.15a1.2 1.2 0 0 1 0 1.698z"/></svg>
+              <svg className="fill-current h-6 w-6 text-red-500" role="button" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><title>Close</title><path d="M14.348 14.849a1.2 1.2 0 0 1-1.697 0L10 11.819l-2.651 3.029a1.2 1.2 0 1 1-1.697-1.697l2.758-3.15-2.759-3.152a1.2 1.2 0 1 1 1.697-1.697L10 8.183l2.651-3.031a1.2 1.2 0 1 1 1.697 1.697l-2.758 3.152 2.758 3.15a1.2 1.2 0 0 1 0 1.698z" /></svg>
             </span>
           </div>
         )}
@@ -256,7 +241,7 @@ function MessageBoardPage() { // Renamed from App to MessageBoardPage
           {loading && (
             <div className="text-center text-gray-500 mt-4">Loading messages...</div>
           )}
-          <div ref={messagesEndRef} /> {/* Dummy div for auto-scrolling */}
+          <div ref={messagesEndRef} />
         </div>
 
         {/* Message Input Form */}
@@ -285,51 +270,43 @@ function MessageBoardPage() { // Renamed from App to MessageBoardPage
   );
 }
 
-// Component for a single chat message
 function Message({ message, currentUserId }) {
   const timestamp = new Date(message.timestamp);
   const isCurrentUser = message.authorId === currentUserId;
 
-  // Determine the correct avatar URL
   const avatarSrc = message.avatarUrl && message.avatarUrl.startsWith('/uploads')
-    ? `${BACKEND_URL}${message.avatarUrl}` // Prepend backend URL for relative paths
-    : message.avatarUrl || 'https://placehold.co/40x40/cccccc/000000?text=U'; // Fallback for missing or non-relative avatarUrl
+    ? `${BACKEND_URL}${message.avatarUrl}`
+    : message.avatarUrl || 'https://placehold.co/40x40/cccccc/000000?text=U';
 
   return (
     <div className={`chat mb-4 ${isCurrentUser ? 'chat-end' : 'chat-start'}`}>
-      {/* Chat Image (Avatar) */}
-      {avatarSrc && ( // Only render avatar div if avatarSrc is available
+      {avatarSrc && (
         <div className="chat-image avatar">
           <div className="w-10 rounded-full">
             <img
               alt={`${message.username} avatar`}
               src={avatarSrc}
               className="object-cover"
-              // Fallback for image loading errors
               onError={(e) => {
-                e.target.onerror = null; // Prevent infinite loop
-                e.target.src = 'https://placehold.co/40x40/cccccc/000000?text=X'; // Broken image placeholder
+                e.target.onerror = null;
+                e.target.src = 'https://placehold.co/40x40/cccccc/000000?text=X';
               }}
             />
           </div>
         </div>
       )}
 
-      {/* Chat Header */}
       <div className="chat-header">
         {isCurrentUser ? 'You' : message.username}
-        {/* Timestamp in header for context */}
         <time className="text-xs opacity-50 ml-2">
           {timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
         </time>
       </div>
 
-      {/* Chat Bubble - Main Message Content */}
       <div className={`chat-bubble p-3 rounded-xl shadow-md ${isCurrentUser ? 'bg-purple-200 text-purple-800' : 'bg-gray-200 text-gray-800'}`}>
         <p className="whitespace-pre-wrap">{message.content}</p>
       </div>
 
-      {/* Chat Footer (for time as in DaisyUI example) */}
       <div className="chat-footer opacity-50">
         {isCurrentUser ? `Delivered at ` : `Seen at `}
         {timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
@@ -338,4 +315,4 @@ function Message({ message, currentUserId }) {
   );
 }
 
-export default MessageBoardPage; // Exporting MessageBoardPage
+export default MessageBoardPage;
