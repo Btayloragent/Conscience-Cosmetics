@@ -31,7 +31,10 @@ const ProfileTemplate = ({
   if (!user) return null;
 
   return (
-    <div className="flex flex-col min-h-screen bg-gray-200">
+    <div
+      className="flex flex-col min-h-screen bg-gray-200"
+      style={{ fontFamily: "Merriweather, serif" }}
+    >
       <NavBar onSearch={(query) => console.log("Search query:", query)} />
 
       <ProfileBanner
