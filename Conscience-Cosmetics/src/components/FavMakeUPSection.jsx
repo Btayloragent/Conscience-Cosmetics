@@ -1,5 +1,3 @@
-// FavMakeUPSection.jsx
-
 import React, { useEffect, useState } from "react";
 import brandLogos from "../brandLogos.json"; 
 import axios from "axios";
@@ -32,7 +30,7 @@ const FavMakeUPSection = ({ userId, isEditable = false }) => {
       }
     };
     fetchUserBrands();
-  }, [userId]); // Removed token from dependencies, rely on check inside
+  }, [userId]);
 
   // Toggle selection of a brand
   const toggleBrand = (brandName) => {
@@ -75,7 +73,7 @@ const FavMakeUPSection = ({ userId, isEditable = false }) => {
     }
   };
 
-  if (loading) return <p className="text-center">Loading favorite brands...</p>;
+  if (loading) return <p className="text-center" style={{ fontFamily: 'Merriweather, serif' }}>Loading favorite brands...</p>;
 
   // Filter to get only the selected brand objects for display
   const selectedBrandObjects = brandLogos.filter(brand => selectedBrands.includes(brand.name));
@@ -93,7 +91,10 @@ const FavMakeUPSection = ({ userId, isEditable = false }) => {
   return (
     <div
       className="bg-gray-700 bg-opacity-40 rounded-lg mt-4 p-4 flex flex-col items-center"
-      style={{ width: "100%" }}
+      style={{ 
+        width: "100%", 
+        fontFamily: 'Merriweather, serif' // Apply Merriweather here
+      }}
     >
       <h2 className="text-xl font-semibold text-blue mb-4 text-center">
         Favorite MakeUp Brands {isEditable ? `(${selectedBrands.length}/5 selected)` : ""}
