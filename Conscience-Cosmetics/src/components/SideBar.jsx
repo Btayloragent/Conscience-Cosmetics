@@ -5,6 +5,7 @@ import MakeUpIcon from '../pictures/SideBarIcons/MakeUp.png';
 import VideosIcon from '../pictures/SideBarIcons/Videos.png';
 import AboutUSIcon from '../pictures/SideBarIcons/AboutUs2.png';
 import EditIcon from '../pictures/SideBarIcons/EditPage3.png';
+import GroupMessageIcon from '../pictures/SideBarIcons/GroupMessage.png';
 
 const SideBar = () => {
   const [hoveredIcon, setHoveredIcon] = useState(null);
@@ -50,7 +51,7 @@ const SideBar = () => {
     backgroundColor: 'transparent',
     padding: '20px',
     position: 'fixed',
-    top: '95px',
+    top: '70px',
     left: '5px',
     height: '100vh',
     boxShadow: 'none',
@@ -92,6 +93,7 @@ const SideBar = () => {
     { to: '/MakeUpPage', icon: AboutUSIcon, alt: 'About Us', key: 'about', protected: false },
     { to: '/CosmeticPage', icon: MakeUpIcon, alt: 'Cosmetics', key: 'cosmetics', protected: true },
     { to: '/VideoPage', icon: VideosIcon, alt: 'Videos', key: 'videos', protected: true },
+    { to: '/MessageBoardPage', icon: GroupMessageIcon, alt: 'Videos', key: 'videos', protected: true },
   ];
 
   return (
