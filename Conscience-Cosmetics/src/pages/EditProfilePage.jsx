@@ -5,9 +5,9 @@ import { useParams, useLocation } from "react-router-dom";
 import FavMakeUPSection from "../components/FavMakeUPSection";
 
 const EditProfilePage = () => {
-  const { username } = useParams();
+  const { username: encodedUsername } = useParams();
+  const username = decodeURIComponent(encodedUsername);
   const location = useLocation();
-  const isEditable = location.pathname === `/profile/${username}/edit`;
 
   const [user, setUser] = useState(null);
   const [isEditingBio, setIsEditingBio] = useState(false);
@@ -128,18 +128,17 @@ const EditProfilePage = () => {
       handleSaveBio={handleSaveBio}
       onEditAvatar={onEditAvatar}
       onEditBanner={onEditBanner}
-      isEditable={isEditable} // pass edit mode
+      isEditable={true}
       loggedInUsername={loggedInUsername}
-      editProfileButton={null} // optional
+      editProfileButton={null}
       topBrands={topBrands}
     >
-      <FavMakeUPSection userId={user._id} isEditable={isEditable} initialTopBrands={topBrands} />
+      <FavMakeUPSection userId={user._id} isEditable={true} initialTopBrands={topBrands} />
     </ProfileTemplate>
   );
 };
 
 export default EditProfilePage;
-
 
 
 

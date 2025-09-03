@@ -1,6 +1,5 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
-import App from './App.jsx'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import './index.css'
 import LandingPage from './pages/landingPage.jsx'
@@ -29,6 +28,10 @@ let router = createBrowserRouter([
     element: <VideoPage />
   },
   {
+    path: "/VideoPage/:videoId",
+    element: <VideoTube />
+  },
+  {
     path: "/CosmeticPage",
     element: <CosmeticPage />
   },
@@ -41,32 +44,21 @@ let router = createBrowserRouter([
     element: <LogOutPage />
   },
   {
-    path: "/VideoPage",
-    element: <VideoPage />
+    path: "/MessageBoardPage",
+    element: <MessageBoardPage />
   },
   {
-    path: "/VideoPage/:videoId",
-    element: <VideoTube />
+    path: "/profile/:username/edit",
+    element: <EditProfilePage />
   },
   {
     path: "/profile/:username",
     element: <ProfilePage />
   },
   {
-    path: "/profile/:username/edit", // 👈 Add this route
-    element: <EditProfilePage />
-  },
-  {
     path: "/profile-template",
     element: <ProfileTemplate />
-  },
-   {
-    path: "/MessageBoardPage",
-    element: <MessageBoardPage />
   }
-
-
-
 ])
 
 ReactDOM.createRoot(document.getElementById('root')).render(
@@ -74,5 +66,4 @@ ReactDOM.createRoot(document.getElementById('root')).render(
     <RouterProvider router={router} />
   </React.StrictMode>
 )
-
 
