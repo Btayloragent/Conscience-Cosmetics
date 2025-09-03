@@ -41,10 +41,12 @@ const SideBar = () => {
     };
   }, []);
 
+  const encodedLoggedInUsername = loggedInUsername ? encodeURIComponent(loggedInUsername) : '';
+
   const onOwnProfilePage =
-    isLoggedIn && location.pathname === `/profile/${loggedInUsername}`;
+    isLoggedIn && location.pathname === `/profile/${encodedLoggedInUsername}`;
   const onEditProfilePage =
-    isLoggedIn && location.pathname === `/profile/${loggedInUsername}/edit`;
+    isLoggedIn && location.pathname === `/profile/${encodedLoggedInUsername}/edit`;
 
   const sidebarStyle = {
     width: '150px',
@@ -123,7 +125,7 @@ const SideBar = () => {
         {onOwnProfilePage && (
           <li style={liStyle} key="edit">
             <Link
-              to={`/profile/${loggedInUsername}/edit`}
+              to={`/profile/${encodedLoggedInUsername}/edit`}
               style={aStyle}
               onMouseEnter={() => setHoveredIcon('edit')}
               onMouseLeave={() => setHoveredIcon(null)}
@@ -138,7 +140,7 @@ const SideBar = () => {
         {onEditProfilePage && avatarUrl && (
           <li style={liStyle} key="view-profile">
             <Link
-              to={`/profile/${loggedInUsername}`}
+              to={`/profile/${encodedLoggedInUsername}`}
               style={aStyle}
               onMouseEnter={() => setHoveredIcon('view-profile')}
               onMouseLeave={() => setHoveredIcon(null)}
