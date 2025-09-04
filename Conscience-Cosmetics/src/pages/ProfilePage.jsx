@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import ProfileTemplate from "./ProfileTemplate";
-import { useParams } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 
 const ProfilePage = () => {
   const { username: encodedUsername } = useParams();
@@ -14,27 +14,29 @@ const ProfilePage = () => {
   const loggedInUsername = localStorage.getItem("username");
   const token = localStorage.getItem("token");
 
+  // Check if the current profile belongs to the logged-in user
+  const isOwnProfile = loggedInUsername === username;
+
   useEffect(() => {
-    if (!username || !token) return;
+    if (!username) return;
 
     const fetchProfile = async () => {
       try {
         // Fetch profile data
         const res = await axios.get(
-          `http://localhost:5001/api/profile?username=${username}`,
-          { headers: { Authorization: `Bearer ${token}` } }
+          `http://localhost:5001/api/profile?username=${username}`
         );
 
         const profileData = res.data;
         setUser(profileData);
         setEditedBio(profileData.bio || "");
 
-        if (profileData.avatarUrl) {
+        if (profileData.avatarUrl && isOwnProfile) {
           localStorage.setItem("avatarUrl", profileData.avatarUrl);
         }
 
         // Check if logged-in user is following this profile
-        if (loggedInUsername && loggedInUsername !== username && profileData._id) {
+        if (loggedInUsername && !isOwnProfile && profileData._id) {
           try {
             const followRes = await axios.get(
               `http://localhost:5001/api/users/${profileData._id}/is-following`,
@@ -55,7 +57,7 @@ const ProfilePage = () => {
     };
 
     fetchProfile();
-  }, [username, loggedInUsername, token]);
+  }, [username, loggedInUsername, token, isOwnProfile]);
 
   const handleStartEditBio = () => setIsEditingBio(true);
 
@@ -151,6 +153,15 @@ const ProfilePage = () => {
     }
   };
 
+  // Edit button for your own profile
+  const editProfileButton = isOwnProfile ? (
+    <Link to={`/profile/${username}/edit`}>
+      <button className="bg-purple-500 text-white py-2 px-4 rounded-full hover:bg-purple-600 transition duration-300">
+        Edit Profile
+      </button>
+    </Link>
+  ) : null;
+
   if (!user) {
     return <div className="text-center mt-10">Loading profile...</div>;
   }
@@ -158,9 +169,7 @@ const ProfilePage = () => {
   return (
     <ProfileTemplate
       user={user}
-      setUser={setUser}
       isEditingBio={isEditingBio}
-      setIsEditingBio={setIsEditingBio}
       editedBio={editedBio}
       setEditedBio={setEditedBio}
       handleStartEditBio={handleStartEditBio}
@@ -168,10 +177,11 @@ const ProfilePage = () => {
       handleSaveBio={handleSaveBio}
       onEditAvatar={onEditAvatar}
       onEditBanner={onEditBanner}
-      isEditable={false}
+      isEditable={false} // This remains false for the view-only profile page
       loggedInUsername={loggedInUsername}
       isFollowing={isFollowing}
       onFollowToggle={onFollowToggle}
+      editProfileButton={editProfileButton}
     />
   );
 };
