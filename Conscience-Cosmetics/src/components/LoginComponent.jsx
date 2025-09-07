@@ -10,6 +10,9 @@ const LoginComponent = ({ mode, onClose, onLoginSuccess }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [currentMode, setCurrentMode] = useState(mode);
 
+  // New state for the profile type dropdown
+  const [profileType, setProfileType] = useState(''); // Initialize with an empty string
+
   // Avatar selection (1–99)
   const [avatarId, setAvatarId] = useState(1);
   const getAvatarUrl = (id) => `https://avatar.iran.liara.run/public/${id}.png`;
@@ -18,6 +21,13 @@ const LoginComponent = ({ mode, onClose, onLoginSuccess }) => {
   const handleSubmit = async () => {
     setIsLoading(true);
     setErrorMessage('');
+
+    // Optional: Add a check to ensure a profile type is selected
+    if (currentMode === 'signup' && !profileType) {
+        setErrorMessage('Please select a profile type.');
+        setIsLoading(false);
+        return;
+    }
 
     try {
       const url =
@@ -28,7 +38,8 @@ const LoginComponent = ({ mode, onClose, onLoginSuccess }) => {
       const payload =
         currentMode === 'login'
           ? { username, password }
-          : { username, password, email, avatarUrl: selectedAvatar };
+          // Add profileType to the signup payload
+          : { username, password, email, avatarUrl: selectedAvatar, profileType };
 
       const response = await axios.post(url, payload);
 
@@ -175,6 +186,20 @@ const LoginComponent = ({ mode, onClose, onLoginSuccess }) => {
               placeholder="Confirm Password"
               style={inputStyle}
             />
+
+            {/* Updated Profile Type Dropdown */}
+            <select
+              style={inputStyle}
+              value={profileType}
+              onChange={(e) => setProfileType(e.target.value)}
+            >
+              <option value="" disabled hidden>Profile Type</option>
+              <option value="Enthusiast">Enthusiast</option>
+              <option value="Student">Student</option>
+              <option value="Professional Makeup Artist">Professional Makeup Artist</option>
+              <option value="Professional Model">Professional Model</option>
+              <option value="Hobbyist">Hobbyist</option>
+            </select>
           </>
         )}
 
