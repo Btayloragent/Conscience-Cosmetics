@@ -95,7 +95,7 @@ const SideBar = () => {
     { to: '/MakeUpPage', icon: AboutUSIcon, alt: 'About Us', key: 'about', protected: false },
     { to: '/CosmeticPage', icon: MakeUpIcon, alt: 'Cosmetics', key: 'cosmetics', protected: true },
     { to: '/VideoPage', icon: VideosIcon, alt: 'Videos', key: 'videos', protected: true },
-    { to: '/MessageBoardPage', icon: GroupMessageIcon, alt: 'Videos', key: 'videos', protected: true },
+    { to: '/MessageBoardPage', icon: GroupMessageIcon, alt: 'MessageBoard', key: 'MessageBoard', protected: true },
   ];
 
   return (
